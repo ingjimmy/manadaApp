@@ -216,4 +216,8 @@ export class ActionDetailComponent {
         let index = this.comment.files.indexOf(file);
         this.comment.files.splice(index, 1);
     }
+
+    showEditComment(comment: CommentModel) {
+
+    }
 }
