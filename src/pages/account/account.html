@@ -1,0 +1,66 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            Account
+        </ion-title>
+    </ion-navbar>
+    <ion-toolbar class="custom-ion-toolbar" no-border-top>
+        <ion-segment [(ngModel)]="selected" padding>
+            <ion-segment-button (click)="change()" value="account">
+                Account
+            </ion-segment-button>
+            <ion-segment-button (click)="change()" value="email">
+                Mails
+            </ion-segment-button>
+        </ion-segment>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <div *ngIf="selected == 'account'">
+        <ion-item>
+            <ion-label>Name</ion-label>
+            <ion-input required type="text" [(ngModel)]="model.names" name="names"></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-label>Email</ion-label>
+            <ion-input required type="email" [(ngModel)]="model.email" name="email"></ion-input>
+        </ion-item>
+        <button (click)="send()" *ngIf="model.names != response.names || model.email != response.email" ion-button color="primary"
+            type="button" clear>Save changes</button>
+        <ion-item class="custom-bg-password">
+            <ion-label>Password</ion-label>
+            <ion-input readonly type="password" value="******"></ion-input>
+        </ion-item>
+        <button ion-button color="primary" type="submit" clear>Change password</button>
+        <div>
+            <button ion-button color="danger" type="button" (click)="logout()" clear>Log out</button>
+        </div>
+    </div>
+    <div *ngIf="selected == 'email'">
+        <ion-list>
+            <div *ngFor="let setting of settings">
+                <div class="custom-label-setting">
+                    {{setting.description}}
+                </div>
+                <ion-item>
+                    <ion-toggle (ionChange)="changeSetting(setting)" [(ngModel)]="setting.value"></ion-toggle>
+                    <ion-label>
+                        {{setting.name}}
+                    </ion-label>
+                </ion-item>
+            </div>
+        </ion-list>
+    </div>
+</ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <button ion-button menuToggle color="primary">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+        <ion-buttons end>
+            <button (click)="newAction()" ion-button icon-right color="primary">
+        New action
+      </button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-footer>

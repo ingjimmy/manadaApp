@@ -1,0 +1,21 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>
+            New project
+        </ion-title>
+        <ion-buttons start>
+            <button ion-button (click)="dismiss()">
+        <span ion-text color="primary" showWhen="ios">Cancel</span>
+        <ion-icon name="md-close" showWhen="android,windows"></ion-icon>
+      </button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <form (submit)="send(form)" #form="ngForm">
+        <ion-item>
+            <ion-input required type="text" [(ngModel)]="model.name" name="name" placeholder="Names"></ion-input>
+        </ion-item>        
+        <button [disabled]="!form.valid" ion-button color="primary" type="submit" clear block>Save</button>
+    </form>
+</ion-content>

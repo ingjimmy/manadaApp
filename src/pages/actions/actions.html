@@ -1,0 +1,48 @@
+<ion-menu [content]="content" [swipeEnabled]="false">
+  <ion-content>
+    <button class="custom-list-button" ion-item (click)="allActions()">All Actions <ion-note class="custom-action-ion-note" *ngIf="mainService.countAll > 0" color="primary" item-end>{{mainService.countAll}}</ion-note></button>
+    <ion-item-divider class="custom-divider">
+      <button (click)="addUser()">My team +</button>
+    </ion-item-divider>
+    <ion-list class="custom-ion-list">
+      <ion-item-sliding #item *ngFor="let user of mainService.users">
+        <button class="custom-list-button" ion-item (click)="filterUser(user)">{{user.names}}           
+          <ion-note class="custom-action-ion-note" *ngIf="user.countActiveActions > 0" color="primary" item-end>{{user.countActiveActions}}</ion-note>
+        </button>
+        <ion-item-options side="right">
+          <button class="button-swipe" ion-button (click)="removeUser(user, item)" color="danger">
+          <ion-icon name="trash"></ion-icon>
+        </button>
+          <button class="button-swipe" ion-button color="secondary" (click)="editUser(user, item)">
+          <ion-icon name="color-wand"></ion-icon>
+        </button>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+    <ion-item-divider class="custom-divider">
+      <button (click)="addProject()">Projects +</button>
+    </ion-item-divider>
+    <button class="custom-list-button" ion-item (click)="filterProject(mainService.projectRaw)">{{mainService.projectRaw.name}}  
+      <ion-note class="custom-action-ion-note" *ngIf="mainService.projectRaw.countActions > 0" color="primary" item-end>{{mainService.projectRaw.countActions}}</ion-note></button>
+    <ion-list class="custom-ion-list">
+      <ion-item-sliding #item *ngFor="let project of mainService.projects">
+        <button class="custom-list-button" ion-item (click)="filterProject(project)">{{project.name}}  
+          <ion-note class="custom-action-ion-note" *ngIf="project.countActions > 0" color="primary" item-end>{{project.countActions}}</ion-note>
+        </button>
+        <ion-item-options side="right">
+          <button class="button-swipe" ion-button (click)="removeProject(project, item)" color="danger">
+          <ion-icon name="trash"></ion-icon>
+        </button>
+          <button class="button-swipe" ion-button color="secondary" (click)="editProject(project, item)">
+          <ion-icon name="color-wand"></ion-icon>
+        </button>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+    <ion-item-divider class="custom-divider">
+      <button (click)="account()">Account</button>
+    </ion-item-divider>
+  </ion-content>
+</ion-menu>
+<!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->
+<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>

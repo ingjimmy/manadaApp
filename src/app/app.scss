@@ -14,3 +14,27 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
+$color1: #5ECCEE;
+$color2: #22DB98;
+$color3: #FFEE3F;
+$color4: #FF0047;
+
+.tagcolor1{
+    background: $color1 !important;
+}
+.tagcolor2{
+    background: $color2 !important;
+}
+.tagcolor3{
+    background: $color3 !important;
+}
+.tagcolor4{
+    background: $color4 !important;
+}
+.custom-remove-confirm {
+    color:#f53d3d !important;
+}
+body {
+    background-color: #fff !important;
+}

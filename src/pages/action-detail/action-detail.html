@@ -1,0 +1,70 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Action Detail
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content fixed scrollDownOnLoad="true" class="custom-content">
+  <ion-list>
+    <ion-card class="custom-card">
+      <div class="color-bar tag{{model.color}}"></div>
+      <ion-card-header>
+        1. {{model.creator.names}}
+      </ion-card-header>
+      <ion-card-content>
+        <span class="custom-comment-date" [innerHTML]="model.creationDate"></span>
+        <p [innerHTML]="model.subject"></p>
+        <p>
+          <span class="users" *ngFor="let user of model.assignedUsers">{{ user.names }}</span>
+          <span class="users" *ngFor="let project of model.projects">{{ project.name }}</span>
+        </p>
+      </ion-card-content>
+    </ion-card>
+    <ion-card class="custom-card" *ngFor="let comment of comments">
+      <div class="color-bar tag{{comment.color}}"></div>
+      <ion-card-header>
+        {{comment.index}}. {{comment.user.names}}
+      </ion-card-header>
+      <ion-card-content>
+        <span class="custom-comment-date" [innerHTML]="comment.modificationDate | tillDate"></span>
+        <p [innerHTML]="comment.content"></p>
+      </ion-card-content>
+      <div *ngFor="let file of comment.files | commentType:0" class="custom-card-image">
+        <img (click)="openPicture(file)" [src]="rootPath + file.path" />
+      </div>
+      <button class="custom-button-file" *ngFor="let file of comment.files | commentType:1" ion-button clear block color="primary"
+        (click)="openFile(file)">
+        <ion-icon name="attach"></ion-icon>        
+        {{file.name}}
+      </button>
+    </ion-card>
+  </ion-list>
+</ion-content>
+<ion-footer id="footer" (touchstart)="footerTouchStart($event)">
+  <ion-list class="custom-list-files">
+    <ion-item *ngFor="let file of comment.files">
+      <ion-avatar item-start>
+        <img [src]="rootPath + file.path">
+      </ion-avatar>
+      <h2>{{file.name}}</h2>
+      <button (click)="removeFile(file)" ion-button clear item-end>
+        <ion-icon color="danger" name="trash"></ion-icon>
+      </button>
+    </ion-item>
+  </ion-list>
+  <ion-toolbar>
+    <ion-buttons start>
+      <button (click)="files()" ion-button icon-left color="primary">        
+        <ion-icon name="attach"></ion-icon>
+      </button>
+    </ion-buttons>
+    <input id="commentinput" style="width: 100%;" class="input-save" type="text" name="content" [(ngModel)]="comment.content">
+    <ion-buttons end>
+      <button (click)="send($event)" ion-button icon-right color="primary">
+        Send
+        <ion-icon name="send"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

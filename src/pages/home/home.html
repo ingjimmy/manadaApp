@@ -1,14 +1,17 @@
-<ion-header>
-  <ion-navbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
-  </ion-navbar>
-</ion-header>
-
-<ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+<ion-content>
+  <ion-list>
+    <ion-list-header class="custom-ion-list-header" inset>
+      <img class="logo-image" src="assets/images/logo.svg">
+    </ion-list-header>
+    <form (submit)="send(form)" #form="ngForm">
+      <ion-item class="custom-home-ion-item">
+        <ion-input required type="email" [(ngModel)]="login.username" name="username" placeholder="Email"></ion-input>
+      </ion-item>
+      <ion-item class="custom-home-ion-item">
+        <ion-input required type="password" [(ngModel)]="login.password" name="password" placeholder="Password"></ion-input>
+      </ion-item>
+      <button ion-button color="primary" type="submit" clear block>Log in</button>
+      <button ion-button (click)="forgot()" class="forgot" type="button" clear block>¿Forgot yout password?</button>
+    </form>
+  </ion-list>
 </ion-content>

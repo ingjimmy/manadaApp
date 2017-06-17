@@ -1,0 +1,30 @@
+.custom-list-button {
+    color:#666 !important;
+}
+.custom-action-ion-note {
+    margin-top:14px !important;
+    font-size: 13px !important;
+}
+.custom-divider {
+    font-weight: bold !important;
+    font-size: 18px !important;
+    color:#000;
+
+    button {
+        font-weight: bold !important;
+        font-size: 18px !important;
+        background-color: transparent;
+        width: 100%;
+        color:#000;
+        text-align: left; 
+    }
+}
+.custom-ion-list {
+    border:none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+
+    button {
+        border:none !important;
+    }
+}

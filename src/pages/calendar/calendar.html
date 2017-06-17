@@ -1,0 +1,29 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons start>
+            <button ion-button (click)="dismiss()">
+        <span ion-text color="primary" showWhen="ios">Back</span>
+        <ion-icon name="md-close" showWhen="android,windows"></ion-icon>
+      </button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>>
+<ion-content>
+    <ion-grid>
+        <ion-row class="calendar-header">
+            <ion-col col-1>
+                <ion-icon (click)="back()" name="arrow-back"></ion-icon>
+            </ion-col>
+            <ion-col col-10>{{monthName}} {{year}}</ion-col>
+            <ion-col col-1>
+                <ion-icon (click)="next()" name="arrow-forward"></ion-icon>
+            </ion-col>
+        </ion-row>
+        <ion-row class="calendar-week-days">
+            <ion-col *ngFor="let weekDay of weekdays">{{weekDay}}</ion-col>
+        </ion-row>
+        <ion-row *ngFor="let date of weeks" class="calendar-days">
+            <ion-col (click)="setDate(day)" *ngFor="let day of date">{{day.day}}</ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>

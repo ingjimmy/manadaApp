@@ -1,0 +1,55 @@
+*[contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  display: block;
+  color:#999;
+}
+.subject-action {
+    min-height: 200px;
+    word-break: break-all;
+    white-space: pre-wrap;
+    overflow-x: hidden;
+}
+*[contenteditable] {
+-webkit-user-select: auto !important;
+}
+.custom-input-autocomplete {
+  max-width: 150px !important;
+}
+.custom-row-autocomplete {
+  position: relative;
+
+  label {
+    float: left;
+    margin-right: 10px;
+    font-size: 1.7rem;
+  }
+  
+  span {
+    border:1px solid #F1F1F1;
+    padding: 1px 3px;
+    line-height: 1.7;
+    font-size: 14px;
+    margin-right: 5px;
+  }
+
+  input {
+    border:none;
+    padding: 3px;
+    font-size: 14px;
+  }
+}
+.custom-list-users {
+  padding: 0;
+  margin-bottom: 0 !important;
+
+  button {
+    border-bottom: none !important;
+
+    div:last-child {
+      border:none !important
+    }
+  }  
+}
+.no-border {
+  border:none !important;
+}

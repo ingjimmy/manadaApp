@@ -1,0 +1,55 @@
+.custom-card {
+    padding: 0 !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid #F1F1F1 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    position: relative;
+}
+.custom-card-image {
+    padding:  10px 10px 0 10px !important;
+    box-sizing: border-box;
+}
+.custom-comment-date {
+    font-size: 13px;
+    color:#666;
+}
+.custom-button-file {
+    span {
+        text-align: left;
+        -webkit-justify-content:left !important;
+        justify-content:left !important;
+        -webkit-align-items:left !important;
+    } 
+    ion-icon {
+        margin-right: 10px;
+    }   
+}
+.color-bar {
+    width: 5px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #F1F1F1;
+}
+.custom-content {
+    .scroll-content {
+        display: flex;
+        flex-direction: column;
+
+        ion-list {
+            margin-top: auto;
+            margin-bottom: 0;
+        }
+    }    
+}
+.input-save {
+    border:none;
+    padding: 8px;
+    border-radius: 20px;
+}
+.custom-list-files {
+    margin: 0 !important;
+    padding: 0 !important;
+}
