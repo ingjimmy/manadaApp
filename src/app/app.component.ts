@@ -13,7 +13,7 @@ import { ActionsPage } from './../pages/actions/actions';
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage: any = HomePage;
+  rootPage: any;
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, mainService: MainService, private keyboard: Keyboard) {
     platform.ready().then(() => {
@@ -23,7 +23,9 @@ export class MyApp {
         mainService.currentUser.user_id = localStorage.getItem('userID');
         mainService.currentUser.user_type = localStorage.getItem('type');
 
-        this.rootPage = ActionsPage
+        this.rootPage = ActionsPage;
+      } else {
+        this.rootPage = HomePage;
       }
 
       // Okay, so the platform is ready and our plugins are available.

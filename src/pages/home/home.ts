@@ -39,7 +39,7 @@ export class HomePage {
           localStorage.setItem('userID', this.mainService.currentUser.user_id);
           localStorage.setItem('type', this.mainService.currentUser.user_type);
 
-          this.navCtrl.push(ActionsPage);
+          this.navCtrl.setRoot(ActionsPage);
         }, error => {
           loader.dismiss();
           let message = 'Invalid user!';

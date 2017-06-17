@@ -5,7 +5,10 @@
     </ion-title>
   </ion-navbar>
 </ion-header>
-<ion-content fixed scrollDownOnLoad="true" class="custom-content">
+<ion-content fixed scrollDownOnLoad="true" class="custom-content" (tap)="contentMouseDown($event)">
+  <ion-infinite-scroll position="top" (ionInfinite)="doInfinite($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
   <ion-list>
     <ion-card class="custom-card">
       <div class="color-bar tag{{model.color}}"></div>
@@ -41,27 +44,27 @@
     </ion-card>
   </ion-list>
 </ion-content>
-<ion-footer id="footer" (touchstart)="footerTouchStart($event)">
+<ion-footer (touchstart)="footerTouchStart($event)">
   <ion-list class="custom-list-files">
     <ion-item *ngFor="let file of comment.files">
       <ion-avatar item-start>
         <img [src]="rootPath + file.path">
       </ion-avatar>
       <h2>{{file.name}}</h2>
-      <button (click)="removeFile(file)" ion-button clear item-end>
+      <button (touchstart)="removeFile($event, file)" ion-button clear item-end>
         <ion-icon color="danger" name="trash"></ion-icon>
       </button>
     </ion-item>
   </ion-list>
   <ion-toolbar>
     <ion-buttons start>
-      <button (click)="files()" ion-button icon-left color="primary">        
+      <button (touchstart)="files($event)" ion-button icon-left color="primary">        
         <ion-icon name="attach"></ion-icon>
       </button>
     </ion-buttons>
     <input id="commentinput" style="width: 100%;" class="input-save" type="text" name="content" [(ngModel)]="comment.content">
     <ion-buttons end>
-      <button (click)="send($event)" ion-button icon-right color="primary">
+      <button (touchstart)="send($event)" ion-button icon-right color="primary">
         Send
         <ion-icon name="send"></ion-icon>
       </button>

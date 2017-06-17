@@ -145,13 +145,14 @@ export class ActionCrudComponent implements OnInit {
         }
     }
 
-    addUser(user: any) {
+    addUser(event: Event, user: any) {
+        event.preventDefault();
+        this.myInput.nativeElement.focus();
         if (this.model.assignedUsers.find(t => t.userID == user.userID) == null) {
             this.model.assignedUsers.push(user);
         }
         this.users = [];
-        this.username = '';
-        this.myInput.nativeElement.focus();
+        this.username = '';       
     }
 
     removeLast(event) {
@@ -160,7 +161,8 @@ export class ActionCrudComponent implements OnInit {
         }
     }
 
-    addProject(project: any) {
+    addProject(event: Event, project: any) {
+        event.preventDefault();
         this.model.projects = [];
         this.model.projects.push(project);
         this.projects = [];

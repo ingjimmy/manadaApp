@@ -28,7 +28,7 @@
     </ion-item>
     <ion-item *ngIf="users.length > 0">
         <ion-list class="custom-list-users">
-            <button *ngFor="let user of users" (click)="addUser(user)" ion-item detail-none type="button">{{user.names}}</button>
+            <button *ngFor="let user of users" (touchstart)="addUser($event, user)" ion-item detail-none type="button">{{user.names}}</button>
         </ion-list>
     </ion-item>
     <ion-item text-wrap class="custom-row-autocomplete">
@@ -41,7 +41,7 @@
     </ion-item>
     <ion-item *ngIf="projects.length > 0">
         <ion-list class="custom-list-users">
-            <button *ngFor="let project of projects" (click)="addProject(project)" (keyup)="removeLastProject($event)" ion-item detail-none
+            <button *ngFor="let project of projects" (touchstart)="addProject($event, project)" (keyup)="removeLastProject($event)" ion-item detail-none
                 type="button">{{project.name}}</button>
         </ion-list>
     </ion-item>

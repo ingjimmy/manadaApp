@@ -1,6 +1,6 @@
 import { Configuration } from './../../configuration/configuration';
 import { IResult } from './../../models/IResult';
-import { NavParams, Platform, Content, ActionSheetController, LoadingController, ToastController } from 'ionic-angular';
+import { NavParams, Platform, Content, ActionSheetController, LoadingController, ToastController, InfiniteScroll, Footer } from 'ionic-angular';
 import { Component, ViewChild, Renderer } from '@angular/core';
 import { ActionModel } from "../../models/action-model";
 import { ActionService, CommentService } from "../../services/index";
@@ -17,6 +17,8 @@ import { BrowserTab } from "@ionic-native/browser-tab";
 })
 export class ActionDetailComponent {
     @ViewChild(Content) content: Content;
+    @ViewChild(InfiniteScroll) infiniteScroll: InfiniteScroll;
+    @ViewChild(Footer) footer: Footer;
     rootPath: string;
     model: ActionModel = new ActionModel();
     comments: Array<CommentModel> = new Array<CommentModel>();
@@ -48,7 +50,12 @@ export class ActionDetailComponent {
         }, error => {
             console.log(error);
         });
-        this.bindComments();
+        this.bindComments(() => {
+            setTimeout(() => {
+                this.content.scrollToBottom();
+                this.infiniteScroll.enable(true);
+            }, 200);
+        });
     }
 
     ionViewDidLoad() {
@@ -57,7 +64,7 @@ export class ActionDetailComponent {
         }
     }
 
-    bindComments() {
+    bindComments(call?: (hasNextPage: boolean) => void) {
         this.commentService.getAll(this.commentFilter).subscribe(data => {
             let result: IResult = data.json();
             this.totalComments = result.totalCount;
@@ -69,11 +76,14 @@ export class ActionDetailComponent {
 
             result.results.forEach((t, index) => {
                 let comment: CommentModel = t;
-                comment.index = 1 + this.totalComments - length - index;
+                comment.index = (this.totalComments + 1) - length - index;
                 this.comments.unshift(comment);
             });
 
             this.commentFilter.hasNextPage = result.hasNextPage;
+            if (call != null) {
+                call.call(null);
+            }
         }, error => {
             console.log(error);
         })
@@ -81,11 +91,11 @@ export class ActionDetailComponent {
 
     addKeyboardListeners() {
         let scrollContentElelment = this.content.getScrollElement();
-        let footerElement = document.getElementById('footer');
+        let footerElement = this.footer.getNativeElement();
 
-        this.keyboardHideSub = this.keyboard.onKeyboardHide().subscribe((e) => {
-            this.renderer.setElementStyle(footerElement, 'marginBottom', '0px')
+        this.keyboardHideSub = this.keyboard.onKeyboardHide().subscribe((e) => {            
             this.renderer.setElementStyle(scrollContentElelment, 'marginBottom', '44px');
+            this.renderer.setElementStyle(footerElement, 'marginBottom', '0px');
         });
 
         this.keyboardShowSub = this.keyboard.onKeyboardShow().subscribe((e) => {
@@ -95,11 +105,12 @@ export class ActionDetailComponent {
             this.renderer.setElementStyle(footerElement, 'marginBottom', newHeight + 'px');
             setTimeout(() => {
                 this.content.scrollToBottom();
-            }, 500);
+            }, 200);
         });
     }
 
-    files() {
+    files(event: Event) {
+        event.preventDefault();
         let actionSheet = this.actionSheetCtrl.create({
             title: 'Select Image Source',
             buttons: [
@@ -163,14 +174,14 @@ export class ActionDetailComponent {
         fileTransfer.upload(pat, url, options).then(data => {
             let file = JSON.parse(data.response);
             this.comment.files.push(file);
-            loading.dismissAll();            
+            loading.dismissAll();
         }, error => {
             this.presentToast(error.http_status);
             loading.dismissAll();
         });
     }
 
-    send(event) {
+    send(event: Event) {
         event.preventDefault();
         document.getElementById('commentinput').focus();
         if (this.comment.content != '') {
@@ -212,12 +223,29 @@ export class ActionDetailComponent {
         toast.present();
     }
 
-    removeFile(file:any) {
+    removeFile(event: Event, file: any) {
+        event.preventDefault();
         let index = this.comment.files.indexOf(file);
         this.comment.files.splice(index, 1);
     }
 
     showEditComment(comment: CommentModel) {
 
+    }
+
+    contentMouseDown(event) {
+        //console.log('blurring input element :- > event type:', event.type);
+        document.getElementById('commentinput').blur();
+    }
+
+    doInfinite(infiniteScroll) {
+        if (this.commentFilter.hasNextPage) {
+            this.commentFilter.page++;
+            this.bindComments(() => {
+                infiniteScroll.complete();
+            });
+        } else {
+            infiniteScroll.enable(false);
+        }
     }
 }
