@@ -1,6 +1,6 @@
 import { Configuration } from './../../configuration/configuration';
 import { IResult } from './../../models/IResult';
-import { NavParams, Platform, Content, ActionSheetController, LoadingController, ToastController, InfiniteScroll, Footer } from 'ionic-angular';
+import { NavParams, Platform, Content, ActionSheetController, LoadingController, ToastController, InfiniteScroll, Footer, ModalController } from 'ionic-angular';
 import { Component, ViewChild, Renderer } from '@angular/core';
 import { ActionModel } from "../../models/action-model";
 import { ActionService, CommentService } from "../../services/index";
@@ -11,6 +11,7 @@ import { Camera } from '@ionic-native/camera';
 import { Transfer, TransferObject } from '@ionic-native/transfer';
 import { PhotoViewer } from '@ionic-native/photo-viewer';
 import { BrowserTab } from "@ionic-native/browser-tab";
+import { CommentCrudComponent } from "../comment-crud/comment-crud";
 
 @Component({
     templateUrl: 'action-detail.html'
@@ -40,9 +41,11 @@ export class ActionDetailComponent {
         public loadingCtrl: LoadingController,
         public toastCtrl: ToastController,
         public photoViewer: PhotoViewer,
-        private browserTab: BrowserTab) {
+        private browserTab: BrowserTab,
+        public modalCtrl: ModalController) {
         this.rootPath = Configuration.Url;
         this.model = params.get('action');
+        this.model.files = [];
         this.commentFilter.actionID = this.model.actionID;
         this.commentFilter.page = 0;
         this.actionService.get(this.model.actionID).subscribe(data => {
@@ -93,7 +96,7 @@ export class ActionDetailComponent {
         let scrollContentElelment = this.content.getScrollElement();
         let footerElement = this.footer.getNativeElement();
 
-        this.keyboardHideSub = this.keyboard.onKeyboardHide().subscribe((e) => {            
+        this.keyboardHideSub = this.keyboard.onKeyboardHide().subscribe((e) => {
             this.renderer.setElementStyle(scrollContentElelment, 'marginBottom', '44px');
             this.renderer.setElementStyle(footerElement, 'marginBottom', '0px');
         });
@@ -229,10 +232,6 @@ export class ActionDetailComponent {
         this.comment.files.splice(index, 1);
     }
 
-    showEditComment(comment: CommentModel) {
-
-    }
-
     contentMouseDown(event) {
         //console.log('blurring input element :- > event type:', event.type);
         document.getElementById('commentinput').blur();
@@ -247,5 +246,70 @@ export class ActionDetailComponent {
         } else {
             infiniteScroll.enable(false);
         }
+    }
+
+    displayMenuAction() {
+        let actionSheet = this.actionSheetCtrl.create({
+            title: 'Manada',
+            cssClass: 'action-sheets-basic-page',
+            buttons: [
+                {
+                    text: 'Edit',
+                    icon: !this.platform.is('ios') ? 'edit' : null,
+                    handler: () => {
+                        console.log('Edit clicked');
+                    }
+                },
+                {
+                    text: 'Delete',
+                    icon: !this.platform.is('ios') ? 'list' : null,
+                    handler: () => {
+                        console.log('Cancel clicked');
+                    }
+                },
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    icon: !this.platform.is('ios') ? 'close' : null,
+                    handler: () => {
+                        console.log('Cancel clicked');
+                    }
+                }
+            ]
+        });
+        actionSheet.present();
+    }
+
+    displayMenuComment(comment: CommentModel) {
+        let actionSheet = this.actionSheetCtrl.create({
+            title: 'Manada',
+            cssClass: 'action-sheets-basic-page',
+            buttons: [
+                {
+                    text: 'Edit',
+                    icon: !this.platform.is('ios') ? 'edit' : null,
+                    handler: () => {
+                        let pop = this.modalCtrl.create(CommentCrudComponent, { comment: comment, comments: this.comments });
+                        pop.present();
+                    }
+                },
+                {
+                    text: 'Delete',
+                    icon: !this.platform.is('ios') ? 'list' : null,
+                    handler: () => {
+                        
+                    }
+                },
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    icon: !this.platform.is('ios') ? 'close' : null,
+                    handler: () => {
+                        console.log('Cancel clicked');
+                    }
+                }
+            ]
+        });
+        actionSheet.present();
     }
 }

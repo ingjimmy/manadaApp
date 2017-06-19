@@ -1,25 +1,29 @@
-import { Component, ViewChild, OnInit, Renderer } from '@angular/core';
-import { Platform, NavParams, ViewController, ModalController, Content } from "ionic-angular";
+import { Component, ViewChild, Renderer } from '@angular/core';
+import { Platform, NavParams, ViewController, ModalController, Content, ActionSheetController, LoadingController } from "ionic-angular";
 import { ActionModel } from "../../models/action-model";
 import { MainService, HelperService, ActionService } from "../../services/index";
 import { CalendarComponent } from "../calendar/calendar";
 import { Keyboard } from '@ionic-native/keyboard';
+import { Camera } from '@ionic-native/camera';
+import { Transfer, TransferObject } from '@ionic-native/transfer';
+import { Configuration } from "../../configuration/configuration";
 
 @Component({
     templateUrl: 'action-crud.html'
 })
-export class ActionCrudComponent implements OnInit {
+export class ActionCrudComponent {
     @ViewChild('inputname') myInput;
     @ViewChild('subject') subject;
     @ViewChild(Content) content: Content;
-    model: ActionModel = new ActionModel();
-    updateAction: any;
-    users: Array<any> = new Array<any>();
-    projects: Array<any> = new Array<any>();
-    username: string;
-    projectname: string;
-    keyboardHideSub: any;
-    keyboardShowSub: any;
+    public model: ActionModel = new ActionModel();
+    public updateAction: any;
+    public users: Array<any> = new Array<any>();
+    public projects: Array<any> = new Array<any>();
+    public username: string;
+    public projectname: string;
+    public keyboardHideSub: any;
+    public keyboardShowSub: any;
+    public rootPath: string;
     constructor(
         public platform: Platform,
         public params: NavParams,
@@ -29,13 +33,25 @@ export class ActionCrudComponent implements OnInit {
         private helperService: HelperService,
         private actionService: ActionService,
         private keyboard: Keyboard,
-        public renderer: Renderer) { }
+        public renderer: Renderer,
+        private camera: Camera,
+        private transfer: Transfer,
+        public actionSheetCtrl: ActionSheetController,
+        public loadingCtrl: LoadingController) {
+        this.rootPath = Configuration.Url;
 
-    ngOnInit() {
-
+        this.updateAction = params.get('action');
+        if (this.updateAction != undefined) {
+            this.actionService.get(this.updateAction.actionID).subscribe(data => {
+                this.model = data.json();
+                this.subject.nativeElement.innerHTML = this.model.subject;
+            }, error => {
+                console.log(error);
+            });
+        }
     }
 
-    ionViewDidLoad() {
+    ionViewDidLoad(): void {
         if (this.platform.is('ios')) {
             this.addKeyboardListeners()
 
@@ -46,33 +62,37 @@ export class ActionCrudComponent implements OnInit {
         }
     }
 
-    dismiss() {
+    dismiss(): void {
         this.viewCtrl.dismiss();
     }
 
-    addKeyboardListeners() {
+    addKeyboardListeners(): void {
         let scrollContentElelment = this.content.getScrollElement();
-        
+
         this.keyboardHideSub = this.keyboard.onKeyboardHide().subscribe(() => {
             let newHeight = 44;
             let marginBottom = newHeight + 'px';
-            this.renderer.setElementStyle(scrollContentElelment, 'marginBottom', marginBottom);            
+            this.renderer.setElementStyle(scrollContentElelment, 'marginBottom', marginBottom);
         });
 
         this.keyboardShowSub = this.keyboard.onKeyboardShow().subscribe((e) => {
             let newHeight = (e['keyboardHeight']);
             let marginBottom = newHeight + 44 + 'px';
-            this.renderer.setElementStyle(scrollContentElelment, 'marginBottom', marginBottom);            
+            this.renderer.setElementStyle(scrollContentElelment, 'marginBottom', marginBottom);
         });
     }
 
-    send(form: any) {
+    send(form: any): void {
         if (this.subject.nativeElement.innerHTML != '') {
             this.model.subject = this.subject.nativeElement.innerHTML;
 
             if (this.model.actionID != null) {
                 this.actionService.update(this.model).subscribe(data => {
-
+                    let act = this.mainService.actions.find(t => t.actionID == this.model.actionID);
+                    let index = this.mainService.actions.indexOf(act);
+                    this.mainService.actions.splice(index, 1);
+                    this.mainService.actions.splice(0, 0, data.json());
+                    this.dismiss();
                 }, error => {
                     console.log(error);
                 })
@@ -116,16 +136,16 @@ export class ActionCrudComponent implements OnInit {
                 })
             }
         } else {
-            this.helperService.alert('The subject is required');
+            this.helperService.alert('The action description is required');
         }
     }
 
-    calendar() {
+    calendar(): void {
         let modal = this.modalCtrl.create(CalendarComponent, { action: this.model });
         modal.present();
     }
 
-    displayUsers(event) {
+    displayUsers(event): void {
         if (event.target.value != '') {
             this.users = this.mainService.users.filter(e => {
                 return e.names.toLocaleLowerCase().indexOf(event.target.value.toLocaleLowerCase()) > -1;
@@ -135,7 +155,7 @@ export class ActionCrudComponent implements OnInit {
         }
     }
 
-    displayProjects(event) {
+    displayProjects(event): void {
         if (event.target.value != '') {
             this.projects = this.mainService.projects.filter(e => {
                 return e.name.toLocaleLowerCase().indexOf(event.target.value.toLocaleLowerCase()) > -1;
@@ -145,23 +165,23 @@ export class ActionCrudComponent implements OnInit {
         }
     }
 
-    addUser(event: Event, user: any) {
+    addUser(event: Event, user: any): void {
         event.preventDefault();
         this.myInput.nativeElement.focus();
         if (this.model.assignedUsers.find(t => t.userID == user.userID) == null) {
             this.model.assignedUsers.push(user);
         }
         this.users = [];
-        this.username = '';       
+        this.username = '';
     }
 
-    removeLast(event) {
+    removeLast(event): void {
         if (event.keyCode == 8 && this.username == '' && this.model.assignedUsers.length > 0) {
             this.model.assignedUsers.splice(this.model.assignedUsers.length - 1, 1);
         }
     }
 
-    addProject(event: Event, project: any) {
+    addProject(event: Event, project: any): void {
         event.preventDefault();
         this.model.projects = [];
         this.model.projects.push(project);
@@ -169,13 +189,85 @@ export class ActionCrudComponent implements OnInit {
         this.projectname = '';
     }
 
-    removeLastProject(event) {
+    removeLastProject(event): void {
         if (event.keyCode == 8 && this.username == '' && this.model.assignedUsers.length > 0) {
             this.model.assignedUsers.splice(this.model.assignedUsers.length - 1, 1);
         }
     }
 
-    attach() {
+    attach(event): void {
+        event.preventDefault();
+        let actionSheet = this.actionSheetCtrl.create({
+            title: 'Select Image Source',
+            buttons: [
+                {
+                    text: 'Load from Library',
+                    handler: () => {
+                        this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+                    }
+                },
+                {
+                    text: 'Use Camera',
+                    handler: () => {
+                        this.takePicture(this.camera.PictureSourceType.CAMERA);
+                    }
+                },
+                {
+                    text: 'Cancel',
+                    role: 'cancel'
+                }
+            ]
+        });
+        actionSheet.present();
+    }
 
+    public removeFile(event: Event, file: any): any {
+        event.preventDefault();
+        let index = this.model.files.indexOf(file);
+        this.model.files.splice(index, 1);
+    }
+
+    private takePicture(sourceType): void {
+        let options = {
+            quality: 100,
+            sourceType: sourceType,
+            saveToPhotoAlbum: false,
+            correctOrientation: true
+        };
+
+        this.camera.getPicture(options).then((imagePath) => {
+            this.uploadImage(imagePath);
+        }, (err) => {
+            console.log(err)
+        });
+    }
+
+    private uploadImage(pat: string): void {
+        var url = `${this.rootPath}/api/v2/files/upload`;
+        var options = {
+            fileKey: "file",
+            fileName: 'file.jpg',
+            chunkedMode: false,
+            headers: {
+                'Authorization': 'bearer ' + localStorage.getItem('accessToken')
+            },
+            mimeType: "multipart/form-data"
+        };
+
+        const fileTransfer: TransferObject = this.transfer.create();
+
+        let loading = this.loadingCtrl.create({
+            content: 'Uploading...',
+        });
+        loading.present();
+
+        fileTransfer.upload(pat, url, options).then(data => {
+            let file = JSON.parse(data.response);
+            this.model.files.push(file);
+            loading.dismissAll();
+        }, error => {
+            console.log(error.http_status);
+            loading.dismissAll();
+        });
     }
 }

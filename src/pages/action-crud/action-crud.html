@@ -41,8 +41,8 @@
     </ion-item>
     <ion-item *ngIf="projects.length > 0">
         <ion-list class="custom-list-users">
-            <button *ngFor="let project of projects" (touchstart)="addProject($event, project)" (keyup)="removeLastProject($event)" ion-item detail-none
-                type="button">{{project.name}}</button>
+            <button *ngFor="let project of projects" (touchstart)="addProject($event, project)" (keyup)="removeLastProject($event)" ion-item
+                detail-none type="button">{{project.name}}</button>
         </ion-list>
     </ion-item>
     <ion-item (click)="calendar()" class="custom-row-autocomplete">
@@ -53,8 +53,19 @@
         <div #subject class="subject-action" contenteditable="true" placeholder="Describe the action"></div>
     </ion-item>
     <div>
-        <button ion-button clear icon-left (click)="attach()">        
+        <button ion-button clear icon-left (click)="attach($event)">        
             <ion-icon name="attach"></ion-icon>
         </button>
     </div>
+    <ion-list class="custom-list-files">
+        <ion-item *ngFor="let file of model.files">
+            <ion-avatar item-start>
+                <img [src]="rootPath + file.path">
+            </ion-avatar>
+            <h2>{{file.name}}</h2>
+            <button (touchstart)="removeFile($event, file)" ion-button clear item-end>
+        <ion-icon color="danger" name="trash"></ion-icon>
+      </button>
+        </ion-item>
+    </ion-list>
 </ion-content>

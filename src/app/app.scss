@@ -15,11 +15,6 @@
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
 
-$color1: #5ECCEE;
-$color2: #22DB98;
-$color3: #FFEE3F;
-$color4: #FF0047;
-
 .tagcolor1{
     background: $color1 !important;
 }
@@ -37,4 +32,11 @@ $color4: #FF0047;
 }
 body {
     background-color: #fff !important;
+}
+
+.icon-edit:before {
+  content: "\e90c";  
+}
+.custom-icon-edit {
+  font-size: 12px !important;
 }

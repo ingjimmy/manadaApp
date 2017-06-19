@@ -125,7 +125,8 @@ export class ActionListComponent {
                     text: 'Edit',
                     icon: !this.platform.is('ios') ? 'edit' : null,
                     handler: () => {
-                        console.log('Edit clicked');
+                        let editPop = this.modalCtrl.create(ActionCrudComponent, { action: action });
+                        editPop.present();
                     }
                 },
                 {

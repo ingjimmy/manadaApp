@@ -14,6 +14,7 @@
       <div class="color-bar tag{{model.color}}"></div>
       <ion-card-header>
         1. {{model.creator.names}}
+        <ion-icon (touchstart)="displayMenuAction()" class="custom-icon-edit custom-icon-edit-comment" name="icon-edit"></ion-icon>
       </ion-card-header>
       <ion-card-content>
         <span class="custom-comment-date" [innerHTML]="model.creationDate"></span>
@@ -23,11 +24,20 @@
           <span class="users" *ngFor="let project of model.projects">{{ project.name }}</span>
         </p>
       </ion-card-content>
+      <div *ngFor="let file of model.files | commentType:0" class="custom-card-image">
+        <img (click)="openPicture(file)" [src]="rootPath + file.path" />
+      </div>
+      <button class="custom-button-file" *ngFor="let file of model.files | commentType:1" ion-button clear block color="primary"
+        (click)="openFile(file)">
+        <ion-icon name="attach"></ion-icon>        
+        {{file.name}}
+      </button>
     </ion-card>
     <ion-card class="custom-card" *ngFor="let comment of comments">
       <div class="color-bar tag{{comment.color}}"></div>
       <ion-card-header>
         {{comment.index}}. {{comment.user.names}}
+        <ion-icon (touchstart)="displayMenuComment(comment)" class="custom-icon-edit custom-icon-edit-comment" name="icon-edit"></ion-icon>
       </ion-card-header>
       <ion-card-content>
         <span class="custom-comment-date" [innerHTML]="comment.modificationDate | tillDate"></span>

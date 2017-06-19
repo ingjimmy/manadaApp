@@ -30,7 +30,7 @@ export class ActionService {
   }
 
   update(model: any): Observable<Response> {
-    return this.http.put(`${Configuration.UrlApi}/actions/${model.userID}`, model);
+    return this.http.put(`${Configuration.UrlApi}/actions/${model.actionID}`, model);
   }
 
   delete(id: number): Observable<Response> {

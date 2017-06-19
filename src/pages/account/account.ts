@@ -9,10 +9,10 @@ import { HomePage } from "../home/home";
     templateUrl: 'account.html'
 })
 export class AccountComponent {
-    selected: string = 'account';
-    settings:Array<SettingModel> = new Array<SettingModel>();
-    model: UserModel = new UserModel();
-    response:any = {};
+    public selected: string = 'account';
+    public settings:Array<SettingModel> = new Array<SettingModel>();
+    public model: UserModel = new UserModel();
+    public response:any = {};
     constructor(
         public navCtrl: NavController,
         private mainService: MainService,
@@ -32,24 +32,24 @@ export class AccountComponent {
             });
     }
 
-    change() {
+    change(): void {
 
     }
 
-    newAction() {
+    newAction(): void {
 
     }
 
-    send() {
+    send(): void {
         console.log(this.model);
     }
 
-    changeSetting(setting:SettingModel) {
+    changeSetting(setting:SettingModel): void {
         setting.settingValue = setting.value ? 'true' : 'false';
         this.userService.updateSetting(this.model.userID, setting).subscribe();
     }
 
-    logout() {
+    logout(): void {
         localStorage.clear();
         this.navCtrl.setRoot(HomePage);
     }
