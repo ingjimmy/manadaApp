@@ -9,7 +9,7 @@ export class FileService {
 
     constructor(private http: Http) { }
 
-    getAll(filter: FileFilter): Observable<Response> {
+    public getAll(filter: FileFilter): Observable<Response> {
         let params: URLSearchParams = new URLSearchParams();
         for (var key in filter) {
             params.set(key.toString(), filter[key]);

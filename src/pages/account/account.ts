@@ -32,24 +32,24 @@ export class AccountComponent {
             });
     }
 
-    change(): void {
+    public change(): void {
 
     }
 
-    newAction(): void {
+    public newAction(): void {
 
     }
 
-    send(): void {
+    public send(): void {
         console.log(this.model);
     }
 
-    changeSetting(setting:SettingModel): void {
+    public changeSetting(setting:SettingModel): void {
         setting.settingValue = setting.value ? 'true' : 'false';
         this.userService.updateSetting(this.model.userID, setting).subscribe();
     }
 
-    logout(): void {
+    public logout(): void {
         localStorage.clear();
         this.navCtrl.setRoot(HomePage);
     }

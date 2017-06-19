@@ -1,12 +1,12 @@
 import { Component, ViewChild, Renderer } from '@angular/core';
-import { Platform, NavParams, ViewController, ModalController, Content, ActionSheetController, LoadingController } from "ionic-angular";
+import { Platform, NavParams, ViewController, ModalController, Content } from "ionic-angular";
 import { ActionModel } from "../../models/action-model";
-import { MainService, HelperService, ActionService } from "../../services/index";
+import { MainService, ActionService } from "../../services/index";
 import { CalendarComponent } from "../calendar/calendar";
 import { Keyboard } from '@ionic-native/keyboard';
-import { Camera } from '@ionic-native/camera';
-import { Transfer, TransferObject } from '@ionic-native/transfer';
 import { Configuration } from "../../configuration/configuration";
+import { CameraHelper } from "../../helpers/camera-helper";
+import { AlertHelper } from "../../helpers/alert-helper";
 
 @Component({
     templateUrl: 'action-crud.html'
@@ -24,20 +24,18 @@ export class ActionCrudComponent {
     public keyboardHideSub: any;
     public keyboardShowSub: any;
     public rootPath: string;
+    public showAnimate: boolean = false;
     constructor(
         public platform: Platform,
         public params: NavParams,
         public viewCtrl: ViewController,
         public modalCtrl: ModalController,
         public mainService: MainService,
-        private helperService: HelperService,
+        private alertHelper: AlertHelper,
         private actionService: ActionService,
         private keyboard: Keyboard,
         public renderer: Renderer,
-        private camera: Camera,
-        private transfer: Transfer,
-        public actionSheetCtrl: ActionSheetController,
-        public loadingCtrl: LoadingController) {
+        private cameraHelper: CameraHelper) {
         this.rootPath = Configuration.Url;
 
         this.updateAction = params.get('action');
@@ -51,7 +49,7 @@ export class ActionCrudComponent {
         }
     }
 
-    ionViewDidLoad(): void {
+    public ionViewDidLoad(): void {
         if (this.platform.is('ios')) {
             this.addKeyboardListeners()
 
@@ -62,11 +60,11 @@ export class ActionCrudComponent {
         }
     }
 
-    dismiss(): void {
+    public dismiss(): void {
         this.viewCtrl.dismiss();
     }
 
-    addKeyboardListeners(): void {
+    private addKeyboardListeners(): void {
         let scrollContentElelment = this.content.getScrollElement();
 
         this.keyboardHideSub = this.keyboard.onKeyboardHide().subscribe(() => {
@@ -82,7 +80,7 @@ export class ActionCrudComponent {
         });
     }
 
-    send(form: any): void {
+    public send(form: any): void {
         if (this.subject.nativeElement.innerHTML != '') {
             this.model.subject = this.subject.nativeElement.innerHTML;
 
@@ -98,6 +96,8 @@ export class ActionCrudComponent {
                 })
             } else {
                 this.actionService.add(this.model).subscribe(data => {
+                    this.showAnimate = true;
+                    this.keyboard.close();
                     let result = data.json();
                     let push: boolean = false;
 
@@ -129,23 +129,25 @@ export class ActionCrudComponent {
                         this.mainService.actions.unshift(result);
                         this.mainService.countAll++;
                     }
+                    setTimeout(() => {
+                        this.dismiss();
+                    }, 2000);
 
-                    this.dismiss();
                 }, error => {
                     console.log(error);
                 })
             }
         } else {
-            this.helperService.alert('The action description is required');
+            this.alertHelper.alert('The action description is required');
         }
     }
 
-    calendar(): void {
+    public calendar(): void {
         let modal = this.modalCtrl.create(CalendarComponent, { action: this.model });
         modal.present();
     }
 
-    displayUsers(event): void {
+    public displayUsers(event): void {
         if (event.target.value != '') {
             this.users = this.mainService.users.filter(e => {
                 return e.names.toLocaleLowerCase().indexOf(event.target.value.toLocaleLowerCase()) > -1;
@@ -155,7 +157,7 @@ export class ActionCrudComponent {
         }
     }
 
-    displayProjects(event): void {
+    public displayProjects(event): void {
         if (event.target.value != '') {
             this.projects = this.mainService.projects.filter(e => {
                 return e.name.toLocaleLowerCase().indexOf(event.target.value.toLocaleLowerCase()) > -1;
@@ -165,7 +167,7 @@ export class ActionCrudComponent {
         }
     }
 
-    addUser(event: Event, user: any): void {
+    public addUser(event: Event, user: any): void {
         event.preventDefault();
         this.myInput.nativeElement.focus();
         if (this.model.assignedUsers.find(t => t.userID == user.userID) == null) {
@@ -175,13 +177,13 @@ export class ActionCrudComponent {
         this.username = '';
     }
 
-    removeLast(event): void {
+    public removeLast(event): void {
         if (event.keyCode == 8 && this.username == '' && this.model.assignedUsers.length > 0) {
             this.model.assignedUsers.splice(this.model.assignedUsers.length - 1, 1);
         }
     }
 
-    addProject(event: Event, project: any): void {
+    public addProject(event: Event, project: any): void {
         event.preventDefault();
         this.model.projects = [];
         this.model.projects.push(project);
@@ -189,85 +191,21 @@ export class ActionCrudComponent {
         this.projectname = '';
     }
 
-    removeLastProject(event): void {
+    public removeLastProject(event): void {
         if (event.keyCode == 8 && this.username == '' && this.model.assignedUsers.length > 0) {
             this.model.assignedUsers.splice(this.model.assignedUsers.length - 1, 1);
         }
     }
 
-    attach(event): void {
-        event.preventDefault();
-        let actionSheet = this.actionSheetCtrl.create({
-            title: 'Select Image Source',
-            buttons: [
-                {
-                    text: 'Load from Library',
-                    handler: () => {
-                        this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
-                    }
-                },
-                {
-                    text: 'Use Camera',
-                    handler: () => {
-                        this.takePicture(this.camera.PictureSourceType.CAMERA);
-                    }
-                },
-                {
-                    text: 'Cancel',
-                    role: 'cancel'
-                }
-            ]
+    public attach(event): void {
+        this.cameraHelper.takeFromDevice((file) => {
+            this.model.files.push(file);
         });
-        actionSheet.present();
     }
 
     public removeFile(event: Event, file: any): any {
         event.preventDefault();
         let index = this.model.files.indexOf(file);
         this.model.files.splice(index, 1);
-    }
-
-    private takePicture(sourceType): void {
-        let options = {
-            quality: 100,
-            sourceType: sourceType,
-            saveToPhotoAlbum: false,
-            correctOrientation: true
-        };
-
-        this.camera.getPicture(options).then((imagePath) => {
-            this.uploadImage(imagePath);
-        }, (err) => {
-            console.log(err)
-        });
-    }
-
-    private uploadImage(pat: string): void {
-        var url = `${this.rootPath}/api/v2/files/upload`;
-        var options = {
-            fileKey: "file",
-            fileName: 'file.jpg',
-            chunkedMode: false,
-            headers: {
-                'Authorization': 'bearer ' + localStorage.getItem('accessToken')
-            },
-            mimeType: "multipart/form-data"
-        };
-
-        const fileTransfer: TransferObject = this.transfer.create();
-
-        let loading = this.loadingCtrl.create({
-            content: 'Uploading...',
-        });
-        loading.present();
-
-        fileTransfer.upload(pat, url, options).then(data => {
-            let file = JSON.parse(data.response);
-            this.model.files.push(file);
-            loading.dismissAll();
-        }, error => {
-            console.log(error.http_status);
-            loading.dismissAll();
-        });
     }
 }

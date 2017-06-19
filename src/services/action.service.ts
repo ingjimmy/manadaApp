@@ -9,7 +9,7 @@ export class ActionService {
 
   constructor(private http: Http) { }
 
-  getAll(filter: ActionFilter): Observable<Response> {
+  public getAll(filter: ActionFilter): Observable<Response> {
     let params: URLSearchParams = new URLSearchParams();
     for (var key in filter) {
       params.set(key.toString(), filter[key]);
@@ -21,31 +21,31 @@ export class ActionService {
     return this.http.get(`${Configuration.UrlApi}/actions`, requestOptions);
   }
 
-  add(model: any): Observable<Response> {
+  public add(model: any): Observable<Response> {
     return this.http.post(`${Configuration.UrlApi}/actions`, model);
   }
 
-  get(id: number): Observable<Response> {
+  public get(id: number): Observable<Response> {
     return this.http.get(`${Configuration.UrlApi}/actions/${id}`);
   }
 
-  update(model: any): Observable<Response> {
+  public update(model: any): Observable<Response> {
     return this.http.put(`${Configuration.UrlApi}/actions/${model.actionID}`, model);
   }
 
-  delete(id: number): Observable<Response> {
+  public delete(id: number): Observable<Response> {
     return this.http.delete(`${Configuration.UrlApi}/actions/${id}`);
   }
 
-  patch(model: any): Observable<Response> {
+  public patch(model: any): Observable<Response> {
     return this.http.patch(`${Configuration.UrlApi}/actions/${model.actionID}/relationusers`, model);
   }
 
-  changeStatus(model: any): Observable<Response> {
+  public changeStatus(model: any): Observable<Response> {
     return this.http.patch(`${Configuration.UrlApi}/actions/${model.actionID}`, model);
   }
 
-  countActive() {
+  public countActive() {
     return this.http.get(`${Configuration.UrlApi}/actions/countactive`);
   }
 }

@@ -7,14 +7,14 @@ import { ActionModel } from "../../models/action-model";
     templateUrl: 'calendar.html'
 })
 export class CalendarComponent {
-    weeks: Array<Array<any>> = new Array<Array<any>>();
-    monthName: string = null;
-    date: any;
-    currentDay: any;
-    currentDate: any;
-    year: any;
-    weekdays: Array<string> = new Array<string>();
-    model: ActionModel = new ActionModel();
+    public weeks: Array<Array<any>> = new Array<Array<any>>();
+    public monthName: string = null;
+    public date: any;
+    public currentDay: any;
+    public currentDate: any;
+    public year: any;
+    public weekdays: Array<string> = new Array<string>();
+    public model: ActionModel = new ActionModel();
 
     constructor(
         public viewCtrl: ViewController,
@@ -29,7 +29,7 @@ export class CalendarComponent {
         this.bind();
     }
 
-    bind() {
+    public bind(): void {
         let currentMonth = this.date.getMonth();
         this.monthName = moment(this.date).format('MMMM');
         this.year = this.date.getFullYear();
@@ -56,22 +56,22 @@ export class CalendarComponent {
         }
     }
 
-    back() {
+    public back(): void {
         this.date = moment(this.date).subtract(1, 'months').toDate();
         this.bind();
     }
 
-    next() {
+    public next(): void {
         this.date = moment(this.date).add(1, 'months').toDate();
         this.bind();
     }
 
-    setDate(date:any) {
+    public setDate(date:any): void {
         this.model.dueDate = date.date;
         this.dismiss();
     }
 
-    dismiss() {
+    public dismiss(): void {
         this.viewCtrl.dismiss();
     }
 }

@@ -27,6 +27,8 @@ import { ActionDetailComponent } from "../pages/action-detail/action-detail";
 import { CommentTypePipe } from "../pipes/comment-type/comment-type";
 import { TillDatePipe } from '../pipes/till-date/till-date';
 import { CommentCrudComponent } from "../pages/comment-crud/comment-crud";
+import { AlertHelper } from "../helpers/alert-helper";
+import { CameraHelper } from "../helpers/camera-helper";
 
 
 @NgModule({
@@ -89,6 +91,8 @@ import { CommentCrudComponent } from "../pages/comment-crud/comment-crud";
     Transfer,
     PhotoViewer,
     BrowserTab,
+    AlertHelper,
+    CameraHelper,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     { provide: RequestOptions, useClass: CustomRequestOptions },
   ]

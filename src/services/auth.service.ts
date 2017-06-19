@@ -9,7 +9,7 @@ export class AuthService {
 
   constructor(private http:Http) { }
 
-  getToken(model:LoginModel): Observable<Response> {    
+  public getToken(model:LoginModel): Observable<Response> {    
     model.client_id = Configuration.ClientID;
     model.client_secret = Configuration.SecretClient;
 

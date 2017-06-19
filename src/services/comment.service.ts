@@ -10,7 +10,7 @@ export class CommentService {
 
     constructor(private http: Http) { }
 
-    getAll(filter: CommentFilter): Observable<Response> {
+    public getAll(filter: CommentFilter): Observable<Response> {
         let params: URLSearchParams = new URLSearchParams();
         for (var key in filter) {
             params.set(key.toString(), filter[key]);
@@ -22,19 +22,19 @@ export class CommentService {
         return this.http.get(`${Configuration.UrlApi}/actions/${filter.actionID}/comments/`, requestOptions);
     }
 
-    add(model: CommentModel): Observable<Response> {
+    public add(model: CommentModel): Observable<Response> {
         return this.http.post(`${Configuration.UrlApi}/actions/${model.actionID}/comments`, model);
     }
 
-    update(model: CommentModel): Observable<Response> {
+    public update(model: CommentModel): Observable<Response> {
         return this.http.put(`${Configuration.UrlApi}/actions/${model.actionID}/comments/${model.commentID}`, model);
     }
 
-    patch(model: CommentModel): Observable<Response> {
+    public patch(model: CommentModel): Observable<Response> {
         return this.http.put(`${Configuration.UrlApi}/actions/${model.actionID}/comments`, model);
     }
 
-    delete(model: CommentModel): Observable<Response> {
+    public delete(model: CommentModel): Observable<Response> {
         return this.http.delete(`${Configuration.UrlApi}/actions/${model.actionID}/comments/${model.commentID}`);
     }
 }

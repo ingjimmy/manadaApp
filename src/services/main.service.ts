@@ -11,23 +11,23 @@ import { FileFilter } from "../filters/file-filter";
 
 @Injectable()
 export class MainService {
-  currentUser: TokenModel;
-  users = [];
-  projects = [];
-  actions = [];
-  filterDocuments: {};
-  selectUser = {};
-  editUser = {};
-  editProject = {};
-  projectRaw:any = {};
-  files = [];
-  selected: string = 'active';
-  userFilter: UserFilter = new UserFilter();
-  projectFilter: ProjectFilter = new ProjectFilter();
-  actionFilter: ActionFilter = new ActionFilter();
-  fileFilter: FileFilter = new FileFilter();
-  title: string = 'All Actions';
-  countAll: number = 0;
+  public currentUser: TokenModel;
+  public users:Array<any> = [];
+  public projects:Array<any> = [];
+  public actions:Array<any> = [];
+  public filterDocuments:any = {};
+  public selectUser:any = {};
+  public editUser:any = {};
+  public editProject:any = {};
+  public projectRaw:any = {};
+  public files:Array<any> = [];
+  public selected: string = 'active';
+  public userFilter: UserFilter = new UserFilter();
+  public projectFilter: ProjectFilter = new ProjectFilter();
+  public actionFilter: ActionFilter = new ActionFilter();
+  public fileFilter: FileFilter = new FileFilter();
+  public title: string = 'All Actions';
+  public countAll: number = 0;
 
   constructor(
     private userService: UserService,
@@ -38,21 +38,21 @@ export class MainService {
     this.actionFilter.status = 'active';
   }
 
-  bindUsers() {
+  public bindUsers(): void {
     this.userService.getAll(this.userFilter).subscribe(resp => {
       let response: IResult = resp.json();
       this.users = response.results;
     }, err => { console.log(err); })
   }
 
-  bindProjects() {
+  public bindProjects(): void {
     this.projectService.getAll(this.projectFilter).subscribe(resp => {
       let response: IResult = resp.json();
       this.projects = response.results;
     }, err => { console.log(err); })
   }
 
-  bindActions(call?:(enabled:boolean) => void) {
+  public bindActions(call?:(enabled:boolean) => void): void {
     this.actionService.getAll(this.actionFilter).subscribe(resp => {
       let response: IResult = resp.json();
       if (this.actionFilter.page == 0) {
@@ -71,7 +71,7 @@ export class MainService {
     })
   }
 
-  bindCountActions() {
+  public bindCountActions(): void {
     this.actionService.countActive().subscribe(data => {
       this.countAll = parseInt(data.json());
       let countByProject = 0
@@ -88,7 +88,7 @@ export class MainService {
     })
   }
 
-  bind() {
+  public bind(): void {
     this.actionFilter.page = 0;
     this.bindUsers();
     this.bindActions();
@@ -100,35 +100,31 @@ export class MainService {
     }, err => { console.log(err); })
   }
 
-  displayUserOption(event, user: any) {
+  public displayUserOption(event, user: any): void {
     event.stopPropagation();
     this.editUser = user;
   }
 
-  displayProjectOption(event, project: any) {
+  public displayProjectOption(event, project: any): void {
     event.stopPropagation();
     this.editProject = project;
   }
 
-  deleteUser(user: any) {
+  public deleteUser(user: any): void {
     this.clean();
     let index = this.users.indexOf(user);
     this.users.splice(index, 1);
   }
 
-  deleteProject(project: any) {
+  public deleteProject(project: any): void {
     this.clean();
     let index = this.projects.indexOf(project);
     this.projects.splice(index, 1);
   }
 
-  clean() {
+  public clean(): void {
     this.editProject = {};
     this.editUser = {};
-  }
-
-  navigate(path: string) {
-
   }
 
   changeColor(event, action, color) {

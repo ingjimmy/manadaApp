@@ -1,20 +1,20 @@
 import { Component } from '@angular/core';
-import { Platform, NavParams, ViewController } from "ionic-angular";
-import { ProjectService, MainService, HelperService } from "../../services/index";
+import { NavParams, ViewController } from "ionic-angular";
+import { ProjectService, MainService } from "../../services/index";
+import { AlertHelper } from "../../helpers/alert-helper";
 
 @Component({
     templateUrl: 'project-crud.html'
 })
 export class ProjectCrudComponent {
-    model: any = {};
-    updateProject: any;
+    public model: any = {};
+    public updateProject: any;
     constructor(
-        public platform: Platform,
         public params: NavParams,
         public viewCtrl: ViewController,
         private projectService: ProjectService,
         private mainService: MainService,
-        private helperService: HelperService) {
+        private alertHelper: AlertHelper) {
         this.model.name = '';
         this.updateProject = params.get('project');
         if (this.updateProject != undefined) {
@@ -23,11 +23,11 @@ export class ProjectCrudComponent {
         }
     }
 
-    dismiss() {
+    public dismiss(): void {
         this.viewCtrl.dismiss();
     }
 
-    send(form: any) {
+    public send(form: any): void {
         if (form.valid) {
             if (this.updateProject != undefined) {
                 this.projectService.update(this.model).subscribe(data => {
@@ -37,7 +37,7 @@ export class ProjectCrudComponent {
                 }, error => {
                     let message = error.json();
                     if (message.message != undefined) {
-                        this.helperService.alert(message.message);
+                        this.alertHelper.alert(message.message);
                     }
                     this.dismiss();
                 });
@@ -48,7 +48,7 @@ export class ProjectCrudComponent {
                 }, error => {
                     let message = error.json();
                     if (message.message != undefined) {
-                        this.helperService.alert(message.message);
+                        this.alertHelper.alert(message.message);
                     }
                     this.dismiss();
                 });

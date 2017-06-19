@@ -1,16 +1,15 @@
 import { MainService } from './../../services/main.service';
 import { Component } from '@angular/core';
-import { Platform, NavParams, ViewController } from "ionic-angular";
+import { NavParams, ViewController } from "ionic-angular";
 import { ActionService } from "../../services/index";
 
 @Component({
     templateUrl: 'project-list.html'
 })
 export class ProjectListPage {
-    action: any;
+    public action: any;
 
     constructor(
-        public platform: Platform,
         public params: NavParams,
         public viewCtrl: ViewController,
         public mainService: MainService,
@@ -18,7 +17,7 @@ export class ProjectListPage {
         this.action = params.get('action');
     }
 
-    relation(project: any) {
+    public relation(project: any): void {
         if (this.action.projects.length == 0 || this.action.projects[0].projectID != project.projectID) {
             if (this.action.projects.length > 0) {
                 let projectID = this.action.projects[0].projectID;
@@ -52,7 +51,7 @@ export class ProjectListPage {
         }
     }
 
-    dismiss() {
+    public dismiss(): void {
         this.viewCtrl.dismiss();
     }
 }

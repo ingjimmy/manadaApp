@@ -1,17 +1,17 @@
 import { Configuration } from './../../configuration/configuration';
 import { IResult } from './../../models/IResult';
-import { NavParams, Platform, Content, ActionSheetController, LoadingController, ToastController, InfiniteScroll, Footer, ModalController } from 'ionic-angular';
+import { NavParams, Platform, Content, ActionSheetController, InfiniteScroll, Footer, ModalController } from 'ionic-angular';
 import { Component, ViewChild, Renderer } from '@angular/core';
 import { ActionModel } from "../../models/action-model";
 import { ActionService, CommentService } from "../../services/index";
 import { CommentModel } from "../../models/comment-model";
 import { CommentFilter } from "../../filters/comment-filter";
 import { Keyboard } from '@ionic-native/keyboard';
-import { Camera } from '@ionic-native/camera';
-import { Transfer, TransferObject } from '@ionic-native/transfer';
 import { PhotoViewer } from '@ionic-native/photo-viewer';
 import { BrowserTab } from "@ionic-native/browser-tab";
 import { CommentCrudComponent } from "../comment-crud/comment-crud";
+import { CameraHelper } from "../../helpers/camera-helper";
+import { AlertHelper } from "../../helpers/alert-helper";
 
 @Component({
     templateUrl: 'action-detail.html'
@@ -20,14 +20,14 @@ export class ActionDetailComponent {
     @ViewChild(Content) content: Content;
     @ViewChild(InfiniteScroll) infiniteScroll: InfiniteScroll;
     @ViewChild(Footer) footer: Footer;
-    rootPath: string;
-    model: ActionModel = new ActionModel();
-    comments: Array<CommentModel> = new Array<CommentModel>();
-    comment: CommentModel = new CommentModel();
-    commentFilter: CommentFilter = new CommentFilter();
-    totalComments: number = 0;
-    keyboardHideSub: any;
-    keyboardShowSub: any;
+    public rootPath: string;
+    public model: ActionModel = new ActionModel();
+    public comments: Array<CommentModel> = new Array<CommentModel>();
+    public comment: CommentModel = new CommentModel();
+    public commentFilter: CommentFilter = new CommentFilter();
+    public totalComments: number = 0;
+    public keyboardHideSub: any;
+    public keyboardShowSub: any;
     constructor(
         public platform: Platform,
         public params: NavParams,
@@ -35,14 +35,12 @@ export class ActionDetailComponent {
         private commentService: CommentService,
         private keyboard: Keyboard,
         public renderer: Renderer,
-        private camera: Camera,
         public actionSheetCtrl: ActionSheetController,
-        private transfer: Transfer,
-        public loadingCtrl: LoadingController,
-        public toastCtrl: ToastController,
         public photoViewer: PhotoViewer,
         private browserTab: BrowserTab,
-        public modalCtrl: ModalController) {
+        public modalCtrl: ModalController,
+        private cameraHelper: CameraHelper,
+        private alertHelper: AlertHelper) {
         this.rootPath = Configuration.Url;
         this.model = params.get('action');
         this.model.files = [];
@@ -61,13 +59,13 @@ export class ActionDetailComponent {
         });
     }
 
-    ionViewDidLoad() {
+    public ionViewDidLoad(): void {
         if (this.platform.is('ios')) {
             this.addKeyboardListeners()
         }
     }
 
-    bindComments(call?: (hasNextPage: boolean) => void) {
+    public bindComments(call?: (hasNextPage: boolean) => void): void {
         this.commentService.getAll(this.commentFilter).subscribe(data => {
             let result: IResult = data.json();
             this.totalComments = result.totalCount;
@@ -92,7 +90,7 @@ export class ActionDetailComponent {
         })
     }
 
-    addKeyboardListeners() {
+    private addKeyboardListeners(): void {
         let scrollContentElelment = this.content.getScrollElement();
         let footerElement = this.footer.getNativeElement();
 
@@ -112,79 +110,14 @@ export class ActionDetailComponent {
         });
     }
 
-    files(event: Event) {
+    public files(event: Event): void {
         event.preventDefault();
-        let actionSheet = this.actionSheetCtrl.create({
-            title: 'Select Image Source',
-            buttons: [
-                {
-                    text: 'Load from Library',
-                    handler: () => {
-                        this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
-                    }
-                },
-                {
-                    text: 'Use Camera',
-                    handler: () => {
-                        this.takePicture(this.camera.PictureSourceType.CAMERA);
-                    }
-                },
-                {
-                    text: 'Cancel',
-                    role: 'cancel'
-                }
-            ]
-        });
-        actionSheet.present();
-    }
-
-    takePicture(sourceType) {
-        let options = {
-            quality: 100,
-            sourceType: sourceType,
-            saveToPhotoAlbum: false,
-            correctOrientation: true
-        };
-
-        this.camera.getPicture(options).then((imagePath) => {
-            this.uploadImage(imagePath);
-        }, (err) => {
-            console.log(err)
-        });
-    }
-
-    public uploadImage(pat: string) {
-        // Destination URL
-        var url = `${this.rootPath}/api/v2/files/upload`;
-        var options = {
-            fileKey: "file",
-            fileName: 'file.jpg',
-            chunkedMode: false,
-            headers: {
-                'Authorization': 'bearer ' + localStorage.getItem('accessToken')
-            },
-            mimeType: "multipart/form-data"
-        };
-
-        const fileTransfer: TransferObject = this.transfer.create();
-
-        let loading = this.loadingCtrl.create({
-            content: 'Uploading...',
-        });
-        loading.present();
-
-        // Use the FileTransfer to upload the image
-        fileTransfer.upload(pat, url, options).then(data => {
-            let file = JSON.parse(data.response);
+        this.cameraHelper.takeFromDevice((file) => {
             this.comment.files.push(file);
-            loading.dismissAll();
-        }, error => {
-            this.presentToast(error.http_status);
-            loading.dismissAll();
         });
     }
 
-    send(event: Event) {
+    public send(event: Event): void {
         event.preventDefault();
         document.getElementById('commentinput').focus();
         if (this.comment.content != '') {
@@ -203,41 +136,31 @@ export class ActionDetailComponent {
         }
     }
 
-    openPicture(file: any) {
+    public openPicture(file: any): void {
         this.photoViewer.show(this.rootPath + file.path);
     }
 
-    openFile(file: any) {
+    public openFile(file: any): void {
         this.browserTab.openUrl(this.rootPath + file.path);
     }
 
-    footerTouchStart(event) {
+    public footerTouchStart(event): void {
         if (event.target.localName !== "input" && event.target.localName !== "button") {
             event.preventDefault();
         }
     }
 
-    presentToast(text) {
-        let toast = this.toastCtrl.create({
-            message: text,
-            duration: 3000,
-            position: 'top'
-        });
-        toast.present();
-    }
-
-    removeFile(event: Event, file: any) {
+    public removeFile(event: Event, file: any): void {
         event.preventDefault();
         let index = this.comment.files.indexOf(file);
         this.comment.files.splice(index, 1);
     }
 
-    contentMouseDown(event) {
-        //console.log('blurring input element :- > event type:', event.type);
+    public contentMouseDown(event): void {
         document.getElementById('commentinput').blur();
     }
 
-    doInfinite(infiniteScroll) {
+    public doInfinite(infiniteScroll): void {
         if (this.commentFilter.hasNextPage) {
             this.commentFilter.page++;
             this.bindComments(() => {
@@ -248,7 +171,7 @@ export class ActionDetailComponent {
         }
     }
 
-    displayMenuAction() {
+    public displayMenuAction(): void {
         let actionSheet = this.actionSheetCtrl.create({
             title: 'Manada',
             cssClass: 'action-sheets-basic-page',
@@ -270,17 +193,14 @@ export class ActionDetailComponent {
                 {
                     text: 'Cancel',
                     role: 'cancel',
-                    icon: !this.platform.is('ios') ? 'close' : null,
-                    handler: () => {
-                        console.log('Cancel clicked');
-                    }
+                    icon: !this.platform.is('ios') ? 'close' : null
                 }
             ]
         });
         actionSheet.present();
     }
 
-    displayMenuComment(comment: CommentModel) {
+    public displayMenuComment(comment: CommentModel): void {
         let actionSheet = this.actionSheetCtrl.create({
             title: 'Manada',
             cssClass: 'action-sheets-basic-page',
@@ -297,16 +217,23 @@ export class ActionDetailComponent {
                     text: 'Delete',
                     icon: !this.platform.is('ios') ? 'list' : null,
                     handler: () => {
-                        
+                        this.alertHelper.confirm(
+                            '¿Are you sure to delete the comment?',
+                            () => {
+                                this.commentService.delete(comment).subscribe(data => {
+                                    let index = this.comments.indexOf(comment);
+                                    this.comments.splice(index, 1);
+                                }, error => {
+                                    console.log(error);
+                                });
+                            }
+                        )
                     }
                 },
                 {
                     text: 'Cancel',
                     role: 'cancel',
                     icon: !this.platform.is('ios') ? 'close' : null,
-                    handler: () => {
-                        console.log('Cancel clicked');
-                    }
                 }
             ]
         });

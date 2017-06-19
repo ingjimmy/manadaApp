@@ -10,7 +10,7 @@ export class UserService {
 
   constructor(private http: Http) { }
 
-  getAll(filter: UserFilter): Observable<Response> {
+  public getAll(filter: UserFilter): Observable<Response> {
     let params: URLSearchParams = new URLSearchParams();
     for (var key in filter) {
       params.set(key.toString(), filter[key]);
@@ -21,27 +21,27 @@ export class UserService {
     return this.http.get(`${Configuration.UrlApi}/users`, requestOptions);
   }
 
-  add(model: any): Observable<Response> {
+  public add(model: any): Observable<Response> {
     return this.http.post(`${Configuration.UrlApi}/users`, model);
   }
 
-  get(id: number): Observable<Response> {
+  public get(id: number): Observable<Response> {
     return this.http.get(`${Configuration.UrlApi}/users/${id}`);
   }
 
-  update(model: any): Observable<Response> {
+  public update(model: any): Observable<Response> {
     return this.http.put(`${Configuration.UrlApi}/users/${model.userID}`, model);
   }
 
-  delete(id: number): Observable<Response> {
+  public delete(id: number): Observable<Response> {
     return this.http.delete(`${Configuration.UrlApi}/users/${id}`);
   }
 
-  forgotten(model) {
+  public forgotten(model) {
       return this.http.post(`${Configuration.UrlApi}/users/passwordrecovery`, model);
   }
 
-  updateSetting(id:number, setting:SettingModel) {
+  public updateSetting(id:number, setting:SettingModel) {
     return this.http.put(`${Configuration.UrlApi}/users/${id}/Setting/${setting.userSettingID}`, setting);
   }
 }

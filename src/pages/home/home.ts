@@ -1,33 +1,33 @@
-import { UserService, AuthService, MainService, HelperService } from './../../services/index';
+import { UserService, AuthService, MainService } from './../../services/index';
 import { LoginModel } from './../../models/login-model';
 import { Component } from '@angular/core';
-import { NavController, AlertController, LoadingController } from 'ionic-angular';
+import { NavController, LoadingController } from 'ionic-angular';
 import { ActionsPage } from "../actions/actions";
+import { AlertHelper } from "../../helpers/alert-helper";
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
-  login: LoginModel = new LoginModel();
+  public login: LoginModel = new LoginModel();
 
   constructor(
     public navCtrl: NavController,
-    public alertCtrl: AlertController,
     private userService: UserService,
     private authService: AuthService,
     private mainService: MainService,
-    private helperService: HelperService,
-    public loadingCtrl: LoadingController) {
+    public loadingCtrl: LoadingController,
+    private alertHelper: AlertHelper) {
   }
 
-  send(form: any) {
+  public send(form: any): void {
     this.login.username = 'jimmy.rodriguez@dasigno.com';
     this.login.password = '123456';
 
     if (form.valid) {
       let loader = this.loadingCtrl.create({
-        content: "Please wait..."
+        content: 'Please wait...'
       });
 
       loader.present().then(() => {
@@ -47,47 +47,33 @@ export class HomePage {
             message = 'Connection problem encountered';
           }
 
-          this.helperService.alert(message);
+          this.alertHelper.alert(message);
         });
       });
     }
   }
 
-  forgot() {
-    let prompt = this.alertCtrl.create({
-      title: 'Login',
-      message: "We'll email you instructions on how to reset it.",
-      inputs: [
+  public forgot(): void {
+    this.alertHelper.promp(
+      'Login',
+      "We'll email you instructions on how to reset it.",
+      [
         {
           name: 'email',
           placeholder: 'Email'
         },
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          handler: data => {
-            console.log('Cancel clicked');
-          }
-        },
-        {
-          text: 'Send',
-          handler: data => {
-            if (data.email != '') {
-              this.userService.forgotten(data).subscribe(data => {
-                this.helperService.alert('An email has been sent for you to change your password.');
-              }, error => {
-                if (error.status == 404) {
-                  this.helperService.alert('Invalid user');
-                } else if (error.status == 400) {
-                  this.helperService.alert('Email format invalid');
-                }
-              });
+      ], data => {
+        if (data.email != '') {
+          this.userService.forgotten(data).subscribe(data => {
+            this.alertHelper.alert('An email has been sent for you to change your password.');
+          }, error => {
+            if (error.status == 404) {
+              this.alertHelper.alert('Invalid user');
+            } else if (error.status == 400) {
+              this.alertHelper.alert('Email format invalid');
             }
-          }
+          });
         }
-      ]
-    });
-    prompt.present();
+      });
   }
 }

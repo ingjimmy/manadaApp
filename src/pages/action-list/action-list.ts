@@ -4,29 +4,30 @@ import { ActionService } from './../../services/action.service';
 import { MainService } from './../../services/main.service';
 import { Component } from '@angular/core';
 import { ItemSliding } from 'ionic-angular';
-import { ActionSheetController, Platform, AlertController, ModalController, NavController } from "ionic-angular";
+import { ActionSheetController, Platform, ModalController, NavController } from "ionic-angular";
 import { ProjectListPage } from "../project-list/project-list";
 import { FileService } from "../../services/index";
 import { ActionCrudComponent } from "../action-crud/action-crud";
 import { ActionDetailComponent } from "../action-detail/action-detail";
+import { AlertHelper } from "../../helpers/alert-helper";
 
 @Component({
     templateUrl: 'action-list.html'
 })
 export class ActionListComponent {
-    enableSearch: boolean = false;
-    intervalSearch: any = null;
+    public enableSearch: boolean = false;
+    public intervalSearch: any = null;
     constructor(
         public mainService: MainService,
         public actionsheetCtrl: ActionSheetController,
         public platform: Platform,
         private actionService: ActionService,
-        private alertCtrl: AlertController,
         public modalCtrl: ModalController,
         public fileService: FileService,
-        public navCtrl: NavController) { }
+        public navCtrl: NavController,
+        private alertHelper: AlertHelper) { }
 
-    filter() {
+    public filter(): void {
         this.mainService.files = [];
         this.mainService.actions = [];
         this.mainService.actionFilter.hasNextPage = false;
@@ -36,14 +37,14 @@ export class ActionListComponent {
         this.mainService.bindActions();
     }
 
-    docs() {
+    public docs(): void {
         this.mainService.actions = [];
         this.mainService.fileFilter.page = 0;
         this.mainService.fileFilter.projectID = this.mainService.actionFilter.projectID;
         this.bindDocuments();
     }
 
-    bindDocuments(call?: (hasNextPage: boolean) => void) {
+    public bindDocuments(call?: (hasNextPage: boolean) => void): void {
         this.fileService.getAll(this.mainService.fileFilter).subscribe(resp => {
             let response: IResult = resp.json();
             response.results.forEach(element => {
@@ -58,16 +59,16 @@ export class ActionListComponent {
         });
     }
 
-    newAction() {
+    public newAction(): void {
         let modal = this.modalCtrl.create(ActionCrudComponent);
         modal.present();
     }
 
-    detail(action: any) {
+    public detail(action: any): void {
         this.navCtrl.push(ActionDetailComponent, { action: action });
     }
 
-    done(action: any) {
+    public done(action: any): void {
         let model: any = {};
         model.actionID = action.actionID;
         model.status = action.status;
@@ -115,7 +116,7 @@ export class ActionListComponent {
         });
     }
 
-    openmenu(action: any, slidingItem: ItemSliding) {
+    public openmenu(action: any, slidingItem: ItemSliding): void {
         slidingItem.close();
         let actionSheet = this.actionsheetCtrl.create({
             title: 'Manada',
@@ -123,7 +124,7 @@ export class ActionListComponent {
             buttons: [
                 {
                     text: 'Edit',
-                    icon: !this.platform.is('ios') ? 'edit' : null,
+                    icon: !this.platform.is('ios') ? 'icon-edit' : null,
                     handler: () => {
                         let editPop = this.modalCtrl.create(ActionCrudComponent, { action: action });
                         editPop.present();
@@ -137,52 +138,38 @@ export class ActionListComponent {
                 {
                     text: 'Cancel',
                     role: 'cancel',
-                    icon: !this.platform.is('ios') ? 'close' : null,
-                    handler: () => {
-                        console.log('Cancel clicked');
-                    }
+                    icon: !this.platform.is('ios') ? 'close' : null
                 }
             ]
         });
         actionSheet.present();
     }
 
-    remove(action: any) {
-        let alert = this.alertCtrl.create({
-            title: '¿Are you sure to delete the action?',
-            buttons: [
-                {
-                    text: 'Cancel'
-                },
-                {
-                    text: 'Ok',
-                    cssClass: 'custom-remove-confirm',
-                    handler: () => {
-                        action.remove = true;
-                        setTimeout(() => {
-                            let index = this.mainService.actions.indexOf(action);
-                            this.mainService.actions.splice(index, 1);
-                        }, 500);
+    public remove(action: any): void {
+        this.alertHelper.confirm(
+            '¿Are you sure to delete the action?',
+            () => {
+                action.remove = true;
+                setTimeout(() => {
+                    let index = this.mainService.actions.indexOf(action);
+                    this.mainService.actions.splice(index, 1);
+                }, 500);
 
-                        this.actionService.delete(action.actionID).subscribe(data => {
+                this.actionService.delete(action.actionID).subscribe(data => {
 
-                        }, error => {
-                            console.log(error);
-                        });
-                    }
-                }
-            ]
-        });
-
-        alert.present();
+                }, error => {
+                    console.log(error);
+                });
+            }
+        );
     }
 
-    openListProjects(action: any, modalCtrl: ModalController) {
+    public openListProjects(action: any, modalCtrl: ModalController): void {
         let modal = modalCtrl.create(ProjectListPage, { action: action });
         modal.present();
     }
 
-    getItems(event) {
+    public getItems(event): void {
         this.mainService.actionFilter.searchCriteria = event.target.value;
 
         if (this.intervalSearch != null) {
@@ -199,7 +186,7 @@ export class ActionListComponent {
         }
     }
 
-    toggleSearch() {
+    public toggleSearch(): void {
         this.enableSearch = !this.enableSearch;
         this.mainService.actionFilter.searchCriteria = '';
         if (!this.enableSearch) {
@@ -207,7 +194,7 @@ export class ActionListComponent {
         }
     }
 
-    doInfinite(infiniteScroll) {
+    public doInfinite(infiniteScroll): void {
         if (this.mainService.actionFilter.hasNextPage || this.mainService.fileFilter.hasNextPage) {
             if (this.mainService.fileFilter.projectID != null) {
                 this.mainService.fileFilter.page++;
@@ -219,7 +206,7 @@ export class ActionListComponent {
                 this.mainService.bindActions(enabled => {
                     infiniteScroll.complete();
                 });
-            } 
+            }
         } else {
             infiniteScroll.complete();
         }

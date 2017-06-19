@@ -1,4 +1,4 @@
-import { Platform, NavParams, ViewController } from 'ionic-angular';
+import { NavParams, ViewController } from 'ionic-angular';
 import { Component, ViewChild } from '@angular/core';
 import { CommentModel } from "../../models/comment-model";
 import { CommentService } from "../../services/index";
@@ -8,25 +8,23 @@ import { CommentService } from "../../services/index";
 })
 export class CommentCrudComponent {
     @ViewChild('commentcontent') commentcontent;
-    model: CommentModel = new CommentModel();
-    updateComment: any;
+    public model: CommentModel = new CommentModel();
     constructor(
-        public platform: Platform,
         public params: NavParams,
         public viewCtrl: ViewController,
         private commentService: CommentService) {
         this.model = params.get('comment');
     }
 
-    ionViewDidLoad() {
+    public ionViewDidLoad(): void {
         this.commentcontent.nativeElement.innerHTML = this.model.content;
     }
 
-    dismiss() {
+    public dismiss(): void {
         this.viewCtrl.dismiss();
     }
 
-    send() {
+    public send(): void {
         if (this.commentcontent.nativeElement.innerHTML != '' && this.params.get('comment') != undefined) {
             this.model.content = this.commentcontent.nativeElement.innerHTML;
             this.commentService.update(this.model).subscribe(data => {
