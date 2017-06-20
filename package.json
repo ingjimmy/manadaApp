@@ -65,10 +65,11 @@
             "cordova-plugin-statusbar": {},
             "cordova-plugin-whitelist": {},
             "ionic-plugin-keyboard": {},
-            "cordova-plugin-camera": {},
             "cordova-plugin-file-transfer": {},
             "com-sarriaroman-photoviewer": {},
-            "cordova-plugin-browsertab": {}
+            "cordova-plugin-browsertab": {},
+            "cordova-plugin-camera": {},
+            "cordova-plugin-compat": {}
         },
         "platforms": [
             "android",

@@ -211,4 +211,10 @@ export class ActionListComponent {
             infiniteScroll.complete();
         }
     }
+
+    public doRefresh(refresher:any): void {
+        this.mainService.bind(() => {
+            refresher.complete();
+        });
+    }
 }

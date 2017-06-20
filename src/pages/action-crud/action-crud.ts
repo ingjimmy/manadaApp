@@ -86,6 +86,11 @@ export class ActionCrudComponent {
 
             if (this.model.actionID != null) {
                 this.actionService.update(this.model).subscribe(data => {
+                    let call = this.params.get('call');
+                    if (call != undefined) {
+                        call.call(null, this.model); 
+                    }
+
                     let act = this.mainService.actions.find(t => t.actionID == this.model.actionID);
                     let index = this.mainService.actions.indexOf(act);
                     this.mainService.actions.splice(index, 1);
@@ -198,9 +203,14 @@ export class ActionCrudComponent {
     }
 
     public attach(event): void {
-        this.cameraHelper.takeFromDevice((file) => {
-            this.model.files.push(file);
-        });
+        let countFiles = this.model.files.filter(e => { return e.fileID == 0; }).length;
+        if (countFiles < 4) {
+            this.cameraHelper.takeFromDevice((file) => {
+                this.model.files.push(file);
+            });
+        } else {
+            this.alertHelper.alert('The max number of files to upload is 4');
+        }
     }
 
     public removeFile(event: Event, file: any): any {

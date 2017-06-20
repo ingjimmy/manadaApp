@@ -6,3 +6,4 @@ export * from './project.service';
 export * from './user.service';
 export * from './comment.service'
 export * from './file.service'
+export * from './leader.service'

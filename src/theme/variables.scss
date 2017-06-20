@@ -7,6 +7,7 @@ $font-path: "../assets/fonts";
 @import "icomoon";
 
 @include makeIcon(icon-edit, '\e90c');
+@include makeIcon(icon-user, '\e901');
 
 // Shared Variables
 // --------------------------------------------------

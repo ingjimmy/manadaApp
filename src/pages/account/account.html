@@ -6,10 +6,10 @@
     </ion-navbar>
     <ion-toolbar class="custom-ion-toolbar" no-border-top>
         <ion-segment [(ngModel)]="selected" padding>
-            <ion-segment-button (click)="change()" value="account">
+            <ion-segment-button value="account">
                 Account
             </ion-segment-button>
-            <ion-segment-button (click)="change()" value="email">
+            <ion-segment-button value="email">
                 Mails
             </ion-segment-button>
         </ion-segment>
@@ -17,21 +17,34 @@
 </ion-header>
 <ion-content>
     <div *ngIf="selected == 'account'">
-        <ion-item>
-            <ion-label>Name</ion-label>
-            <ion-input required type="text" [(ngModel)]="model.names" name="names"></ion-input>
-        </ion-item>
-        <ion-item>
-            <ion-label>Email</ion-label>
-            <ion-input required type="email" [(ngModel)]="model.email" name="email"></ion-input>
-        </ion-item>
-        <button (click)="send()" *ngIf="model.names != response.names || model.email != response.email" ion-button color="primary"
-            type="button" clear>Save changes</button>
-        <ion-item class="custom-bg-password">
-            <ion-label>Password</ion-label>
-            <ion-input readonly type="password" value="******"></ion-input>
-        </ion-item>
-        <button ion-button color="primary" type="submit" clear>Change password</button>
+        <form (submit)="send(form)" #form="ngForm">
+            <ion-item>
+                <ion-label>Name</ion-label>
+                <ion-input required type="text" [(ngModel)]="model.names" name="names"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label>Email</ion-label>
+                <ion-input pattern="\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*" required type="email" [(ngModel)]="model.email"
+                    name="email"></ion-input>
+            </ion-item>
+            <button [disabled]="!form.valid" ion-button color="primary" type="submit" clear>Save changes</button>
+        </form>
+        <div *ngIf="!showChangePassword">
+            <ion-item class="custom-bg-password">
+                <ion-label>Password</ion-label>
+                <ion-input readonly type="password" value="******"></ion-input>
+            </ion-item>
+            <button ion-button color="primary" type="button" (click)="showChangePassword = !showChangePassword" clear>Change password</button>
+        </div>
+        <form *ngIf="showChangePassword" (submit)="updatePassword(form)" #formPass="ngForm">
+            <ion-item>
+                <ion-input minlength="6" placeholder="Password (min 6 characters)" required type="password" [(ngModel)]="passwordModel.password" name="password"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-input minlength="6" placeholder="Confirm password" required type="password" [(ngModel)]="passwordModel.confirmPassword" name="confirmPassword"></ion-input>
+            </ion-item>
+            <button [disabled]="!formPass.valid || !form.valid || passwordModel.confirmPassword != passwordModel.password" ion-button color="primary" type="submit" clear>Save changes</button>
+        </form>
         <div>
             <button ion-button color="danger" type="button" (click)="logout()" clear>Log out</button>
         </div>

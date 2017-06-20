@@ -3,7 +3,7 @@ import { IResult } from './../../models/IResult';
 import { NavParams, Platform, Content, ActionSheetController, InfiniteScroll, Footer, ModalController } from 'ionic-angular';
 import { Component, ViewChild, Renderer } from '@angular/core';
 import { ActionModel } from "../../models/action-model";
-import { ActionService, CommentService } from "../../services/index";
+import { ActionService, CommentService, MainService } from "../../services/index";
 import { CommentModel } from "../../models/comment-model";
 import { CommentFilter } from "../../filters/comment-filter";
 import { Keyboard } from '@ionic-native/keyboard';
@@ -12,6 +12,7 @@ import { BrowserTab } from "@ionic-native/browser-tab";
 import { CommentCrudComponent } from "../comment-crud/comment-crud";
 import { CameraHelper } from "../../helpers/camera-helper";
 import { AlertHelper } from "../../helpers/alert-helper";
+import { ActionCrudComponent } from "../action-crud/action-crud";
 
 @Component({
     templateUrl: 'action-detail.html'
@@ -40,7 +41,8 @@ export class ActionDetailComponent {
         private browserTab: BrowserTab,
         public modalCtrl: ModalController,
         private cameraHelper: CameraHelper,
-        private alertHelper: AlertHelper) {
+        private alertHelper: AlertHelper,
+        private mainService: MainService) {
         this.rootPath = Configuration.Url;
         this.model = params.get('action');
         this.model.files = [];
@@ -130,6 +132,13 @@ export class ActionDetailComponent {
                 this.comment = new CommentModel();
                 let dimension = this.content.getContentDimensions();
                 this.content.scrollTo(0, dimension.scrollHeight);
+
+                let action = this.mainService.actions.find(t => t.actionID == this.model.actionID);
+                if (action != undefined) {
+                    let actionIndex = this.mainService.actions.indexOf(action);
+                    this.mainService.actions.splice(actionIndex, 1);
+                    this.mainService.actions.splice(0, 0, action);
+                }
             }, error => {
                 console.log(error);
             })
@@ -180,14 +189,13 @@ export class ActionDetailComponent {
                     text: 'Edit',
                     icon: !this.platform.is('ios') ? 'edit' : null,
                     handler: () => {
-                        console.log('Edit clicked');
-                    }
-                },
-                {
-                    text: 'Delete',
-                    icon: !this.platform.is('ios') ? 'list' : null,
-                    handler: () => {
-                        console.log('Cancel clicked');
+                        let pop = this.modalCtrl.create(ActionCrudComponent, {
+                            action: this.model,
+                            call: (mod: ActionModel) => {
+                                this.model = mod;
+                            }
+                        });
+                        pop.present();
                     }
                 },
                 {
@@ -207,7 +215,7 @@ export class ActionDetailComponent {
             buttons: [
                 {
                     text: 'Edit',
-                    icon: !this.platform.is('ios') ? 'edit' : null,
+                    icon: !this.platform.is('ios') ? 'icon-edit' : null,
                     handler: () => {
                         let pop = this.modalCtrl.create(CommentCrudComponent, { comment: comment, comments: this.comments });
                         pop.present();
@@ -221,8 +229,19 @@ export class ActionDetailComponent {
                             '¿Are you sure to delete the comment?',
                             () => {
                                 this.commentService.delete(comment).subscribe(data => {
-                                    let index = this.comments.indexOf(comment);
-                                    this.comments.splice(index, 1);
+                                    if (comment.parentID != null) {
+                                        let parent = this.comments.find(t => t.commentID == comment.parentID);
+                                        let localIndex = parent.comments.indexOf(comment);
+                                        parent.comments.splice(localIndex, 1);
+                                    } else {
+                                        let index = this.comments.indexOf(comment);
+                                        this.comments.splice(index, 1);
+                                        this.totalComments -= 1;
+
+                                        for (let i = index; i < this.comments.length; i++) {
+                                            this.comments[i].index -= 1;
+                                        }
+                                    }
                                 }, error => {
                                     console.log(error);
                                 });
@@ -238,5 +257,10 @@ export class ActionDetailComponent {
             ]
         });
         actionSheet.present();
+    }
+
+    public newSubcomment(comment: CommentModel): void {
+        let pop = this.modalCtrl.create(CommentCrudComponent, { parent: comment, comments: this.comments });
+        pop.present();
     }
 }

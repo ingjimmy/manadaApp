@@ -88,7 +88,7 @@ export class MainService {
     })
   }
 
-  public bind(): void {
+  public bind(call?: () => void): void {
     this.actionFilter.page = 0;
     this.bindUsers();
     this.bindActions();
@@ -97,6 +97,9 @@ export class MainService {
       this.projects = response.results;
 
       this.bindCountActions();
+      if (call != null) {
+        call.call(null);
+      }
     }, err => { console.log(err); })
   }
 

@@ -5,6 +5,17 @@
     margin: 0 !important;
     width: 100% !important;
     position: relative;
+
+    ion-card {
+        margin-left: 35px !important;
+    }
+
+    ion-card-header {
+        padding-bottom: 4px !important;
+    }
+}
+.custom-response-comment-button {
+    margin: 0 !important;
 }
 .custom-card-image {
     padding:  10px 10px 0 10px !important;

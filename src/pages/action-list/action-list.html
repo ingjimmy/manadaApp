@@ -1,12 +1,12 @@
 <ion-header>
-  <ion-toolbar class="custom-ion-toolbar" *ngIf="enableSearch" class="custom-bar-search">
+  <ion-navbar *ngIf="enableSearch" class="custom-bar-search">
     <ion-searchbar (input)="getItems($event)"></ion-searchbar>
     <ion-buttons end>
       <button (click)="toggleSearch()" ion-button icon-only>
         <ion-icon name="search"></ion-icon>
       </button>
     </ion-buttons>
-  </ion-toolbar>
+  </ion-navbar>
   <ion-navbar *ngIf="!enableSearch">
     <ion-title>
       {{mainService.title}}
@@ -40,6 +40,9 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <div>
     <ion-card *ngFor="let file of mainService.files">
         <img *ngIf="file.type == 0" [src]="file.img" />
@@ -60,7 +63,7 @@
         <div class="list-button">
           <h2 [innerHTML]="action.shortSubject"></h2> 
         <p>
-          <span class="users" *ngFor="let user of action.assignedUsers">{{ user.names }}</span>
+          <span class="users" *ngFor="let user of action.assignedUsers"><ion-icon name="icon-user"></ion-icon> {{ user.names }}</span>
           <span class="users" *ngFor="let project of action.projects">{{ project.name }}</span>
         </p>
         </div> 

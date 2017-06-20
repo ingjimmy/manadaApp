@@ -5,11 +5,11 @@
       <button (click)="addUser()">My team +</button>
     </ion-item-divider>
     <ion-list class="custom-ion-list">
-      <ion-item-sliding #item *ngFor="let user of mainService.users">
+      <ion-item-sliding #item *ngFor="let user of mainService.users; first as isFirst">
         <button class="custom-list-button" ion-item (click)="filterUser(user)">{{user.names}}           
           <ion-note class="custom-action-ion-note" *ngIf="user.countActiveActions > 0" color="primary" item-end>{{user.countActiveActions}}</ion-note>
         </button>
-        <ion-item-options side="right">
+        <ion-item-options side="right" *ngIf="!isFirst">
           <button class="button-swipe" ion-button (click)="removeUser(user, item)" color="danger">
           <ion-icon name="trash"></ion-icon>
         </button>

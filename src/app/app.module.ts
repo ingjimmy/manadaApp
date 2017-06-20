@@ -10,7 +10,7 @@ import { Camera } from "@ionic-native/camera";
 import { PhotoViewer } from '@ionic-native/photo-viewer';
 import { BrowserTab } from "@ionic-native/browser-tab";
 
-import { AuthService, ActionService, CommentService, HelperService, MainService, ProjectService, UserService, FileService } from './../services/index';
+import { AuthService, ActionService, CommentService, HelperService, MainService, ProjectService, UserService, FileService, LeaderService } from './../services';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { CustomRequestOptions } from "../configuration/custom-request-options";
@@ -93,6 +93,7 @@ import { CameraHelper } from "../helpers/camera-helper";
     BrowserTab,
     AlertHelper,
     CameraHelper,
+    LeaderService,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     { provide: RequestOptions, useClass: CustomRequestOptions },
   ]

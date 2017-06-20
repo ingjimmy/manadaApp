@@ -27,6 +27,18 @@
 .tagcolor4{
     background: $color4 !important;
 }
+.fontcolor1{
+    color: $color1 !important;
+}
+.fontcolor2{
+    color: $color2 !important;
+}
+.fontcolor3{
+    color: $color3 !important;
+}
+.fontcolor4{
+    color: $color4 !important;
+}
 .custom-remove-confirm {
     color:#f53d3d !important;
 }
@@ -36,6 +48,9 @@ body {
 
 .icon-edit:before {
   content: "\e90c";  
+}
+.icon-user:before {
+  content: "\e901";  
 }
 .custom-icon-edit {
   font-size: 12px !important;
