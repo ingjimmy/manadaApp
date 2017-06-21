@@ -11,4 +11,5 @@ export class ActionModel {
     modificationDate:string;
     projects:Array<any> = new Array<any>();
     actionID?:number;
+    status:number;
 }

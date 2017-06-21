@@ -4,28 +4,35 @@ import { ActionService } from './../../services/action.service';
 import { MainService } from './../../services/main.service';
 import { Component } from '@angular/core';
 import { ItemSliding } from 'ionic-angular';
-import { ActionSheetController, Platform, ModalController, NavController } from "ionic-angular";
+import { ModalController, NavController } from "ionic-angular";
 import { ProjectListPage } from "../project-list/project-list";
 import { FileService } from "../../services/index";
 import { ActionCrudComponent } from "../action-crud/action-crud";
 import { ActionDetailComponent } from "../action-detail/action-detail";
 import { AlertHelper } from "../../helpers/alert-helper";
+import { CustomActionSheetComponent } from "../../components/custom-action-sheet";
+import { ActionSheetModel } from "../../models/action-sheet-model";
+import { PhotoViewer } from "@ionic-native/photo-viewer";
+import { BrowserTab } from "@ionic-native/browser-tab";
 
 @Component({
     templateUrl: 'action-list.html'
 })
 export class ActionListComponent {
+    public rootPath: string;
     public enableSearch: boolean = false;
     public intervalSearch: any = null;
     constructor(
         public mainService: MainService,
-        public actionsheetCtrl: ActionSheetController,
-        public platform: Platform,
         private actionService: ActionService,
         public modalCtrl: ModalController,
         public fileService: FileService,
         public navCtrl: NavController,
-        private alertHelper: AlertHelper) { }
+        private alertHelper: AlertHelper,
+        public photoViewer: PhotoViewer,
+        private browserTab: BrowserTab) {
+        this.rootPath = Configuration.Url;
+    }
 
     public filter(): void {
         this.mainService.files = [];
@@ -118,31 +125,36 @@ export class ActionListComponent {
 
     public openmenu(action: any, slidingItem: ItemSliding): void {
         slidingItem.close();
-        let actionSheet = this.actionsheetCtrl.create({
-            title: 'Manada',
-            cssClass: 'action-sheets-basic-page',
-            buttons: [
-                {
-                    text: 'Edit',
-                    icon: !this.platform.is('ios') ? 'icon-edit' : null,
-                    handler: () => {
-                        let editPop = this.modalCtrl.create(ActionCrudComponent, { action: action });
-                        editPop.present();
-                    }
+        let options: Array<ActionSheetModel> = [
+            {
+                name: 'Color',
+                handler: (data) => {
+                    action.color = data;
+                    this.actionService.patch(action).subscribe(data => { }, error => { });
                 },
-                {
-                    text: 'List',
-                    icon: !this.platform.is('ios') ? 'list' : null,
-                    handler: this.openListProjects.bind(null, action, this.modalCtrl)
+                colors: true
+            },
+            {
+                name: 'Edit',
+                handler: () => {
+                    let editPop = this.modalCtrl.create(ActionCrudComponent, { action: action });
+                    editPop.present();
                 },
-                {
-                    text: 'Cancel',
-                    role: 'cancel',
-                    icon: !this.platform.is('ios') ? 'close' : null
-                }
-            ]
-        });
-        actionSheet.present();
+                colors: false
+            },
+            {
+                name: 'List',
+                handler: this.openListProjects.bind(null, action, this.modalCtrl),
+                colors: false
+            },
+            {
+                name: 'Cancel',
+                colors: false
+            }
+        ];
+
+        let pop = this.modalCtrl.create(CustomActionSheetComponent, { options: options });
+        pop.present();
     }
 
     public remove(action: any): void {
@@ -212,9 +224,17 @@ export class ActionListComponent {
         }
     }
 
-    public doRefresh(refresher:any): void {
+    public doRefresh(refresher: any): void {
         this.mainService.bind(() => {
             refresher.complete();
         });
+    }
+
+    public openPicture(file: any): void {
+        this.photoViewer.show(this.rootPath + file.path);
+    }
+
+    public openFile(file: any): void {
+        this.browserTab.openUrl(this.rootPath + file.path);
     }
 }

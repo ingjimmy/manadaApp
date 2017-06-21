@@ -10,7 +10,7 @@
       <ion-item class="custom-home-ion-item">
         <ion-input required type="password" [(ngModel)]="login.password" name="password" placeholder="Password"></ion-input>
       </ion-item>
-      <button ion-button color="primary" type="submit" clear block>Log in</button>
+      <button [disabled]="!form.valid" ion-button color="primary" type="submit" clear block>Log in</button>
       <button ion-button (click)="forgot()" class="forgot" type="button" clear block>¿Forgot yout password?</button>
     </form>
   </ion-list>

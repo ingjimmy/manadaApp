@@ -1,3 +1,4 @@
+import { OneSignal } from '@ionic-native/onesignal';
 import { UserService, AuthService, MainService } from './../../services/index';
 import { LoginModel } from './../../models/login-model';
 import { Component } from '@angular/core';
@@ -18,27 +19,31 @@ export class HomePage {
     private authService: AuthService,
     private mainService: MainService,
     public loadingCtrl: LoadingController,
-    private alertHelper: AlertHelper) {
+    private alertHelper: AlertHelper,
+    private oneSignal: OneSignal) {      
   }
 
   public send(form: any): void {
-    this.login.username = 'jimmy.rodriguez@dasigno.com';
-    this.login.password = '123456';
-
     if (form.valid) {
+      
+      
       let loader = this.loadingCtrl.create({
         content: 'Please wait...'
       });
 
-      loader.present().then(() => {
-        this.authService.getToken(this.login).subscribe(data => {
+      let timer = setTimeout(() => {
+        loader.present();
+      }, 100);      
+
+      this.authService.getToken(this.login).subscribe(data => {
+          clearTimeout(timer);
           loader.dismiss();
           this.mainService.currentUser = data.json();
 
           localStorage.setItem('accessToken', this.mainService.currentUser.access_token);
-          localStorage.setItem('userID', this.mainService.currentUser.user_id);
-          localStorage.setItem('type', this.mainService.currentUser.user_type);
-
+          localStorage.setItem('userID', this.mainService.currentUser.user_id.toString());
+          localStorage.setItem('type', this.mainService.currentUser.user_type.toString());
+          this.oneSignal.sendTag('user_id', this.mainService.currentUser.user_id.toString());
           this.navCtrl.setRoot(ActionsPage);
         }, error => {
           loader.dismiss();
@@ -49,7 +54,6 @@ export class HomePage {
 
           this.alertHelper.alert(message);
         });
-      });
     }
   }
 

@@ -2,6 +2,7 @@ import { NavParams, ViewController } from 'ionic-angular';
 import { Component, ViewChild } from '@angular/core';
 import { CommentModel } from "../../models/comment-model";
 import { CommentService, MainService } from "../../services/index";
+import { AlertHelper } from "../../helpers/alert-helper";
 
 @Component({
     templateUrl: 'comment-crud.html',
@@ -14,7 +15,8 @@ export class CommentCrudComponent {
         public params: NavParams,
         public viewCtrl: ViewController,
         private commentService: CommentService,
-        private mainService: MainService) {
+        private mainService: MainService,
+        private alertHelper: AlertHelper) {
         this.model = params.get('comment');
         this.parent = params.get('parent');
     }
@@ -34,19 +36,43 @@ export class CommentCrudComponent {
     }
 
     public send(): void {
-        if (this.commentcontent.nativeElement.innerHTML != '' && this.params.get('comment') != undefined) {
-            this.model.content = this.commentcontent.nativeElement.innerHTML;
-            this.commentService.update(this.model).subscribe(data => {
-                if (this.model.parentID != null) {
+        if (this.commentcontent.nativeElement.innerHTML != '') {
+            if (this.params.get('comment') != undefined) {
+                this.model.content = this.commentcontent.nativeElement.innerHTML;
+                this.commentService.update(this.model).subscribe(data => {
+                    if (this.model.parentID == null) {
+                        let comments = this.params.get('comments');
+                        let comment = comments.find(t => t.commentID == this.model.commentID);
+                        let originalIndex = comments.indexOf(comment);
+                        let lastIndex = comments.length;
+                        let index = comment.index - 1;
+                        comments.splice(originalIndex, 1);
+                        comments.push(this.model);
 
-                } else {
+                        for (let i = originalIndex; i < lastIndex; i++) {
+                            index++;
+                            comments[i].index = index;
+                        }
+
+                        this.updateActionPosition(comment);
+                    } 
+
+                    this.dismiss();
+                }, error => {
+                    this.dismiss();
+                });
+            } else if (this.params.get('parent') != undefined) {
+                this.model.content = this.commentcontent.nativeElement.innerHTML;
+                this.commentService.add(this.model).subscribe(data => {
                     let comments = this.params.get('comments');
-                    let comment = comments.find(t => t.commentID == this.model.commentID);
+
+                    let comment = comments.find(t => t.commentID == this.parent.commentID);
+                    comment.comments.unshift(data.json());
                     let originalIndex = comments.indexOf(comment);
                     let lastIndex = comments.length;
                     let index = comment.index - 1;
                     comments.splice(originalIndex, 1);
-                    comments.push(this.model);
+                    comments.push(comment);
 
                     for (let i = originalIndex; i < lastIndex; i++) {
                         index++;
@@ -54,36 +80,14 @@ export class CommentCrudComponent {
                     }
 
                     this.updateActionPosition(comment);
-                }
 
-                this.dismiss();
-            }, error => {
-                this.dismiss();
-            });
-        } else if (this.commentcontent.nativeElement.innerHTML != '' && this.params.get('parent') != undefined) {
-            this.model.content = this.commentcontent.nativeElement.innerHTML;
-            this.commentService.add(this.model).subscribe(data => {
-                let comments = this.params.get('comments');
-
-                let comment = comments.find(t => t.commentID == this.parent.commentID);
-                comment.comments.unshift(data.json());
-                let originalIndex = comments.indexOf(comment);
-                let lastIndex = comments.length;
-                let index = comment.index - 1;
-                comments.splice(originalIndex, 1);
-                comments.push(comment);
-
-                for (let i = originalIndex; i < lastIndex; i++) {
-                    index++;
-                    comments[i].index = index;
-                }
-
-                this.updateActionPosition(comment);
-
-                this.dismiss();
-            }, error => {
-                this.dismiss();
-            });
+                    this.dismiss();
+                }, error => {
+                    this.dismiss();
+                });
+            }
+        } else {
+            this.alertHelper.alert('The description of the comment is required');
         }
     }
 

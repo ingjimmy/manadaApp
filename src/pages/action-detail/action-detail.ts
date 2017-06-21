@@ -1,6 +1,6 @@
 import { Configuration } from './../../configuration/configuration';
 import { IResult } from './../../models/IResult';
-import { NavParams, Platform, Content, ActionSheetController, InfiniteScroll, Footer, ModalController } from 'ionic-angular';
+import { NavParams, Platform, Content, ActionSheetController, InfiniteScroll, Footer, ModalController, NavController } from 'ionic-angular';
 import { Component, ViewChild, Renderer } from '@angular/core';
 import { ActionModel } from "../../models/action-model";
 import { ActionService, CommentService, MainService } from "../../services/index";
@@ -13,6 +13,8 @@ import { CommentCrudComponent } from "../comment-crud/comment-crud";
 import { CameraHelper } from "../../helpers/camera-helper";
 import { AlertHelper } from "../../helpers/alert-helper";
 import { ActionCrudComponent } from "../action-crud/action-crud";
+import { ActionSheetModel } from "../../models/action-sheet-model";
+import { CustomActionSheetComponent } from "../../components/custom-action-sheet";
 
 @Component({
     templateUrl: 'action-detail.html'
@@ -29,6 +31,7 @@ export class ActionDetailComponent {
     public totalComments: number = 0;
     public keyboardHideSub: any;
     public keyboardShowSub: any;
+    public showAnimate: boolean = false;
     constructor(
         public platform: Platform,
         public params: NavParams,
@@ -42,7 +45,8 @@ export class ActionDetailComponent {
         public modalCtrl: ModalController,
         private cameraHelper: CameraHelper,
         private alertHelper: AlertHelper,
-        private mainService: MainService) {
+        public mainService: MainService,
+        private navCtrl: NavController) {
         this.rootPath = Configuration.Url;
         this.model = params.get('action');
         this.model.files = [];
@@ -82,6 +86,12 @@ export class ActionDetailComponent {
                 comment.index = (this.totalComments + 1) - length - index;
                 this.comments.unshift(comment);
             });
+
+            let countUpdates = this.comments.filter(e => { return e.countUpdates > 0; }).length;
+            if (countUpdates > 0) {
+                this.mainService.bindUsers();
+                this.mainService.bindActions();
+            }
 
             this.commentFilter.hasNextPage = result.hasNextPage;
             if (call != null) {
@@ -181,86 +191,153 @@ export class ActionDetailComponent {
     }
 
     public displayMenuAction(): void {
-        let actionSheet = this.actionSheetCtrl.create({
-            title: 'Manada',
-            cssClass: 'action-sheets-basic-page',
-            buttons: [
-                {
-                    text: 'Edit',
-                    icon: !this.platform.is('ios') ? 'edit' : null,
-                    handler: () => {
-                        let pop = this.modalCtrl.create(ActionCrudComponent, {
-                            action: this.model,
-                            call: (mod: ActionModel) => {
-                                this.model = mod;
-                            }
-                        });
-                        pop.present();
+        let options: Array<ActionSheetModel> = [
+            {
+                name: 'Color',
+                handler: (data) => {
+                    this.model.color = data;
+                    let action = this.mainService.actions.find(t => t.actionID == this.model.actionID);
+                    if (action != undefined) {
+                        action.color = data;
                     }
+
+                    this.actionService.patch(this.model).subscribe(data => { }, error => { });
                 },
-                {
-                    text: 'Cancel',
-                    role: 'cancel',
-                    icon: !this.platform.is('ios') ? 'close' : null
-                }
-            ]
-        });
-        actionSheet.present();
+                colors: true
+            },
+            {
+                name: 'Edit',
+                handler: () => {
+                    let pop = this.modalCtrl.create(ActionCrudComponent, {
+                        action: this.model,
+                        call: (mod: ActionModel) => {
+                            this.model = mod;
+                        }
+                    });
+                    pop.present();
+                },
+                colors: false
+            },
+            {
+                name: 'Cancel',
+                colors: false
+            }
+        ];
+
+        let pop = this.modalCtrl.create(CustomActionSheetComponent, { options: options });
+        pop.present();
     }
 
     public displayMenuComment(comment: CommentModel): void {
-        let actionSheet = this.actionSheetCtrl.create({
-            title: 'Manada',
-            cssClass: 'action-sheets-basic-page',
-            buttons: [
-                {
-                    text: 'Edit',
-                    icon: !this.platform.is('ios') ? 'icon-edit' : null,
-                    handler: () => {
-                        let pop = this.modalCtrl.create(CommentCrudComponent, { comment: comment, comments: this.comments });
-                        pop.present();
-                    }
+        let options: Array<ActionSheetModel> = [
+            {
+                name: 'Color',
+                handler: (data) => {
+                    comment.color = data;
+                    this.commentService.patch(comment).subscribe(data => { }, error => { });
                 },
-                {
-                    text: 'Delete',
-                    icon: !this.platform.is('ios') ? 'list' : null,
-                    handler: () => {
-                        this.alertHelper.confirm(
-                            '¿Are you sure to delete the comment?',
-                            () => {
-                                this.commentService.delete(comment).subscribe(data => {
-                                    if (comment.parentID != null) {
-                                        let parent = this.comments.find(t => t.commentID == comment.parentID);
-                                        let localIndex = parent.comments.indexOf(comment);
-                                        parent.comments.splice(localIndex, 1);
-                                    } else {
-                                        let index = this.comments.indexOf(comment);
-                                        this.comments.splice(index, 1);
-                                        this.totalComments -= 1;
+                colors: true
+            },
+            {
+                name: 'Edit',
+                handler: () => {
+                    let pop = this.modalCtrl.create(CommentCrudComponent, { comment: comment, comments: this.comments });
+                    pop.present();
+                },
+                colors: false
+            },
+            {
+                name: 'Delete',
+                handler: () => {
+                    this.alertHelper.confirm(
+                        '¿Are you sure to delete the comment?',
+                        () => {
+                            this.commentService.delete(comment).subscribe(data => {
+                                if (comment.parentID != null) {
+                                    let parent = this.comments.find(t => t.commentID == comment.parentID);
+                                    let localIndex = parent.comments.indexOf(comment);
+                                    parent.comments.splice(localIndex, 1);
+                                } else {
+                                    let index = this.comments.indexOf(comment);
+                                    this.comments.splice(index, 1);
+                                    this.totalComments -= 1;
 
-                                        for (let i = index; i < this.comments.length; i++) {
-                                            this.comments[i].index -= 1;
-                                        }
+                                    for (let i = index; i < this.comments.length; i++) {
+                                        this.comments[i].index -= 1;
                                     }
-                                }, error => {
-                                    console.log(error);
-                                });
-                            }
-                        )
-                    }
+                                }
+                            }, error => {
+                                console.log(error);
+                            });
+                        }
+                    )
                 },
-                {
-                    text: 'Cancel',
-                    role: 'cancel',
-                    icon: !this.platform.is('ios') ? 'close' : null,
-                }
-            ]
-        });
-        actionSheet.present();
+                colors: false
+            },
+            {
+                name: 'Cancel',
+                colors: false
+            }
+        ];
+
+        let pop = this.modalCtrl.create(CustomActionSheetComponent, { options: options });
+        pop.present();
     }
 
     public newSubcomment(comment: CommentModel): void {
         let pop = this.modalCtrl.create(CommentCrudComponent, { parent: comment, comments: this.comments });
         pop.present();
+    }
+
+    public changeStatus(): void {
+        this.model.status = this.model.status == 0 ? 1 : 0;
+        this.showAnimate = this.model.status == 1;
+        this.actionService.changeStatus(this.model).subscribe(data => {
+            let add = this.model.status === 0 ? -1 : 1;
+
+            this.mainService.countAll += add;
+
+            if (this.model.assignedUsers.length > 0) {
+                for (let i = 0; i < this.model.assignedUsers.length; i++) {
+                    let user = this.mainService.users.find(t => t.userID == this.model.assignedUsers[i].userID);
+                    if (user != null) {
+                        user.countActiveActions += add;
+                    }
+                }
+            } else {
+                this.mainService.users[0].countActiveActions += add;
+            }
+
+            if (this.model.projects.length > 0) {
+                for (var i = 0; i < this.model.projects.length; i++) {
+                    let project = this.mainService.projects.find(t => t.projectID == this.model.projects[i].projectID);
+                    if (project) {
+                        project.countActions += add;
+                    }
+                }
+            }
+
+            let countByProject = 0;
+            for (let i = 0; i < this.mainService.projects.length; i++) {
+                countByProject += this.mainService.projects[i].countActions;
+            }
+
+            let action = this.mainService.actions.find(t => t.actionID == this.model.actionID);
+            if (action != undefined) {
+                let index = this.mainService.actions.indexOf(action);
+                this.mainService.actions.splice(index, 1);
+            }
+
+            this.mainService.projectRaw.countActions = this.mainService.countAll - countByProject;
+            if (this.showAnimate) {
+                setTimeout(() => {
+                    this.navCtrl.pop();
+                }, 1900);
+            } else {
+                this.navCtrl.pop();
+            }
+        }, error => {
+            console.log(error);
+        });
     }
 }

@@ -45,8 +45,8 @@
   </ion-refresher>
   <div>
     <ion-card *ngFor="let file of mainService.files">
-        <img *ngIf="file.type == 0" [src]="file.img" />
-        <div *ngIf="file.type == 1" class="custom-file-document">
+        <img *ngIf="file.type == 0" [src]="file.img" (click)="openPicture(file)" />
+        <div *ngIf="file.type == 1" class="custom-file-document" (click)="openFile(file)">
           <img style="margin:auto 0;" src="assets/images/default.png">            
         </div>
         <ion-card-content>
@@ -60,8 +60,8 @@
     <ion-item-sliding #item *ngFor="let action of mainService.actions" [ngClass]="{'remove-item': action.remove}">
       <button class="primary-button" ion-item detail-none (click)="detail(action)">
         <div class="color-bar tag{{action.color}}"></div>
-        <div class="list-button">
-          <h2 [innerHTML]="action.shortSubject"></h2> 
+        <div class="list-button">          
+          <h2><span class="custom-new-updates" *ngIf="action.countUpdates > 0"></span> {{action.shortSubject}}</h2> 
         <p>
           <span class="users" *ngFor="let user of action.assignedUsers"><ion-icon name="icon-user"></ion-icon> {{ user.names }}</span>
           <span class="users" *ngFor="let project of action.projects">{{ project.name }}</span>

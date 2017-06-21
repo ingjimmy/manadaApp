@@ -7,6 +7,7 @@ import { Keyboard } from '@ionic-native/keyboard';
 import { Configuration } from "../../configuration/configuration";
 import { CameraHelper } from "../../helpers/camera-helper";
 import { AlertHelper } from "../../helpers/alert-helper";
+import * as moment from 'moment';
 
 @Component({
     templateUrl: 'action-crud.html'
@@ -42,6 +43,9 @@ export class ActionCrudComponent {
         if (this.updateAction != undefined) {
             this.actionService.get(this.updateAction.actionID).subscribe(data => {
                 this.model = data.json();
+                if (this.model.dueDate != null) {
+                    this.model.dueDate = moment(this.model.dueDate, 'YYYY/MM/DD HH:mm:ss').format('YYYY/MM/DD');
+                }
                 this.subject.nativeElement.innerHTML = this.model.subject;
             }, error => {
                 console.log(error);
@@ -98,12 +102,14 @@ export class ActionCrudComponent {
                     this.dismiss();
                 }, error => {
                     console.log(error);
-                })
+                });
             } else {
                 this.actionService.add(this.model).subscribe(data => {
+                    let result = data.json();
+                    this.model.actionID = result.actionID;
                     this.showAnimate = true;
                     this.keyboard.close();
-                    let result = data.json();
+                    
                     let push: boolean = false;
 
                     if (result.assignedUsers.length > 0) {
@@ -136,11 +142,11 @@ export class ActionCrudComponent {
                     }
                     setTimeout(() => {
                         this.dismiss();
-                    }, 2000);
+                    }, 2050);
 
                 }, error => {
                     console.log(error);
-                })
+                });
             }
         } else {
             this.alertHelper.alert('The action description is required');

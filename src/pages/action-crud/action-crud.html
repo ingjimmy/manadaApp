@@ -1,5 +1,5 @@
 <div *ngIf="showAnimate" class="send-animate">
-    <img src="assets/images/send-manada.gif" />
+    <img src="assets/images/send-manada.gif?r={{model.actionID}}" />
 </div>
 <ion-header>
     <ion-navbar>
@@ -48,7 +48,7 @@
                 detail-none type="button">{{project.name}}</button>
         </ion-list>
     </ion-item>
-    <ion-item (click)="calendar()" class="custom-row-autocomplete">
+    <ion-item (touchstart)="calendar()" class="custom-row-autocomplete">
         <label>Due date</label>
         <span class="no-border">{{model.dueDate}}</span>
     </ion-item>

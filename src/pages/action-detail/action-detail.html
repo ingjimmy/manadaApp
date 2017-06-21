@@ -1,8 +1,19 @@
+<div *ngIf="showAnimate" class="send-animate">
+    <img src="assets/images/check-manada.gif?r={{model.actionID}}" />
+</div>
 <ion-header>
   <ion-navbar>
     <ion-title>
       Action Detail
     </ion-title>
+    <ion-buttons end>
+      <button *ngIf="model.status == 0" (click)="changeStatus()" ion-button icon-right>
+          Done
+      </button>
+      <button *ngIf="model.status == 1" (click)="changeStatus()" ion-button icon-right>
+          Reactive
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 <ion-content fixed scrollDownOnLoad="true" class="custom-content" (tap)="contentMouseDown($event)">
@@ -14,7 +25,7 @@
       <div class="color-bar tag{{model.color}}"></div>
       <ion-card-header>
         1. {{model.creator.names}}
-        <ion-icon (touchstart)="displayMenuAction()" class="custom-icon-edit custom-icon-edit-comment" name="icon-edit"></ion-icon>
+        <ion-icon (click)="displayMenuAction()" class="custom-icon-edit custom-icon-edit-comment" name="icon-edit"></ion-icon>
       </ion-card-header>
       <ion-card-content>
         <span class="custom-comment-date" [innerHTML]="model.creationDate"></span>
@@ -37,7 +48,8 @@
       <div class="color-bar tag{{comment.color}}"></div>
       <ion-card-header>
         {{comment.index}}. {{comment.user.names}}
-        <ion-icon (touchstart)="displayMenuComment(comment)" class="custom-icon-edit custom-icon-edit-comment" name="icon-edit"></ion-icon>
+        <ion-icon *ngIf="model.status == 0 && comment.user.userID == mainService.currentUser.user_id" (click)="displayMenuComment(comment)" class="custom-icon-edit custom-icon-edit-comment"
+          name="icon-edit"></ion-icon>
       </ion-card-header>
       <ion-card-content>
         <span class="custom-comment-date" [innerHTML]="comment.modificationDate | tillDate"></span>
@@ -55,7 +67,8 @@
       <ion-card class="custom-card" *ngFor="let subcomment of comment.comments">
         <ion-card-header>
           {{subcomment.user.names}}
-          <ion-icon (touchstart)="displayMenuComment(subcomment)" class="custom-icon-edit custom-icon-edit-comment" name="icon-edit"></ion-icon>
+          <ion-icon *ngIf="model.status == 0" (touchstart)="displayMenuComment(subcomment)" class="custom-icon-edit custom-icon-edit-comment"
+            name="icon-edit"></ion-icon>
         </ion-card-header>
         <ion-card-content>
           <span class="custom-comment-date" [innerHTML]="subcomment.modificationDate | tillDate"></span>
@@ -72,20 +85,20 @@
         <img [src]="rootPath + file.path">
       </ion-avatar>
       <h2>{{file.name}}</h2>
-      <button (touchstart)="removeFile($event, file)" ion-button clear item-end>
+      <button (click)="removeFile($event, file)" ion-button clear item-end>
         <ion-icon color="danger" name="trash"></ion-icon>
       </button>
     </ion-item>
   </ion-list>
   <ion-toolbar>
     <ion-buttons start>
-      <button (touchstart)="files($event)" ion-button icon-left color="primary">        
+      <button (click)="files($event)" ion-button icon-left color="primary">        
         <ion-icon name="attach"></ion-icon>
       </button>
     </ion-buttons>
     <input id="commentinput" style="width: 100%;" class="input-save" type="text" name="content" [(ngModel)]="comment.content">
     <ion-buttons end>
-      <button (touchstart)="send($event)" ion-button icon-right color="primary">
+      <button (click)="send($event)" ion-button icon-right color="primary">
         Send
         <ion-icon name="send"></ion-icon>
       </button>

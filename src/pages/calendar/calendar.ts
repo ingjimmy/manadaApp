@@ -22,7 +22,12 @@ export class CalendarComponent {
         this.model = params.get('action');
         this.currentDate = new Date();
         this.currentDay = moment(this.currentDate).format('YYYY/MM/DD');
-        this.date = new Date();
+        
+        if (this.model.dueDate != undefined) {
+            this.date = moment(this.model.dueDate, 'YYYY/MM/DD').toDate();
+        } else {
+            this.date = new Date();
+        }
         [].forEach.call(moment().localeData().weekdays(), d => {
             this.weekdays.push(d.toUpperCase()[0]);
         });
@@ -73,5 +78,13 @@ export class CalendarComponent {
 
     public dismiss(): void {
         this.viewCtrl.dismiss();
+    }
+
+    public tapEvent(event): void {
+        if (event.direction == 2) {
+            this.back();
+        } else {
+            this.next();
+        }
     }
 }

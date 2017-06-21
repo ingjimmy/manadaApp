@@ -28,7 +28,7 @@ export class AccountComponent {
         private leaderService: LeaderService,
         private modalCtrl: ModalController,
         private alertHelper: AlertHelper) {
-            let id = parseInt(this.mainService.currentUser.user_id);
+            let id = this.mainService.currentUser.user_id;
             this.userService.get(id).subscribe(data => {
                 this.response = data.json();
                 this.leaderModel.email = this.model.email = this.response.email;

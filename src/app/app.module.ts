@@ -9,6 +9,7 @@ import { Keyboard } from '@ionic-native/keyboard';
 import { Camera } from "@ionic-native/camera";
 import { PhotoViewer } from '@ionic-native/photo-viewer';
 import { BrowserTab } from "@ionic-native/browser-tab";
+import { OneSignal } from '@ionic-native/onesignal';
 
 import { AuthService, ActionService, CommentService, HelperService, MainService, ProjectService, UserService, FileService, LeaderService } from './../services';
 import { MyApp } from './app.component';
@@ -29,6 +30,7 @@ import { TillDatePipe } from '../pipes/till-date/till-date';
 import { CommentCrudComponent } from "../pages/comment-crud/comment-crud";
 import { AlertHelper } from "../helpers/alert-helper";
 import { CameraHelper } from "../helpers/camera-helper";
+import { CustomActionSheetComponent } from "../components/custom-action-sheet";
 
 
 @NgModule({
@@ -47,7 +49,8 @@ import { CameraHelper } from "../helpers/camera-helper";
     ActionDetailComponent,
     CommentTypePipe,
     TillDatePipe,
-    CommentCrudComponent
+    CommentCrudComponent,
+    CustomActionSheetComponent
   ],
   imports: [
     BrowserModule,
@@ -73,7 +76,8 @@ import { CameraHelper } from "../helpers/camera-helper";
     ActionCrudComponent,
     CalendarComponent,
     ActionDetailComponent,
-    CommentCrudComponent
+    CommentCrudComponent,
+    CustomActionSheetComponent
   ],
   providers: [
     Keyboard,
@@ -94,6 +98,7 @@ import { CameraHelper } from "../helpers/camera-helper";
     AlertHelper,
     CameraHelper,
     LeaderService,
+    OneSignal,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     { provide: RequestOptions, useClass: CustomRequestOptions },
   ]

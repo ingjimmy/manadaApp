@@ -31,7 +31,7 @@ export class CommentService {
     }
 
     public patch(model: CommentModel): Observable<Response> {
-        return this.http.put(`${Configuration.UrlApi}/actions/${model.actionID}/comments`, model);
+        return this.http.put(`${Configuration.UrlApi}/actions/${model.actionID}/comments/${model.commentID}`, model);
     }
 
     public delete(model: CommentModel): Observable<Response> {
