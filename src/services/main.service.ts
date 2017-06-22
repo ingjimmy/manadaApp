@@ -27,6 +27,7 @@ export class MainService {
   public actionFilter: ActionFilter = new ActionFilter();
   public fileFilter: FileFilter = new FileFilter();
   public title: string = 'All Actions';
+  public viewDocument:boolean = false;
   public countAll: number = 0;
 
   constructor(

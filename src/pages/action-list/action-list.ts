@@ -21,7 +21,7 @@ import { BrowserTab } from "@ionic-native/browser-tab";
 export class ActionListComponent {
     public rootPath: string;
     public enableSearch: boolean = false;
-    public intervalSearch: any = null;
+    public intervalSearch: any = null;    
     constructor(
         public mainService: MainService,
         private actionService: ActionService,
@@ -35,6 +35,7 @@ export class ActionListComponent {
     }
 
     public filter(value: string): void {
+        this.mainService.viewDocument = false;
         this.mainService.actionFilter.status = this.mainService.selected = value;
         this.mainService.files = [];
         this.mainService.actions = [];
@@ -45,6 +46,7 @@ export class ActionListComponent {
     }
 
     public docs(): void {
+        this.mainService.viewDocument = true;
         this.mainService.actions = [];
         this.mainService.fileFilter.page = 0;
         this.mainService.fileFilter.projectID = this.mainService.actionFilter.projectID;

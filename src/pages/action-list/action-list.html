@@ -45,7 +45,7 @@
   <ion-refresher (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <div>
+  <div *ngIf="mainService.viewDocument">
     <ion-card *ngFor="let file of mainService.files">
       <img *ngIf="file.type == 0" [src]="file.img" (click)="openPicture(file)" />
       <div *ngIf="file.type == 1" class="custom-file-document" (click)="openFile(file)">
@@ -58,7 +58,7 @@
       </ion-card-content>
     </ion-card>
   </div>
-  <ion-list no-lines>
+  <ion-list no-lines *ngIf="!mainService.viewDocument">
     <ion-item-sliding #item *ngFor="let action of mainService.actions" [ngClass]="{'remove-item': action.remove}">
       <button class="primary-button" ion-item detail-none (click)="detail(action)">
         <div class="color-bar tag{{action.color}}"></div>

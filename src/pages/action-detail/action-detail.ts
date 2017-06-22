@@ -66,13 +66,13 @@ export class ActionDetailComponent {
     }
 
     public ionViewDidLoad(): void {
-        if (this.platform.is('ios')) {
+        if (this.platform.is('ios') && this.model.status == 0) {
             this.addKeyboardListeners();
             let scrollContentElelment = this.content.getScrollElement();
 
             scrollContentElelment.style.cssText = scrollContentElelment.style.cssText + "transition: all " + 200 + "ms; -webkit-transition: all " +
                 200 + "ms; -webkit-transition-timing-function: ease-out; transition-timing-function: ease-out;"
-            
+
             let inputSearch = document.getElementById('commentinput');
 
             inputSearch.style.cssText = scrollContentElelment.style.cssText + "transition: all " + 200 + "ms; -webkit-transition: all " +
@@ -185,7 +185,9 @@ export class ActionDetailComponent {
     }
 
     public contentMouseDown(event): void {
-        document.getElementById('commentinput').blur();
+        if (this.model.status == 0) {
+            document.getElementById('commentinput').blur();
+        }
     }
 
     public doInfinite(infiniteScroll): void {
@@ -238,7 +240,7 @@ export class ActionDetailComponent {
     }
 
     public displayMenuComment(comment: CommentModel): void {
-        let options: Array<ActionSheetModel> = [            
+        let options: Array<ActionSheetModel> = [
             {
                 name: 'Edit',
                 handler: () => {

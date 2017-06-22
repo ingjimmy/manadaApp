@@ -25,12 +25,14 @@ export class ActionsPage {
   }
 
   public allActions(): void {
+    this.mainService.viewDocument = false;
     this.rootPage = ActionListComponent;
     this.menuCtrl.close();
     this.mainService.fileFilter.projectID = null;
     this.mainService.selected = 'active';
     this.mainService.files = [];
     this.mainService.actions = [];
+    this.mainService.actionFilter.status = 'active';
     this.mainService.actionFilter.page = 0;
     this.mainService.actionFilter.projectID = null;
     this.mainService.actionFilter.userID = null;
@@ -39,10 +41,12 @@ export class ActionsPage {
   }
 
   public filterUser(user: any): void {
+    this.mainService.viewDocument = false;
     this.rootPage = ActionListComponent;
     this.menuCtrl.close();
     this.mainService.fileFilter.projectID = null;
     this.mainService.selected = 'active';
+    this.mainService.actionFilter.status = 'active';
     this.mainService.files = [];
     this.mainService.actions = [];
     this.mainService.actionFilter.page = 0;
@@ -53,10 +57,12 @@ export class ActionsPage {
   }
 
   public filterProject(project: any): void {
+    this.mainService.viewDocument = false;
     this.rootPage = ActionListComponent;
     this.menuCtrl.close();
     this.mainService.fileFilter.projectID = null;
     this.mainService.selected = 'active';
+    this.mainService.actionFilter.status = 'active';
     this.mainService.files = [];
     this.mainService.actions = [];
     this.mainService.actionFilter.page = 0;
