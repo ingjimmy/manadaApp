@@ -31,6 +31,7 @@ import { CommentCrudComponent } from "../pages/comment-crud/comment-crud";
 import { AlertHelper } from "../helpers/alert-helper";
 import { CameraHelper } from "../helpers/camera-helper";
 import { CustomActionSheetComponent } from "../components/custom-action-sheet";
+import { Focuser } from "../directives/aut-focus";
 
 
 @NgModule({
@@ -50,7 +51,8 @@ import { CustomActionSheetComponent } from "../components/custom-action-sheet";
     CommentTypePipe,
     TillDatePipe,
     CommentCrudComponent,
-    CustomActionSheetComponent
+    CustomActionSheetComponent,
+    Focuser
   ],
   imports: [
     BrowserModule,

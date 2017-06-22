@@ -1,8 +1,9 @@
 import { NavParams, ViewController } from 'ionic-angular';
 import { Component, ViewChild } from '@angular/core';
 import { CommentModel } from "../../models/comment-model";
-import { CommentService, MainService } from "../../services/index";
+import { CommentService, MainService, HelperService } from "../../services/index";
 import { AlertHelper } from "../../helpers/alert-helper";
+import { Configuration } from "../../configuration/configuration";
 
 @Component({
     templateUrl: 'comment-crud.html',
@@ -16,7 +17,8 @@ export class CommentCrudComponent {
         public viewCtrl: ViewController,
         private commentService: CommentService,
         private mainService: MainService,
-        private alertHelper: AlertHelper) {
+        private alertHelper: AlertHelper,
+        private helperService: HelperService) {
         this.model = params.get('comment');
         this.parent = params.get('parent');
     }
@@ -59,6 +61,7 @@ export class CommentCrudComponent {
 
                     this.dismiss();
                 }, error => {
+                    this.helperService.presentToastMessage(Configuration.ErrorMessage);
                     this.dismiss();
                 });
             } else if (this.params.get('parent') != undefined) {
@@ -83,6 +86,7 @@ export class CommentCrudComponent {
 
                     this.dismiss();
                 }, error => {
+                    this.helperService.presentToastMessage(Configuration.ErrorMessage);
                     this.dismiss();
                 });
             }

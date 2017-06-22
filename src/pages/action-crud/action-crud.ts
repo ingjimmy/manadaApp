@@ -1,7 +1,7 @@
 import { Component, ViewChild, Renderer } from '@angular/core';
 import { Platform, NavParams, ViewController, ModalController, Content } from "ionic-angular";
 import { ActionModel } from "../../models/action-model";
-import { MainService, ActionService } from "../../services/index";
+import { MainService, ActionService, HelperService } from "../../services/index";
 import { CalendarComponent } from "../calendar/calendar";
 import { Keyboard } from '@ionic-native/keyboard';
 import { Configuration } from "../../configuration/configuration";
@@ -37,7 +37,8 @@ export class ActionCrudComponent {
         private actionService: ActionService,
         private keyboard: Keyboard,
         public renderer: Renderer,
-        private cameraHelper: CameraHelper) {
+        private cameraHelper: CameraHelper,
+        private helperService: HelperService) {
         this.rootPath = Configuration.Url;
 
         this.updateAction = params.get('action');
@@ -49,7 +50,7 @@ export class ActionCrudComponent {
                 }
                 this.subject.nativeElement.innerHTML = this.model.subject;
             }, error => {
-                console.log(error);
+                this.helperService.presentToastMessage(Configuration.ErrorMessage);
             });
         } else {
             if (this.mainService.actionFilter.projectID != null) {
@@ -77,6 +78,8 @@ export class ActionCrudComponent {
             scrollContentElelment.style.cssText = scrollContentElelment.style.cssText + "transition: all " + 200 + "ms; -webkit-transition: all " +
                 200 + "ms; -webkit-transition-timing-function: ease-out; transition-timing-function: ease-out;"
         }
+
+        this.myInput.nativeElement.focus();
     }
 
     public dismiss(): void {
@@ -119,7 +122,7 @@ export class ActionCrudComponent {
                 }, error => {
                     this.dismiss();
                     this.isBusy = false;
-                    console.log(error);
+                    this.helperService.presentToastMessage(Configuration.ErrorMessage);
                 });
             } else {
                 this.actionService.add(this.model).subscribe(data => {
@@ -165,8 +168,8 @@ export class ActionCrudComponent {
 
                 }, error => {
                     this.isBusy = false;
-                    this.dismiss();
-                    console.log(error);
+                     this.helperService.presentToastMessage(Configuration.ErrorMessage);
+                    this.dismiss();                   
                 });
             }
         } else {
@@ -210,7 +213,7 @@ export class ActionCrudComponent {
     }
 
     public removeLast(event): void {
-        if (event.keyCode == 8 && this.username == '' && this.model.assignedUsers.length > 0) {
+        if (event.keyCode == 8 && (this.username == '' || this.username == undefined) && this.model.assignedUsers.length > 0) {
             this.model.assignedUsers.splice(this.model.assignedUsers.length - 1, 1);
         }
     }
@@ -224,7 +227,7 @@ export class ActionCrudComponent {
     }
 
     public removeLastProject(event): void {
-        if (event.keyCode == 8 && this.username == '' && this.model.assignedUsers.length > 0) {
+        if (event.keyCode == 8 && (this.projectname == '' || this.projectname == undefined) && this.model.assignedUsers.length > 0) {
             this.model.assignedUsers.splice(this.model.assignedUsers.length - 1, 1);
         }
     }

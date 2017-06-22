@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { UserModel } from "../../models/user-model";
-import { MainService, UserService } from "../../services/index";
+import { MainService, UserService, HelperService } from "../../services/index";
 import { SettingModel } from "../../models/settings-model";
 import { NavController, ModalController } from "ionic-angular";
 import { HomePage } from "../home/home";
@@ -9,6 +9,7 @@ import { LeaderModel } from "../../models/leader-model";
 import { ActionCrudComponent } from "../action-crud/action-crud";
 import { AlertHelper } from "../../helpers/alert-helper";
 import { UpdatePasswordModel } from "../../models/update-password-model";
+import { Configuration } from "../../configuration/configuration";
 
 @Component({
     templateUrl: 'account.html'
@@ -27,7 +28,8 @@ export class AccountComponent {
         private userService: UserService,
         private leaderService: LeaderService,
         private modalCtrl: ModalController,
-        private alertHelper: AlertHelper) {
+        private alertHelper: AlertHelper,
+        private helperService: HelperService) {
             let id = this.mainService.currentUser.user_id;
             this.userService.get(id).subscribe(data => {
                 this.response = data.json();
@@ -56,7 +58,7 @@ export class AccountComponent {
             this.leaderService.update(this.leaderModel).subscribe(data => {
                 this.alertHelper.alert('Updated data');
             }, error => {
-                console.log(error);
+                this.helperService.presentToastMessage(Configuration.ErrorMessage);
             });
         }
     }
@@ -67,7 +69,7 @@ export class AccountComponent {
             this.leaderService.update(this.leaderModel).subscribe(data => {
                 this.alertHelper.alert('Updated data');
             }, error => {
-                console.log(error);
+                this.helperService.presentToastMessage(Configuration.ErrorMessage);
             });
         }
     }
@@ -80,7 +82,6 @@ export class AccountComponent {
     public logout(): void {
         localStorage.clear();
         let counter:number = this.navCtrl.length() - 1;
-        console.log(counter);
         this.navCtrl.remove(0, counter);
         this.navCtrl.setRoot(HomePage);
     }

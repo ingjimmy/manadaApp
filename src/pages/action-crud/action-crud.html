@@ -25,7 +25,7 @@
         <label>To</label>
         <p>
             <span *ngFor="let user of model.assignedUsers">{{user.names}}</span>
-            <input autofocus #inputname [(ngModel)]="username" (input)="displayUsers($event)" (keyup)="removeLast($event)" type="text" name="username"
+            <input #inputname [(ngModel)]="username" (input)="displayUsers($event)" (keyup)="removeLast($event)" type="text" name="username"
             />
         </p>
     </ion-item>

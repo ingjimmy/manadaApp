@@ -98,3 +98,10 @@
         float: right !important;
     }
 }
+.input-search {
+    border:none;
+    padding: 4px;
+    border-radius: 5px;
+    width: calc(100% - 10px);
+    margin-left: 5px;
+}

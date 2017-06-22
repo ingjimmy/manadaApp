@@ -1,6 +1,7 @@
+import { Configuration } from './../../configuration/configuration';
 import { Component } from '@angular/core';
 import { NavParams, ViewController } from "ionic-angular";
-import { ProjectService, MainService } from "../../services/index";
+import { ProjectService, MainService, HelperService } from "../../services/index";
 import { AlertHelper } from "../../helpers/alert-helper";
 
 @Component({
@@ -15,7 +16,8 @@ export class ProjectCrudComponent {
         public viewCtrl: ViewController,
         private projectService: ProjectService,
         private mainService: MainService,
-        private alertHelper: AlertHelper) {
+        private alertHelper: AlertHelper,
+        private helperService: HelperService) {
         this.model.name = '';
         this.updateProject = params.get('project');
         if (this.updateProject != undefined) {
@@ -41,6 +43,8 @@ export class ProjectCrudComponent {
                     let message = error.json();
                     if (message.message != undefined) {
                         this.alertHelper.alert(message.message);
+                    } else {
+                        this.helperService.presentToastMessage(Configuration.ErrorMessage);
                     }
                     this.isBusy = false;
                     this.dismiss();
@@ -54,6 +58,8 @@ export class ProjectCrudComponent {
                     let message = error.json();
                     if (message.message != undefined) {
                         this.alertHelper.alert(message.message);
+                    } else {
+                        this.helperService.presentToastMessage(Configuration.ErrorMessage);
                     }
                     this.isBusy = false;
                     this.dismiss();

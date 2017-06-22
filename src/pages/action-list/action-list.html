@@ -1,9 +1,11 @@
 <ion-header>
   <ion-navbar *ngIf="enableSearch" class="custom-bar-search">
-    <ion-searchbar (input)="getItems($event)"></ion-searchbar>
+    <div>
+      <input class="input-search" placeholder="Search" type="search" name="search" (input)="getItems($event)" />
+    </div>    
     <ion-buttons end>
-      <button (click)="toggleSearch()" ion-button icon-only>
-        <ion-icon name="search"></ion-icon>
+      <button (click)="toggleSearch()" ion-button clear color="primary">
+        Cancel
       </button>
     </ion-buttons>
   </ion-navbar>

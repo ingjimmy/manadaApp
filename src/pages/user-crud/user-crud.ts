@@ -1,24 +1,25 @@
 import { Component } from '@angular/core';
 import { NavParams, ViewController } from "ionic-angular";
 import { UserModel } from "../../models/user-model";
-import { UserService, MainService } from "../../services/index";
+import { UserService, MainService, HelperService } from "../../services/index";
 import { AlertHelper } from "../../helpers/alert-helper";
+import { Configuration } from "../../configuration/configuration";
 
 @Component({
     templateUrl: 'user-crud.html'
 })
 export class UserCrudComponent {
     public model: UserModel = new UserModel();
-
     public updateUser:any;
     public isBusy:boolean = false;
 
-    constructor(
+    constructor(        
         public params: NavParams,
         public viewCtrl: ViewController,
         private userService: UserService,
         private mainService: MainService,
-        private alertHelper: AlertHelper
+        private alertHelper: AlertHelper,
+        private helperService: HelperService
     ) {
         this.updateUser = params.get('user');
         if (this.updateUser != undefined) {
@@ -45,6 +46,8 @@ export class UserCrudComponent {
                     let message = error.json();
                     if (message.message != undefined) {
                         this.alertHelper.alert(message.message);
+                    } else {
+                        this.helperService.presentToastMessage(Configuration.ErrorMessage);
                     }
                     this.isBusy = false;
                     this.dismiss();
@@ -58,6 +61,8 @@ export class UserCrudComponent {
                     let message = error.json();
                     if (message.message != undefined) {
                         this.alertHelper.alert(message.message);
+                    } else {
+                        this.helperService.presentToastMessage(Configuration.ErrorMessage);
                     }
                     this.isBusy = false;
                     this.dismiss();

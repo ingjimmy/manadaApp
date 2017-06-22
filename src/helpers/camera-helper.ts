@@ -1,5 +1,5 @@
 import { Configuration } from './../configuration/configuration';
-import { ActionSheetController, LoadingController, ToastController } from 'ionic-angular';
+import { ActionSheetController, LoadingController } from 'ionic-angular';
 import { Injectable } from '@angular/core';
 import { Camera } from '@ionic-native/camera';
 import { Transfer, TransferObject } from '@ionic-native/transfer';
@@ -11,8 +11,7 @@ export class CameraHelper {
         private actionSheetCtrl: ActionSheetController,
         private camera: Camera,
         private transfer: Transfer,
-        private loadingCtrl: LoadingController,
-        private toastCtrl: ToastController) {
+        private loadingCtrl: LoadingController) {
         this.rootPath = Configuration.Url;
     }
 
