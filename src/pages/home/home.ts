@@ -20,23 +20,17 @@ export class HomePage {
     private mainService: MainService,
     public loadingCtrl: LoadingController,
     private alertHelper: AlertHelper,
-    private oneSignal: OneSignal) {      
+    private oneSignal: OneSignal) {
   }
 
   public send(form: any): void {
     if (form.valid) {
-      
-      
       let loader = this.loadingCtrl.create({
         content: 'Please wait...'
       });
 
-      let timer = setTimeout(() => {
-        loader.present();
-      }, 100);      
-
-      this.authService.getToken(this.login).subscribe(data => {
-          clearTimeout(timer);
+      loader.present().then(t => {
+        this.authService.getToken(this.login).subscribe(data => {
           loader.dismiss();
           this.mainService.currentUser = data.json();
 
@@ -54,6 +48,7 @@ export class HomePage {
 
           this.alertHelper.alert(message);
         });
+      });
     }
   }
 
