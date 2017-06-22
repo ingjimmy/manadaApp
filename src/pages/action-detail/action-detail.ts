@@ -131,7 +131,7 @@ export class ActionDetailComponent {
 
     public send(event: Event): void {
         event.preventDefault();
-        //document.getElementById('commentinput').focus();
+        document.getElementById('commentinput').focus();
         if (this.comment.content != '' || this.comment.files.length > 0) {
             this.comment.actionID = this.model.actionID;
             this.commentService.add(this.comment).subscribe(data => {
@@ -296,8 +296,8 @@ export class ActionDetailComponent {
         this.model.status = this.model.status == 0 ? 1 : 0;
         this.showAnimate = this.model.status == 1;
         this.actionService.changeStatus(this.model).subscribe(data => {
-            let add = this.model.status === 0 ? -1 : 1;
-
+            let add = this.model.status === 1 ? -1 : 1;
+            console.log(add);
             this.mainService.countAll += add;
 
             if (this.model.assignedUsers.length > 0) {
@@ -335,7 +335,7 @@ export class ActionDetailComponent {
             if (this.showAnimate) {
                 setTimeout(() => {
                     this.navCtrl.pop();
-                }, 1900);
+                }, 1500);
             } else {
                 this.navCtrl.pop();
             }

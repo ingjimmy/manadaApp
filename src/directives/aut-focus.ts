@@ -13,6 +13,6 @@ export class Focuser {
         // we need to delay our call in order to work with ionic ...
         setTimeout(() => {
             this.renderer.invokeElementMethod(element, 'focus', []);
-        }, 0);
+        }, 200);
     }
 }

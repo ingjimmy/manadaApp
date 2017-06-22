@@ -3,14 +3,14 @@
 </div>
 <div class="custom-content-menu">
     <ul>
-        <li (click)="resolveHandler($event, option)" *ngFor="let option of options">
+        <li (touchstart)="resolveHandler($event, option)" *ngFor="let option of options">
             <div *ngIf="option.colors;then withcolor else withoutcolor"></div>
             <ng-template #withcolor>
-                <span (click)="resolveHandler($event, option, 'color1')" class="tagcolor1"></span>
-                <span (click)="resolveHandler($event, option, 'color2')" class="tagcolor2"></span>
-                <span (click)="resolveHandler($event, option, 'color3')" class="tagcolor3"></span>
-                <span (click)="resolveHandler($event, option, 'color4')" class="tagcolor4"></span>
-                <span (click)="resolveHandler($event, option, null)" class="custom-no-color"></span>
+                <span (touchstart)="resolveHandler($event, option, 'color1')" class="tagcolor1"></span>
+                <span (touchstart)="resolveHandler($event, option, 'color2')" class="tagcolor2"></span>
+                <span (touchstart)="resolveHandler($event, option, 'color3')" class="tagcolor3"></span>
+                <span (touchstart)="resolveHandler($event, option, 'color4')" class="tagcolor4"></span>
+                <span (touchstart)="resolveHandler($event, option, null)" class="custom-no-color"></span>
             </ng-template>
             <ng-template #withoutcolor>
                 {{option.name}}

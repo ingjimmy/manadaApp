@@ -164,7 +164,7 @@ export class ActionCrudComponent {
                     }
                     setTimeout(() => {
                         this.dismiss();
-                    }, 2050);
+                    }, 1900);
 
                 }, error => {
                     this.isBusy = false;

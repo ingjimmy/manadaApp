@@ -55,7 +55,7 @@ export class MyApp {
       });
       this.oneSignal.endInit();
 
-      this.statusBar.styleDefault();
+      this.statusBar.hide();
       this.splashScreen.hide();
       this.keyboard.disableScroll(true);
     });
