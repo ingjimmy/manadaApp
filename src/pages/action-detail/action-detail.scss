@@ -58,7 +58,8 @@
 .input-save {
     border:none;
     padding: 8px;
-    border-radius: 20px;
+    border-radius: 8px !important;
+    width: 100%;
 }
 .custom-list-files {
     margin: 0 !important;

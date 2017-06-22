@@ -76,7 +76,7 @@ export class ActionCrudComponent {
             let scrollContentElelment = this.content.getScrollElement();
 
             scrollContentElelment.style.cssText = scrollContentElelment.style.cssText + "transition: all " + 200 + "ms; -webkit-transition: all " +
-                200 + "ms; -webkit-transition-timing-function: ease-out; transition-timing-function: ease-out;"
+                200 + "ms; -webkit-transition-timing-function: ease-out; transition-timing-function: ease-out;";
         }
 
         this.myInput.nativeElement.focus();
@@ -178,6 +178,7 @@ export class ActionCrudComponent {
     }
 
     public calendar(): void {
+        this.keyboard.close();
         let modal = this.modalCtrl.create(CalendarComponent, { action: this.model });
         modal.present();
     }

@@ -65,7 +65,7 @@
         <ion-icon name="attach"></ion-icon>        
         {{file.name}}
       </button>
-      <button class="custom-response-comment-button" type="button" ion-button clear left (click)="newSubcomment(comment)" color="primary">Comment</button>
+      <button  *ngIf="model.status == 0" class="custom-response-comment-button" type="button" ion-button clear left (click)="newSubcomment(comment)" color="primary">Comment</button>
       <ion-card class="custom-card" *ngFor="let subcomment of comment.comments">
         <ion-card-header>
           {{subcomment.user.names}}
@@ -82,27 +82,27 @@
     </ion-card>
   </ion-list>
 </ion-content>
-<ion-footer (touchstart)="footerTouchStart($event)">
+<ion-footer *ngIf="model.status == 0" (touchstart)="footerTouchStart($event)">
   <ion-list class="custom-list-files">
     <ion-item *ngFor="let file of comment.files">
       <ion-avatar item-start>
         <img [src]="rootPath + file.path">
       </ion-avatar>
       <h2>{{file.name}}</h2>
-      <button (click)="removeFile($event, file)" ion-button clear item-end>
+      <button (touchstart)="removeFile($event, file)" ion-button clear item-end>
         <ion-icon color="danger" name="trash"></ion-icon>
       </button>
     </ion-item>
   </ion-list>
   <ion-toolbar>
     <ion-buttons start>
-      <button (click)="files($event)" ion-button icon-left color="primary">        
+      <button (touchstart)="files($event)" ion-button icon-left color="primary">        
         <ion-icon name="attach"></ion-icon>
       </button>
     </ion-buttons>
     <input id="commentinput" style="width: 100%;" class="input-save" type="text" name="content" [(ngModel)]="comment.content">
     <ion-buttons end>
-      <button (click)="send($event)" ion-button icon-right color="primary">
+      <button (touchstart)="send($event)" ion-button icon-right color="primary">
         Send
         <ion-icon name="send"></ion-icon>
       </button>

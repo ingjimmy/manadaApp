@@ -1,14 +1,4 @@
 <ion-header>
-  <ion-navbar *ngIf="enableSearch" class="custom-bar-search">
-    <div>
-      <input class="input-search" placeholder="Search" type="search" name="search" (input)="getItems($event)" />
-    </div>    
-    <ion-buttons end>
-      <button (click)="toggleSearch()" ion-button clear color="primary">
-        Cancel
-      </button>
-    </ion-buttons>
-  </ion-navbar>
   <ion-navbar *ngIf="!enableSearch">
     <ion-title>
       {{mainService.title}}
@@ -19,20 +9,30 @@
       </button>
     </ion-buttons>
   </ion-navbar>
+  <ion-navbar *ngIf="enableSearch">
+    <div>
+      <input class="input-save" placeholder="Search" type="search" name="search" (input)="getItems($event)" />
+    </div>
+    <ion-buttons end>
+      <button (click)="toggleSearch()" ion-button clear color="primary">
+        Cancel
+      </button>
+    </ion-buttons>
+  </ion-navbar>
   <ion-toolbar class="custom-ion-toolbar" no-border-top>
     <ion-segment *ngIf="mainService.actionFilter.projectID == null" [(ngModel)]="this.mainService.selected">
-      <ion-segment-button (click)="filter()" value="active">
+      <ion-segment-button (click)="filter('active')" value="active">
         Active
       </ion-segment-button>
-      <ion-segment-button (click)="filter()" value="ended">
+      <ion-segment-button (click)="filter('ended')" value="ended">
         Done
       </ion-segment-button>
     </ion-segment>
     <ion-segment *ngIf="mainService.actionFilter.projectID != null" [(ngModel)]="this.mainService.selected">
-      <ion-segment-button (click)="filter()" value="active">
+      <ion-segment-button (click)="filter('active')" value="active">
         Active
       </ion-segment-button>
-      <ion-segment-button (click)="filter()" value="ended">
+      <ion-segment-button (click)="filter('ended')" value="ended">
         Done
       </ion-segment-button>
       <ion-segment-button (click)="docs()" value="documents">
@@ -47,15 +47,15 @@
   </ion-refresher>
   <div>
     <ion-card *ngFor="let file of mainService.files">
-        <img *ngIf="file.type == 0" [src]="file.img" (click)="openPicture(file)" />
-        <div *ngIf="file.type == 1" class="custom-file-document" (click)="openFile(file)">
-          <img style="margin:auto 0;" src="assets/images/default.png">            
-        </div>
-        <ion-card-content>
-          <p>
-            {{file.name}}
-          </p>
-        </ion-card-content>        
+      <img *ngIf="file.type == 0" [src]="file.img" (click)="openPicture(file)" />
+      <div *ngIf="file.type == 1" class="custom-file-document" (click)="openFile(file)">
+        <img style="margin:auto 0;" src="assets/images/default.png">
+      </div>
+      <ion-card-content>
+        <p>
+          {{file.name}}
+        </p>
+      </ion-card-content>
     </ion-card>
   </div>
   <ion-list no-lines>
@@ -95,8 +95,8 @@
     </ion-item-sliding>
   </ion-list>
   <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
-   <ion-infinite-scroll-content></ion-infinite-scroll-content>
- </ion-infinite-scroll>
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>
 <ion-footer>
   <ion-toolbar>

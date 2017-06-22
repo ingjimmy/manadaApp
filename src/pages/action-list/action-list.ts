@@ -34,13 +34,13 @@ export class ActionListComponent {
         this.rootPath = Configuration.Url;
     }
 
-    public filter(): void {
+    public filter(value: string): void {
+        this.mainService.actionFilter.status = this.mainService.selected = value;
         this.mainService.files = [];
         this.mainService.actions = [];
         this.mainService.actionFilter.hasNextPage = false;
         this.mainService.fileFilter.hasNextPage = false;
         this.mainService.actionFilter.page = 0;
-        this.mainService.actionFilter.status = this.mainService.selected;
         this.mainService.bindActions();
     }
 
