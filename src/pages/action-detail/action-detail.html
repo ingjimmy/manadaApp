@@ -1,5 +1,5 @@
 <div *ngIf="showAnimate" class="send-animate">
-    <img src="assets/images/check-manada.gif?r={{model.actionID}}" />
+  <img src="assets/images/check-manada.gif?r={{model.actionID}}" />
 </div>
 <ion-header>
   <ion-navbar>
@@ -25,7 +25,9 @@
       <div class="color-bar tag{{model.color}}"></div>
       <ion-card-header>
         1. {{model.creator.names}}
-        <ion-icon (click)="displayMenuAction()" class="custom-icon-edit custom-icon-edit-comment" name="icon-edit"></ion-icon>
+        <button class="custom-button-edit" (click)="displayMenuAction()" type="button">
+          <ion-icon class="custom-icon-edit custom-icon-edit-comment" name="icon-edit"></ion-icon>
+        </button>
       </ion-card-header>
       <ion-card-content>
         <span class="custom-comment-date" [innerHTML]="model.creationDate"></span>
@@ -48,8 +50,8 @@
       <div class="color-bar tag{{comment.color}}"></div>
       <ion-card-header>
         {{comment.index}}. {{comment.user.names}}
-        <ion-icon *ngIf="model.status == 0 && comment.user.userID == mainService.currentUser.user_id" (click)="displayMenuComment(comment)" class="custom-icon-edit custom-icon-edit-comment"
-          name="icon-edit"></ion-icon>
+        <ion-icon *ngIf="model.status == 0 && comment.user.userID == mainService.currentUser.user_id" (click)="displayMenuComment(comment)"
+          class="custom-icon-edit custom-icon-edit-comment" name="icon-edit"></ion-icon>
       </ion-card-header>
       <ion-card-content>
         <span class="custom-comment-date" [innerHTML]="comment.modificationDate | tillDate"></span>
@@ -67,8 +69,10 @@
       <ion-card class="custom-card" *ngFor="let subcomment of comment.comments">
         <ion-card-header>
           {{subcomment.user.names}}
-          <ion-icon *ngIf="model.status == 0" (touchstart)="displayMenuComment(subcomment)" class="custom-icon-edit custom-icon-edit-comment"
+          <button (click)="displayMenuComment(subcomment)" class="custom-button-edit" type="button">
+              <ion-icon *ngIf="model.status == 0" class="custom-icon-edit custom-icon-edit-comment"
             name="icon-edit"></ion-icon>
+          </button>
         </ion-card-header>
         <ion-card-content>
           <span class="custom-comment-date" [innerHTML]="subcomment.modificationDate | tillDate"></span>

@@ -131,8 +131,8 @@ export class ActionDetailComponent {
 
     public send(event: Event): void {
         event.preventDefault();
-        document.getElementById('commentinput').focus();
-        if (this.comment.content != '') {
+        //document.getElementById('commentinput').focus();
+        if (this.comment.content != '' || this.comment.files.length > 0) {
             this.comment.actionID = this.model.actionID;
             this.commentService.add(this.comment).subscribe(data => {
                 let result = data.json();
@@ -229,15 +229,7 @@ export class ActionDetailComponent {
     }
 
     public displayMenuComment(comment: CommentModel): void {
-        let options: Array<ActionSheetModel> = [
-            {
-                name: 'Color',
-                handler: (data) => {
-                    comment.color = data;
-                    this.commentService.patch(comment).subscribe(data => { }, error => { });
-                },
-                colors: true
-            },
+        let options: Array<ActionSheetModel> = [            
             {
                 name: 'Edit',
                 handler: () => {
@@ -279,6 +271,17 @@ export class ActionDetailComponent {
                 colors: false
             }
         ];
+
+        if (comment.parentID == null) {
+            options.unshift({
+                name: 'Color',
+                handler: (data) => {
+                    comment.color = data;
+                    this.commentService.patch(comment).subscribe(data => { }, error => { });
+                },
+                colors: true
+            });
+        }
 
         let pop = this.modalCtrl.create(CustomActionSheetComponent, { options: options });
         pop.present();

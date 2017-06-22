@@ -9,9 +9,10 @@
     height: 100%;
 }
 .custom-no-color {
-    background-image:url("/assets/images/vacio.png");
+    background-image:url("assets/images/vacio.png");
     background-position: center center;
     background-size: cover;
+    background-color: #F1F1F1;
 }
 .custom-content-menu {
     position: absolute;

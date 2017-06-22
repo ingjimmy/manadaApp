@@ -9,6 +9,7 @@ import { AlertHelper } from "../../helpers/alert-helper";
 export class ProjectCrudComponent {
     public model: any = {};
     public updateProject: any;
+    public isBusy:boolean = false;
     constructor(
         public params: NavParams,
         public viewCtrl: ViewController,
@@ -28,28 +29,33 @@ export class ProjectCrudComponent {
     }
 
     public send(form: any): void {
-        if (form.valid) {
+        if (form.valid && !this.isBusy) {
+            this.isBusy = true;
             if (this.updateProject != undefined) {
                 this.projectService.update(this.model).subscribe(data => {
                     this.updateProject.projectID = this.model.projectID;
                     this.updateProject.name = this.model.name;
+                    this.isBusy = false;
                     this.dismiss();
                 }, error => {
                     let message = error.json();
                     if (message.message != undefined) {
                         this.alertHelper.alert(message.message);
                     }
+                    this.isBusy = false;
                     this.dismiss();
                 });
             } else {
                 this.projectService.add(this.model).subscribe(data => {
                     this.mainService.bindProjects();
+                    this.isBusy = false;
                     this.dismiss();
                 }, error => {
                     let message = error.json();
                     if (message.message != undefined) {
                         this.alertHelper.alert(message.message);
                     }
+                    this.isBusy = false;
                     this.dismiss();
                 });
             }

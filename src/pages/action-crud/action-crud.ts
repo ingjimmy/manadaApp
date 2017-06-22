@@ -26,6 +26,7 @@ export class ActionCrudComponent {
     public keyboardShowSub: any;
     public rootPath: string;
     public showAnimate: boolean = false;
+    public isBusy: boolean = false;
     constructor(
         public platform: Platform,
         public params: NavParams,
@@ -50,6 +51,20 @@ export class ActionCrudComponent {
             }, error => {
                 console.log(error);
             });
+        } else {
+            if (this.mainService.actionFilter.projectID != null) {
+                let project = this.mainService.projects.find(t => t.projectID == this.mainService.actionFilter.projectID != null);
+                if (project != undefined) {
+                    this.model.projects.push(project);
+                }                
+            }
+
+            if (this.mainService.actionFilter.userID != null) {
+                let user = this.mainService.users.find(t => t.userID == this.mainService.actionFilter.userID != null);
+                if (user != undefined) {
+                    this.model.assignedUsers.push(user);
+                }
+            }
         }
     }
 
@@ -85,9 +100,9 @@ export class ActionCrudComponent {
     }
 
     public send(form: any): void {
-        if (this.subject.nativeElement.innerHTML != '') {
+        if (this.subject.nativeElement.innerHTML != '' && !this.isBusy) {
             this.model.subject = this.subject.nativeElement.innerHTML;
-
+            this.isBusy = true;
             if (this.model.actionID != null) {
                 this.actionService.update(this.model).subscribe(data => {
                     let call = this.params.get('call');
@@ -100,11 +115,15 @@ export class ActionCrudComponent {
                     this.mainService.actions.splice(index, 1);
                     this.mainService.actions.splice(0, 0, data.json());
                     this.dismiss();
+                    this.isBusy = false;
                 }, error => {
+                    this.dismiss();
+                    this.isBusy = false;
                     console.log(error);
                 });
             } else {
                 this.actionService.add(this.model).subscribe(data => {
+                    this.isBusy = false;
                     let result = data.json();
                     this.model.actionID = result.actionID;
                     this.showAnimate = true;
@@ -145,6 +164,8 @@ export class ActionCrudComponent {
                     }, 2050);
 
                 }, error => {
+                    this.isBusy = false;
+                    this.dismiss();
                     console.log(error);
                 });
             }
