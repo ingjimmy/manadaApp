@@ -14,6 +14,7 @@ import { CustomActionSheetComponent } from "../../components/custom-action-sheet
 import { ActionSheetModel } from "../../models/action-sheet-model";
 import { PhotoViewer } from "@ionic-native/photo-viewer";
 import { BrowserTab } from "@ionic-native/browser-tab";
+import { CacheService } from "../../services/cache.service";
 
 @Component({
     templateUrl: 'action-list.html'
@@ -31,7 +32,8 @@ export class ActionListComponent {
         public navCtrl: NavController,
         private alertHelper: AlertHelper,
         public photoViewer: PhotoViewer,
-        private browserTab: BrowserTab) {
+        private browserTab: BrowserTab,
+        private cache: CacheService) {
         this.rootPath = Configuration.Url;
     }
 
@@ -135,6 +137,7 @@ export class ActionListComponent {
                 name: 'Color',
                 handler: (data) => {
                     action.color = data;
+                    this.actionService.updateLocalAction(action, false);
                     this.actionService.patch(action).subscribe(data => { }, error => { });
                 },
                 colors: true
@@ -230,6 +233,7 @@ export class ActionListComponent {
     }
 
     public doRefresh(refresher: any): void {
+        this.cache.clearAll();
         this.mainService.bind(() => {
             refresher.complete();
         });

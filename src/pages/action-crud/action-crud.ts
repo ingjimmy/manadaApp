@@ -110,17 +110,21 @@ export class ActionCrudComponent {
             this.isBusy = true;
             if (this.model.actionID != null) {
                 this.actionService.update(this.model).subscribe(data => {
+                    var result = data.json();
+                    
                     let call = this.params.get('call');
                     if (call != undefined) {
                         call.call(null, this.model);
                     }
-
+                    
                     let act = this.mainService.actions.find(t => t.actionID == this.model.actionID);
+                    result.color = act.color;
+                    this.actionService.updateLocalAction(result, true);
                     let index = this.mainService.actions.indexOf(act);
                     this.mainService.actions.splice(index, 1);
-                    this.mainService.actions.splice(0, 0, data.json());
+                    this.mainService.actions.splice(0, 0, result);
                     this.dismiss();
-                    this.isBusy = false;
+                    this.isBusy = false;                    
                 }, error => {
                     this.dismiss();
                     this.isBusy = false;

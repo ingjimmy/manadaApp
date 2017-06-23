@@ -1,3 +1,4 @@
+import { IonicStorageModule } from '@ionic/storage';
 import { Transfer } from '@ionic-native/transfer';
 import { RequestOptions, HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
@@ -32,7 +33,7 @@ import { AlertHelper } from "../helpers/alert-helper";
 import { CameraHelper } from "../helpers/camera-helper";
 import { CustomActionSheetComponent } from "../components/custom-action-sheet";
 import { Focuser } from "../directives/aut-focus";
-
+import { CacheService } from "../services/cache.service";
 
 @NgModule({
   declarations: [
@@ -63,7 +64,11 @@ import { Focuser } from "../directives/aut-focus";
           inputBlurring: false
         }
     }),
-    HttpModule
+    IonicStorageModule.forRoot({
+      name: 'manadadb',
+         driverOrder: ['indexeddb', 'sqlite', 'websql']
+    }),
+    HttpModule   
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -101,6 +106,7 @@ import { Focuser } from "../directives/aut-focus";
     CameraHelper,
     LeaderService,
     OneSignal,
+    CacheService,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     { provide: RequestOptions, useClass: CustomRequestOptions },
   ]

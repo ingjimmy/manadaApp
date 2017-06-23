@@ -36,7 +36,7 @@ export class MyApp {
         mainService.currentUser.access_token = localStorage.getItem('accessToken');
         mainService.currentUser.user_id = parseInt(localStorage.getItem('userID'));
         mainService.currentUser.user_type = parseInt(localStorage.getItem('type'));
-
+        
         this.rootPage = ActionsPage;
       } else {
         this.rootPage = HomePage;
