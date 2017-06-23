@@ -147,6 +147,7 @@ export class ActionDetailComponent {
                 let result = data.json();
                 this.totalComments += 1;
                 result.index = this.totalComments + 1;
+                result.comments = [];
                 this.comments.push(result);
                 this.comment = new CommentModel();
                 let dimension = this.content.getContentDimensions();

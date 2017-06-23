@@ -60,7 +60,7 @@
   </div>
   <ion-list no-lines *ngIf="!mainService.viewDocument">
     <ion-item-sliding #item *ngFor="let action of mainService.actions" [ngClass]="{'remove-item': action.remove}">
-      <button class="primary-button" ion-item detail-none (click)="detail(action)">
+      <div class="primary-button" ion-item detail-none (click)="detail(action)">
         <div class="color-bar tag{{action.color}}"></div>
         <div class="list-button">          
           <h2><span class="custom-new-updates" *ngIf="action.countUpdates > 0"></span> {{action.shortSubject}}</h2> 
@@ -71,7 +71,7 @@
         </div> 
         <ion-note class="custom-ion-note" *ngIf="action.status == 0" item-end [innerHtml]="action.dueDate | dateColor"></ion-note>              
         <ion-note class="custom-ion-note" *ngIf="action.status == 1" item-end [innerHtml]="action.finalizedDate | dateColor:action.dueDate"></ion-note>
-      </button>
+      </div>
       <ion-item-options *ngIf="action.status == 0" side="right" (ionSwipe)="done(action)">
         <button class="button-swipe button-more" ion-button (click)="openmenu(action, item)" color="light">
           <ion-icon class="custom-icon" name="more"></ion-icon>

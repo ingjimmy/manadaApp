@@ -54,14 +54,14 @@ export class ActionCrudComponent {
             });
         } else {
             if (this.mainService.actionFilter.projectID != null) {
-                let project = this.mainService.projects.find(t => t.projectID == this.mainService.actionFilter.projectID != null);
+                let project = this.mainService.projects.find(t => t.projectID == this.mainService.actionFilter.projectID);
                 if (project != undefined) {
                     this.model.projects.push(project);
                 }
             }
 
             if (this.mainService.actionFilter.userID != null) {
-                let user = this.mainService.users.find(t => t.userID == this.mainService.actionFilter.userID != null);
+                let user = this.mainService.users.find(t => t.userID == this.mainService.actionFilter.userID);
                 if (user != undefined) {
                     this.model.assignedUsers.push(user);
                 }
