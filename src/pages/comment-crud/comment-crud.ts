@@ -39,8 +39,9 @@ export class CommentCrudComponent {
 
     public send(): void {
         if (this.commentcontent.nativeElement.innerHTML != '') {
-            if (this.params.get('comment') != undefined) {
-                this.model.content = this.commentcontent.nativeElement.innerHTML;
+            this.model.content = this.commentcontent.nativeElement.innerHTML;
+
+            if (this.params.get('comment') != undefined) {                
                 this.commentService.update(this.model).subscribe(data => {
                     if (this.model.parentID == null) {
                         let comments = this.params.get('comments');
@@ -65,7 +66,6 @@ export class CommentCrudComponent {
                     this.dismiss();
                 });
             } else if (this.params.get('parent') != undefined) {
-                this.model.content = this.commentcontent.nativeElement.innerHTML;
                 this.commentService.add(this.model).subscribe(data => {
                     let comments = this.params.get('comments');
 

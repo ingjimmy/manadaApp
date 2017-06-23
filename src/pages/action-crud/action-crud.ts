@@ -57,7 +57,7 @@ export class ActionCrudComponent {
                 let project = this.mainService.projects.find(t => t.projectID == this.mainService.actionFilter.projectID != null);
                 if (project != undefined) {
                     this.model.projects.push(project);
-                }                
+                }
             }
 
             if (this.mainService.actionFilter.userID != null) {
@@ -79,7 +79,9 @@ export class ActionCrudComponent {
                 200 + "ms; -webkit-transition-timing-function: ease-out; transition-timing-function: ease-out;";
         }
 
-        this.myInput.nativeElement.focus();
+        setTimeout(() => {
+            this.myInput.nativeElement.focus();
+        }, 500);
     }
 
     public dismiss(): void {
@@ -110,7 +112,7 @@ export class ActionCrudComponent {
                 this.actionService.update(this.model).subscribe(data => {
                     let call = this.params.get('call');
                     if (call != undefined) {
-                        call.call(null, this.model); 
+                        call.call(null, this.model);
                     }
 
                     let act = this.mainService.actions.find(t => t.actionID == this.model.actionID);
@@ -131,7 +133,7 @@ export class ActionCrudComponent {
                     this.model.actionID = result.actionID;
                     this.showAnimate = true;
                     this.keyboard.close();
-                    
+
                     let push: boolean = false;
 
                     if (result.assignedUsers.length > 0) {
@@ -168,8 +170,8 @@ export class ActionCrudComponent {
 
                 }, error => {
                     this.isBusy = false;
-                     this.helperService.presentToastMessage(Configuration.ErrorMessage);
-                    this.dismiss();                   
+                    this.helperService.presentToastMessage(Configuration.ErrorMessage);
+                    this.dismiss();
                 });
             }
         } else {

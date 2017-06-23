@@ -2,9 +2,9 @@ import { Configuration } from './../../configuration/configuration';
 import { IResult } from './../../models/IResult';
 import { ActionService } from './../../services/action.service';
 import { MainService } from './../../services/main.service';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ItemSliding } from 'ionic-angular';
-import { ModalController, NavController } from "ionic-angular";
+import { ModalController, NavController, InfiniteScroll } from "ionic-angular";
 import { ProjectListPage } from "../project-list/project-list";
 import { FileService } from "../../services/index";
 import { ActionCrudComponent } from "../action-crud/action-crud";
@@ -19,6 +19,7 @@ import { BrowserTab } from "@ionic-native/browser-tab";
     templateUrl: 'action-list.html'
 })
 export class ActionListComponent {
+    @ViewChild(InfiniteScroll) infiniteScroll: InfiniteScroll;
     public rootPath: string;
     public enableSearch: boolean = false;
     public intervalSearch: any = null;    
@@ -35,6 +36,7 @@ export class ActionListComponent {
     }
 
     public filter(value: string): void {
+        this.infiniteScroll.complete();
         this.mainService.viewDocument = false;
         this.mainService.actionFilter.status = this.mainService.selected = value;
         this.mainService.files = [];
@@ -46,6 +48,7 @@ export class ActionListComponent {
     }
 
     public docs(): void {
+        this.infiniteScroll.complete();
         this.mainService.viewDocument = true;
         this.mainService.actions = [];
         this.mainService.fileFilter.page = 0;

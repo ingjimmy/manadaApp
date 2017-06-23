@@ -73,7 +73,7 @@ export class ActionDetailComponent {
             scrollContentElelment.style.cssText = scrollContentElelment.style.cssText + "transition: all " + 200 + "ms; -webkit-transition: all " +
                 200 + "ms; -webkit-transition-timing-function: ease-out; transition-timing-function: ease-out;"
 
-            let inputSearch = document.getElementById('commentinput');
+            let inputSearch = this.footer.getNativeElement();
 
             inputSearch.style.cssText = scrollContentElelment.style.cssText + "transition: all " + 200 + "ms; -webkit-transition: all " +
                 200 + "ms; -webkit-transition-timing-function: ease-out; transition-timing-function: ease-out;"
