@@ -10,7 +10,7 @@
             {{updateUser != undefined ? 'Update data' : 'New team member'}}
         </ion-title> 
         <ion-buttons end>
-            <button [disabled]="!form.valid && isBusy" (click)="send(form)" ion-button icon-right>
+            <button class="fontcolor2" [disabled]="!form.valid && isBusy" (click)="send(form)" ion-button icon-right>
                 Save                
             </button>
         </ion-buttons>       

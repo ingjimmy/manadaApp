@@ -81,6 +81,7 @@ export class AccountComponent {
 
     public logout(): void {
         localStorage.clear();
+        //TODO: remove tags from one signal
         let counter:number = this.navCtrl.length() - 1;
         this.navCtrl.remove(0, counter);
         this.navCtrl.setRoot(HomePage);

@@ -347,7 +347,7 @@ export class ActionDetailComponent {
             if (this.showAnimate) {
                 setTimeout(() => {
                     this.navCtrl.pop();
-                }, 1500);
+                }, 1200);
             } else {
                 this.navCtrl.pop();
             }

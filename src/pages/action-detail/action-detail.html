@@ -3,14 +3,11 @@
 </div>
 <ion-header>
   <ion-navbar>
-    <ion-title>
-      Action Detail
-    </ion-title>
     <ion-buttons end>
-      <button *ngIf="model.status == 0" (click)="changeStatus()" ion-button icon-right>
+      <button class="fontcolor2" *ngIf="model.status == 0" (click)="changeStatus()" ion-button icon-right>
           Done
       </button>
-      <button *ngIf="model.status == 1" (click)="changeStatus()" ion-button icon-right>
+      <button class="fontcolor2" *ngIf="model.status == 1" (click)="changeStatus()" ion-button icon-right>
           Reactive
       </button>
     </ion-buttons>
@@ -65,7 +62,7 @@
         <ion-icon name="attach"></ion-icon>        
         {{file.name}}
       </button>
-      <button  *ngIf="model.status == 0" class="custom-response-comment-button" type="button" ion-button clear left (click)="newSubcomment(comment)" color="primary">Comment</button>
+      <button  *ngIf="model.status == 0" class="custom-response-comment-button fontcolor2" type="button" ion-button clear left (click)="newSubcomment(comment)" color="primary">Comment</button>
       <ion-card class="custom-card" *ngFor="let subcomment of comment.comments">
         <ion-card-header>
           {{subcomment.user.names}}
@@ -102,7 +99,7 @@
     </ion-buttons>
     <input id="commentinput" style="width: 100%;" class="input-save" type="text" name="content" [(ngModel)]="comment.content">
     <ion-buttons end>
-      <button (touchstart)="send($event)" ion-button icon-right color="primary">
+      <button class="fontcolor2" (touchstart)="send($event)" ion-button icon-right color="primary">
         Send
         <ion-icon name="send"></ion-icon>
       </button>

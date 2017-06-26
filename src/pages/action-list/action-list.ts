@@ -70,6 +70,8 @@ export class ActionListComponent {
                     call.call(null, response.hasNextPage);
                 }
             });
+        }, error => {
+            
         });
     }
 

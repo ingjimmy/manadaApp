@@ -81,7 +81,7 @@ export class ActionCrudComponent {
 
         setTimeout(() => {
             this.myInput.nativeElement.focus();
-        }, 500);
+        }, 100);
     }
 
     public dismiss(): void {
@@ -170,7 +170,7 @@ export class ActionCrudComponent {
                     }
                     setTimeout(() => {
                         this.dismiss();
-                    }, 1900);
+                    }, 1700);
 
                 }, error => {
                     this.isBusy = false;
