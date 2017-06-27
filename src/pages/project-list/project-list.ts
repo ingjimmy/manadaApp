@@ -45,8 +45,11 @@ export class ProjectListPage {
             let index = this.mainService.projects.indexOf(project);
             this.mainService.projects.splice(index, 1);
             this.mainService.projects.splice(0, 0, project);
-
-            this.actionService.changeStatus(this.action).subscribe();
+            
+            this.actionService.changeStatus(this.action).subscribe(data => {}, 
+            error => {
+                console.log(error);
+            });
             this.dismiss();
         }
     }

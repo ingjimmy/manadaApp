@@ -61,7 +61,8 @@ import { CacheService } from "../services/cache.service";
         ios: {
           scrollAssist: false, 
           autoFocusAssist: false,
-          inputBlurring: false
+          inputBlurring: false,
+          statusbarPadding: false
         }
     }),
     IonicStorageModule.forRoot({

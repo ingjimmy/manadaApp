@@ -59,8 +59,12 @@ export class ActionDetailComponent {
         });
         this.bindComments(() => {
             setTimeout(() => {
-                this.content.scrollToBottom();
-                this.infiniteScroll.enable(true);
+                try {
+                    this.content.scrollToBottom();
+                    this.infiniteScroll.enable(true);
+                } catch (error) {
+                    console.log(error);
+                }
             }, 200);
         });
     }
@@ -213,6 +217,7 @@ export class ActionDetailComponent {
                         action.color = data;
                     }
 
+                    this.actionService.updateLocalAction(this.model, false);
                     this.actionService.patch(this.model).subscribe(data => { }, error => { });
                 },
                 colors: true
@@ -307,9 +312,15 @@ export class ActionDetailComponent {
     public changeStatus(): void {
         this.model.status = this.model.status == 0 ? 1 : 0;
         this.showAnimate = this.model.status == 1;
+
+        let statusRemove = this.model.status == 0 ? 'ended' : 'active';
+        let statusAdd = this.model.status == 0 ? 'active' : 'ended';
+
+        this.actionService.addLocalAction(this.model, statusAdd);
+        this.actionService.removeLocalAction(this.model, statusRemove);
+
         this.actionService.changeStatus(this.model).subscribe(data => {
             let add = this.model.status === 1 ? -1 : 1;
-            console.log(add);
             this.mainService.countAll += add;
 
             if (this.model.assignedUsers.length > 0) {

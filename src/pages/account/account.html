@@ -1,21 +1,17 @@
 <ion-header>
     <ion-navbar>
-        <ion-title>
+        <ion-title class="custom-title">
             Account
         </ion-title>
     </ion-navbar>
     <ion-toolbar class="custom-ion-toolbar" no-border-top>
-        <ion-segment [(ngModel)]="selected" padding>
-            <ion-segment-button value="account">
-                Account
-            </ion-segment-button>
-            <ion-segment-button value="email">
-                Mails
-            </ion-segment-button>
-        </ion-segment>
-    </ion-toolbar>
+        <button [ngClass]="{'custom-filter-home': true, 'custom-selected': selected == 'account' }"
+            ion-button clear (click)="filter('account')">Account</button>
+        <button [ngClass]="{'custom-filter-home': true, 'custom-selected': selected == 'email' }"
+            ion-button clear (click)="filter('email')">Emails</button>        
+    </ion-toolbar>    
 </ion-header>
-<ion-content>
+<ion-content class="custom-content-padding">
     <div *ngIf="selected == 'account'">
         <form (submit)="send(form)" #form="ngForm">
             <ion-item>
@@ -38,12 +34,15 @@
         </div>
         <form *ngIf="showChangePassword" (submit)="updatePassword(form)" #formPass="ngForm">
             <ion-item>
-                <ion-input minlength="6" placeholder="Password (min 6 characters)" required type="password" [(ngModel)]="passwordModel.password" name="password"></ion-input>
+                <ion-input minlength="6" placeholder="Password (min 6 characters)" required type="password" [(ngModel)]="passwordModel.password"
+                    name="password"></ion-input>
             </ion-item>
             <ion-item>
-                <ion-input minlength="6" placeholder="Confirm password" required type="password" [(ngModel)]="passwordModel.confirmPassword" name="confirmPassword"></ion-input>
+                <ion-input minlength="6" placeholder="Confirm password" required type="password" [(ngModel)]="passwordModel.confirmPassword"
+                    name="confirmPassword"></ion-input>
             </ion-item>
-            <button [disabled]="!formPass.valid || !form.valid || passwordModel.confirmPassword != passwordModel.password" ion-button color="primary" type="submit" clear>Save changes</button>
+            <button [disabled]="!formPass.valid || !form.valid || passwordModel.confirmPassword != passwordModel.password" ion-button
+                color="primary" type="submit" clear>Save changes</button>
         </form>
         <div>
             <button ion-button color="danger" type="button" (click)="logout()" clear>Log out</button>

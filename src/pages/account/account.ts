@@ -10,6 +10,7 @@ import { ActionCrudComponent } from "../action-crud/action-crud";
 import { AlertHelper } from "../../helpers/alert-helper";
 import { UpdatePasswordModel } from "../../models/update-password-model";
 import { Configuration } from "../../configuration/configuration";
+import { CacheService } from "../../services/cache.service";
 
 @Component({
     templateUrl: 'account.html'
@@ -29,7 +30,8 @@ export class AccountComponent {
         private leaderService: LeaderService,
         private modalCtrl: ModalController,
         private alertHelper: AlertHelper,
-        private helperService: HelperService) {
+        private helperService: HelperService,
+        private cacheService: CacheService) {
             let id = this.mainService.currentUser.user_id;
             this.userService.get(id).subscribe(data => {
                 this.response = data.json();
@@ -42,6 +44,8 @@ export class AccountComponent {
                 this.settings.forEach(element => {
                     element.value = element.settingValue == 'true'
                 });
+            }, error => {
+                this.helperService.presentToastMessage(Configuration.ErrorMessage);
             });
     }
 
@@ -76,14 +80,22 @@ export class AccountComponent {
 
     public changeSetting(setting:SettingModel): void {
         setting.settingValue = setting.value ? 'true' : 'false';
-        this.userService.updateSetting(this.model.userID, setting).subscribe();
+        this.userService.updateSetting(this.model.userID, setting).subscribe(data => {}
+        , error => {
+            console.log(error);
+        });
     }
 
     public logout(): void {
         localStorage.clear();
+        this.cacheService.clearAll();
         //TODO: remove tags from one signal
         let counter:number = this.navCtrl.length() - 1;
         this.navCtrl.remove(0, counter);
         this.navCtrl.setRoot(HomePage);
+    }
+
+    public filter(option: string): void {
+        this.selected = option;
     }
 }

@@ -108,6 +108,8 @@ export class ActionsPage {
 
           let index = this.mainService.users.indexOf(user);
           this.mainService.users.splice(index, 1);
+        }, error => {
+          console.log(error);
         })
       });
   }
@@ -129,6 +131,8 @@ export class ActionsPage {
 
           let index = this.mainService.projects.indexOf(project);
           this.mainService.projects.splice(index, 1);
+        }, error => {
+          console.log(error);
         });
       });
   }

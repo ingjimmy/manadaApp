@@ -8,35 +8,66 @@ import { ProjectFilter } from "../filters/project-filter";
 import { ActionFilter } from "../filters/action-filter";
 import { TokenModel } from "../models/token-model";
 import { FileFilter } from "../filters/file-filter";
+import { SyncModel } from "../models/sync-model";
+import { SyncEnum } from "../enums/sync-enum";
+import { CacheService } from "./cache.service";
 
 @Injectable()
 export class MainService {
   public currentUser: TokenModel;
-  public users:Array<any> = [];
-  public projects:Array<any> = [];
-  public actions:Array<any> = [];
-  public filterDocuments:any = {};
-  public selectUser:any = {};
-  public editUser:any = {};
-  public editProject:any = {};
-  public projectRaw:any = {};
-  public files:Array<any> = [];
+  public users: Array<any> = [];
+  public projects: Array<any> = [];
+  public actions: Array<any> = [];
+  public filterDocuments: any = {};
+  public selectUser: any = {};
+  public editUser: any = {};
+  public editProject: any = {};
+  public projectRaw: any = {};
+  public files: Array<any> = [];
   public selected: string = 'active';
   public userFilter: UserFilter = new UserFilter();
   public projectFilter: ProjectFilter = new ProjectFilter();
   public actionFilter: ActionFilter = new ActionFilter();
   public fileFilter: FileFilter = new FileFilter();
   public title: string = 'All Actions';
-  public viewDocument:boolean = false;
+  public viewDocument: boolean = false;
   public countAll: number = 0;
+  public intervalSync: any;
+  public syncArray: Array<SyncModel> = new Array<SyncModel>();
 
   constructor(
     private userService: UserService,
     private projectService: ProjectService,
-    private actionService: ActionService) {
+    private actionService: ActionService,
+    private cacheService: CacheService) {
     this.userFilter.enableCounters = true;
     this.projectFilter.enableCounters = true;
     this.actionFilter.status = 'active';
+    this.intervalSync = setInterval(() => {
+      this.syncUp();
+    }, 60000);
+  }
+
+  public syncUp() {
+    this.cacheService.getItem('sync-key').then(data => {
+      this.syncArray = data;
+      if (this.syncArray.length > 0 && this.cacheService.isOnline()) {
+        this.syncArray.forEach(element => {
+          if (element.type == SyncEnum.creation) {
+            this.actionService.add(element.data).subscribe(result => {
+              let action = result.json();
+              this.updateMenuItems(action);
+              this.actionService.addLocalAction(action, 'active');
+
+              let index = this.syncArray.indexOf(element);
+              this.syncArray.splice(index, 1);
+
+              this.cacheService.saveItem('sync-key', this.syncArray);
+            }, error => console.log(error));
+          }
+        });
+      }
+    }).catch(error => { console.log(error) });
   }
 
   public bindUsers(): void {
@@ -53,23 +84,24 @@ export class MainService {
     }, err => { console.log(err); })
   }
 
-  public bindActions(call?:(enabled:boolean) => void): void {
+  public bindActions(call?: (enabled: boolean) => void): void {
     this.actionService.getAll(this.actionFilter).subscribe(resp => {
       let response: IResult = resp;
+
       if (this.actionFilter.page == 0) {
         this.actions = [];
       }
-      
+
       response.results.forEach(element => {
         this.actions.push(element);
       });
-      
+
       this.actionFilter.hasNextPage = response.hasNextPage;
 
       if (call != null) {
         call.call(null, response.hasNextPage);
       }
-    })
+    }, err => { console.log(err); })
   }
 
   public bindCountActions(): void {
@@ -79,14 +111,14 @@ export class MainService {
       this.projects.forEach(element => {
         countByProject += element.countActions;
       });
-      
+
       this.projectRaw = {
         projectID: 0,
         name: 'Raw',
         countActions: this.countAll - countByProject,
         countUpdates: 0
       };
-    })
+    }, err => { console.log(err); })
   }
 
   public bind(call?: () => void): void {
@@ -101,7 +133,12 @@ export class MainService {
       if (call != null) {
         call.call(null);
       }
-    }, err => { console.log(err); })
+    }, err => {
+      console.log(err);
+      if (call != null) {
+        call.call(null);
+      }
+    });
   }
 
   public displayUserOption(event, user: any): void {
@@ -137,5 +174,38 @@ export class MainService {
 
   displayChangeColor(event, action) {
 
+  }
+
+  updateMenuItems(action: any) {
+    let push: boolean = false;
+
+    if (action.assignedUsers.length > 0) {
+      for (let index = 0; index < action.assignedUsers.length; index++) {
+        let user = this.users.find(t => t.userID == action.assignedUsers[index].userID);
+        user.countActiveActions++;
+
+        if (user.userID == this.actionFilter.userID) {
+          push = true;
+        }
+      }
+    }
+
+    if (action.projects.length > 0) {
+      let project = this.projects.find(t => t.projectID == action.projects[0].projectID);
+      project.countActions++;
+
+      if (project.projectID == this.actionFilter.projectID) {
+        push = true;
+      }
+    }
+
+    if (this.actionFilter.userID == null && this.actionFilter.projectID == null) {
+      push = true;
+    }
+
+    if (push) {
+      this.actions.unshift(action);
+      this.countAll++;
+    }
   }
 }

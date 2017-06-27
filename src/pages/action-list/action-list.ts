@@ -23,7 +23,7 @@ export class ActionListComponent {
     @ViewChild(InfiniteScroll) infiniteScroll: InfiniteScroll;
     public rootPath: string;
     public enableSearch: boolean = false;
-    public intervalSearch: any = null;    
+    public intervalSearch: any = null;
     constructor(
         public mainService: MainService,
         private actionService: ActionService,
@@ -71,7 +71,7 @@ export class ActionListComponent {
                 }
             });
         }, error => {
-            
+            console.log(error);
         });
     }
 
@@ -91,12 +91,22 @@ export class ActionListComponent {
         model.status = model.status == 0 ? 1 : 0;
 
         action.remove = true;
-        setTimeout(() => {
-            let index = this.mainService.actions.indexOf(action);
-            this.mainService.actions.splice(index, 1);
-        }, 500);
 
         this.actionService.changeStatus(model).subscribe(data => {
+            setTimeout(() => {
+                let index = this.mainService.actions.indexOf(action);
+                this.mainService.actions.splice(index, 1);
+                
+                action.status = model.status;
+                action.remove = false;
+
+                let statusRemove = action.status == 0 ? 'ended' : 'active';
+                let statusAdd = action.status == 0 ? 'active' : 'ended';
+
+                this.actionService.addLocalAction(action, statusAdd);
+                this.actionService.removeLocalAction(action, statusRemove);                
+            }, 500);
+
             let add = action.status === 0 ? -1 : 1;
 
             this.mainService.countAll += add;
@@ -175,11 +185,11 @@ export class ActionListComponent {
                 setTimeout(() => {
                     let index = this.mainService.actions.indexOf(action);
                     this.mainService.actions.splice(index, 1);
+
+                    this.actionService.removeLocalAction(action, 'ended');
                 }, 500);
 
-                this.actionService.delete(action.actionID).subscribe(data => {
-
-                }, error => {
+                this.actionService.delete(action.actionID).subscribe(data => { }, error => {
                     console.log(error);
                 });
             }
@@ -235,10 +245,12 @@ export class ActionListComponent {
     }
 
     public doRefresh(refresher: any): void {
-        this.cache.clearAll();
-        this.mainService.bind(() => {
-            refresher.complete();
-        });
+        this.cache.clearGroup(`${Configuration.UrlApi}/actions`).then(t => {
+            this.mainService.bind(() => {
+                this.mainService.syncUp();
+                refresher.complete();
+            });
+        }).catch(error => { console.log(error) });
     }
 
     public openPicture(file: any): void {
@@ -247,5 +259,9 @@ export class ActionListComponent {
 
     public openFile(file: any): void {
         this.browserTab.openUrl(this.rootPath + file.path);
+    }
+
+    public trackByFn(index, item): void {
+        return item.actionID;
     }
 }

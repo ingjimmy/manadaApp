@@ -8,6 +8,9 @@ import { Configuration } from "../../configuration/configuration";
 import { CameraHelper } from "../../helpers/camera-helper";
 import { AlertHelper } from "../../helpers/alert-helper";
 import * as moment from 'moment';
+import { SyncModel } from "../../models/sync-model";
+import { SyncEnum } from "../../enums/sync-enum";
+import { CacheService } from "../../services/cache.service";
 
 @Component({
     templateUrl: 'action-crud.html'
@@ -38,7 +41,8 @@ export class ActionCrudComponent {
         private keyboard: Keyboard,
         public renderer: Renderer,
         private cameraHelper: CameraHelper,
-        private helperService: HelperService) {
+        private helperService: HelperService,
+        private cacheService: CacheService) {
         this.rootPath = Configuration.Url;
 
         this.updateAction = params.get('action');
@@ -111,12 +115,12 @@ export class ActionCrudComponent {
             if (this.model.actionID != null) {
                 this.actionService.update(this.model).subscribe(data => {
                     var result = data.json();
-                    
+
                     let call = this.params.get('call');
                     if (call != undefined) {
                         call.call(null, this.model);
                     }
-                    
+
                     let act = this.mainService.actions.find(t => t.actionID == this.model.actionID);
                     result.color = act.color;
                     this.actionService.updateLocalAction(result, true);
@@ -124,59 +128,43 @@ export class ActionCrudComponent {
                     this.mainService.actions.splice(index, 1);
                     this.mainService.actions.splice(0, 0, result);
                     this.dismiss();
-                    this.isBusy = false;                    
+                    this.isBusy = false;
                 }, error => {
                     this.dismiss();
                     this.isBusy = false;
                     this.helperService.presentToastMessage(Configuration.ErrorMessage);
                 });
             } else {
-                this.actionService.add(this.model).subscribe(data => {
-                    this.isBusy = false;
-                    let result = data.json();
-                    this.model.actionID = result.actionID;
-                    this.showAnimate = true;
-                    this.keyboard.close();
+                let item: SyncModel = new SyncModel();
+                item.date = new Date();
+                item.data = this.model;
+                item.type = SyncEnum.creation;
 
-                    let push: boolean = false;
-
-                    if (result.assignedUsers.length > 0) {
-                        for (let index = 0; index < result.assignedUsers.length; index++) {
-                            let user = this.mainService.users.find(t => t.userID == result.assignedUsers[index].userID);
-                            user.countActiveActions++;
-
-                            if (user.userID == this.mainService.actionFilter.userID) {
-                                push = true;
-                            }
-                        }
-                    }
-
-                    if (result.projects.length > 0) {
-                        let project = this.mainService.projects.find(t => t.projectID == result.projects[0].projectID);
-                        project.countActions++;
-
-                        if (project.projectID == this.mainService.actionFilter.projectID) {
-                            push = true;
-                        }
-                    }
-
-                    if (this.mainService.actionFilter.userID == null && this.mainService.actionFilter.projectID == null) {
-                        push = true;
-                    }
-
-                    if (push) {
-                        this.mainService.actions.unshift(result);
-                        this.mainService.countAll++;
-                    }
-                    setTimeout(() => {
-                        this.dismiss();
-                    }, 1700);
-
-                }, error => {
-                    this.isBusy = false;
-                    this.helperService.presentToastMessage(Configuration.ErrorMessage);
+                if (!this.cacheService.isOnline()) {
+                    this.mainService.syncArray.push(item);
+                    this.cacheService.saveItem('sync-key', this.mainService.syncArray);
                     this.dismiss();
-                });
+                } else {
+                    this.actionService.add(this.model).subscribe(data => {
+                        this.isBusy = false;
+                        let result = data.json();
+                        this.model.actionID = result.actionID;
+                        this.showAnimate = true;
+                        this.keyboard.close();
+
+                        this.mainService.updateMenuItems(result);
+                        this.actionService.addLocalAction(result, 'active');
+
+                        setTimeout(() => {
+                            this.dismiss();
+                        }, 1700);
+
+                    }, error => {
+                        this.isBusy = false;
+                        this.helperService.presentToastMessage(Configuration.ErrorMessage);
+                        this.dismiss();
+                    });
+                }
             }
         } else {
             this.alertHelper.alert('The action description is required');
@@ -240,13 +228,17 @@ export class ActionCrudComponent {
     }
 
     public attach(event): void {
-        let countFiles = this.model.files.filter(e => { return e.fileID == 0; }).length;
-        if (countFiles < 4) {
-            this.cameraHelper.takeFromDevice((file) => {
-                this.model.files.push(file);
-            });
+        if (this.cacheService.isOnline()) {
+            let countFiles = this.model.files.filter(e => { return e.fileID == 0; }).length;
+            if (countFiles < 4) {
+                this.cameraHelper.takeFromDevice((file) => {
+                    this.model.files.push(file);
+                });
+            } else {
+                this.alertHelper.alert('The max number of files to upload is 4');
+            }
         } else {
-            this.alertHelper.alert('The max number of files to upload is 4');
+            this.helperService.presentToastMessage(Configuration.ErrorMessage);
         }
     }
 

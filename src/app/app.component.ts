@@ -55,7 +55,13 @@ export class MyApp {
       });
       this.oneSignal.endInit();
 
-      this.statusBar.styleDefault();
+      if (this.platform.is('ios')) {
+        this.statusBar.backgroundColorByHexString('#fff');
+        this.statusBar.overlaysWebView(true);
+      } else {
+        this.statusBar.styleDefault();
+      }      
+      
       this.splashScreen.hide();
       this.keyboard.disableScroll(true);
     });

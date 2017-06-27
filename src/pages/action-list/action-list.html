@@ -43,7 +43,18 @@
     </ion-card>
   </div>
   <ion-list no-lines *ngIf="!mainService.viewDocument">
-    <ion-item-sliding #item *ngFor="let action of mainService.actions" [ngClass]="{'custom-list-h': true,  'remove-item': action.remove}">
+      <button *ngFor="let actionLocal of mainService.syncArray" type="button" class="primary-button custom-trash-action" ion-item detail-none>
+        <div class="color-bar tag{{actionLocal.data.color}}"></div>
+        <div class="list-button">          
+          <h2>{{actionLocal.data.subject}}</h2> 
+        <p>
+          <span class="users" *ngFor="let user of actionLocal.data.assignedUsers"><ion-icon name="icon-user"></ion-icon> {{ user.names }}</span>
+          <span class="users" *ngFor="let project of actionLocal.data.projects">{{ project.name }}</span>
+        </p>
+        </div>
+        <ion-note class="custom-ion-note" *ngIf="actionLocal.data.dueDate != undefined" item-end [innerHtml]="actionLocal.data.dueDate | dateColor"></ion-note>         
+      </button>
+    <ion-item-sliding #item *ngFor="let action of mainService.actions; trackBy:trackByFn" [ngClass]="{'custom-list-h': true,  'remove-item': action.remove}">
       <button type="button" class="primary-button" ion-item detail-none (click)="detail(action)">
         <div class="color-bar tag{{action.color}}"></div>
         <div class="list-button">          
