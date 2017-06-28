@@ -64,8 +64,7 @@ import { FormatDatePipe } from '../pipes/format-date/format-date';
         ios: {
           scrollAssist: false, 
           autoFocusAssist: false,
-          inputBlurring: false,
-          statusbarPadding: false
+          inputBlurring: false
         }
     }),
     IonicStorageModule.forRoot({
