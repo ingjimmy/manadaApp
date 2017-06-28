@@ -1,3 +1,4 @@
+import { OneSignal } from '@ionic-native/onesignal';
 import { Component } from '@angular/core';
 import { UserModel } from "../../models/user-model";
 import { MainService, UserService, HelperService } from "../../services/index";
@@ -31,7 +32,8 @@ export class AccountComponent {
         private modalCtrl: ModalController,
         private alertHelper: AlertHelper,
         private helperService: HelperService,
-        private cacheService: CacheService) {
+        private cacheService: CacheService,
+        private oneSignal: OneSignal) {
             let id = this.mainService.currentUser.user_id;
             this.userService.get(id).subscribe(data => {
                 this.response = data.json();
@@ -89,7 +91,7 @@ export class AccountComponent {
     public logout(): void {
         localStorage.clear();
         this.cacheService.clearAll();
-        //TODO: remove tags from one signal
+        this.oneSignal.deleteTag('user_id');
         let counter:number = this.navCtrl.length() - 1;
         this.navCtrl.remove(0, counter);
         this.navCtrl.setRoot(HomePage);

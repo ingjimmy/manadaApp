@@ -30,12 +30,15 @@
     line-height: 1.7;
     font-size: 14px;
     margin-right: 5px;
+    margin-bottom: 5px;
+    float: left;
   }
 
   input {
     border:none;
     padding: 3px;
     font-size: 14px;
+    max-width: 120px;
   }
 }
 .custom-list-users {

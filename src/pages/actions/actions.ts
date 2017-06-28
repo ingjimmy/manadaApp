@@ -2,10 +2,12 @@ import { AccountComponent } from './../account/account';
 import { Component } from '@angular/core';
 import { MenuController, ModalController, ItemSliding } from 'ionic-angular';
 import { ActionListComponent } from "../action-list/action-list";
-import { MainService, UserService, ProjectService } from './../../services/index';
+import { MainService, UserService, ProjectService, HelperService } from './../../services/index';
 import { UserCrudComponent } from "../user-crud/user-crud";
 import { ProjectCrudComponent } from "../project-crud/project-crud";
 import { AlertHelper } from "../../helpers/alert-helper";
+import { CacheService } from "../../services/cache.service";
+import { Configuration } from "../../configuration/configuration";
 
 @Component({
   selector: 'page-actions',
@@ -20,7 +22,9 @@ export class ActionsPage {
     private modalCtrl: ModalController,
     private userSevice: UserService,
     private projectSevice: ProjectService,
-    private alertHelper: AlertHelper) {
+    private alertHelper: AlertHelper,
+    private helperService: HelperService,
+    private cacheService: CacheService) {
     this.mainService.bind();
   }
 
@@ -77,10 +81,6 @@ export class ActionsPage {
     this.menuCtrl.close();
   }
 
-  newAction() {
-
-  }
-
   public addUser(): void {
     this.menuCtrl.close();
     let modal = this.modalCtrl.create(UserCrudComponent);
@@ -95,46 +95,54 @@ export class ActionsPage {
 
   public removeUser(user: any, item: ItemSliding): void {
     item.close();
-    this.alertHelper.confirm(
-      '¿Are you sure to delete the action?',
-      () => {
-        this.userSevice.delete(user.userID).subscribe(data => {
-          if (this.mainService.actionFilter.userID == user.userID) {
-            this.mainService.actionFilter.userID = null;
-            this.mainService.actionFilter.page = 0;
-            this.mainService.title = 'All Actions';
-            this.mainService.bindActions();
-          }
+    if (this.cacheService.isOnline()) {
+      this.alertHelper.confirm(
+        '¿Are you sure to delete the action?',
+        () => {
+          this.userSevice.delete(user.userID).subscribe(data => {
+            if (this.mainService.actionFilter.userID == user.userID) {
+              this.mainService.actionFilter.userID = null;
+              this.mainService.actionFilter.page = 0;
+              this.mainService.title = 'All Actions';
+              this.mainService.bindActions();
+            }
 
-          let index = this.mainService.users.indexOf(user);
-          this.mainService.users.splice(index, 1);
-        }, error => {
-          console.log(error);
-        })
-      });
+            let index = this.mainService.users.indexOf(user);
+            this.mainService.users.splice(index, 1);
+          }, error => {
+            console.log(error);
+          })
+        });
+    } else {
+      this.helperService.presentToastMessage(Configuration.ErrorMessage);
+    }
   }
 
   public removeProject(project: any, item: ItemSliding): void {
     item.close();
-    this.alertHelper.confirm(
-      '¿Are you sure to delete the project?',
-      () => {
-        this.projectSevice.delete(project.projectID).subscribe(data => {
-          if (this.mainService.actionFilter.projectID == project.projectID) {
-            this.mainService.actionFilter.projectID = null;
-            this.mainService.actionFilter.page = 0;
-            this.mainService.title = 'All Actions';
-            this.mainService.bindActions();
-          }
+    if (this.cacheService.isOnline()) {
+      this.alertHelper.confirm(
+        '¿Are you sure to delete the project?',
+        () => {
+          this.projectSevice.delete(project.projectID).subscribe(data => {
+            if (this.mainService.actionFilter.projectID == project.projectID) {
+              this.mainService.actionFilter.projectID = null;
+              this.mainService.actionFilter.page = 0;
+              this.mainService.title = 'All Actions';
+              this.mainService.bindActions();
+            }
 
-          this.mainService.projectRaw.countActions += project.countActions;
+            this.mainService.projectRaw.countActions += project.countActions;
 
-          let index = this.mainService.projects.indexOf(project);
-          this.mainService.projects.splice(index, 1);
-        }, error => {
-          console.log(error);
+            let index = this.mainService.projects.indexOf(project);
+            this.mainService.projects.splice(index, 1);
+          }, error => {
+            console.log(error);
+          });
         });
-      });
+    } else {
+      this.helperService.presentToastMessage(Configuration.ErrorMessage);
+    }
   }
 
   public editUser(user: any, item: ItemSliding): void {

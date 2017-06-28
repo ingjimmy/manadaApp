@@ -142,7 +142,7 @@ export class ActionCrudComponent {
 
                 if (!this.cacheService.isOnline()) {
                     this.mainService.syncArray.push(item);
-                    this.cacheService.saveItem('sync-key', this.mainService.syncArray);
+                    this.cacheService.saveItem('sync-key', this.mainService.syncArray, null, Configuration.MinutesInMonth);
                     this.dismiss();
                 } else {
                     this.actionService.add(this.model).subscribe(data => {
@@ -222,8 +222,8 @@ export class ActionCrudComponent {
     }
 
     public removeLastProject(event): void {
-        if (event.keyCode == 8 && (this.projectname == '' || this.projectname == undefined) && this.model.assignedUsers.length > 0) {
-            this.model.assignedUsers.splice(this.model.assignedUsers.length - 1, 1);
+        if (event.keyCode == 8 && (this.projectname == '' || this.projectname == undefined) && this.model.projects.length > 0) {
+            this.model.projects.splice(this.model.projects.length - 1, 1);
         }
     }
 

@@ -3,7 +3,7 @@ import { IResult } from './../../models/IResult';
 import { NavParams, Platform, Content, ActionSheetController, InfiniteScroll, Footer, ModalController, NavController } from 'ionic-angular';
 import { Component, ViewChild, Renderer } from '@angular/core';
 import { ActionModel } from "../../models/action-model";
-import { ActionService, CommentService, MainService } from "../../services/index";
+import { ActionService, CommentService, MainService, HelperService } from "../../services/index";
 import { CommentModel } from "../../models/comment-model";
 import { CommentFilter } from "../../filters/comment-filter";
 import { Keyboard } from '@ionic-native/keyboard';
@@ -15,6 +15,7 @@ import { AlertHelper } from "../../helpers/alert-helper";
 import { ActionCrudComponent } from "../action-crud/action-crud";
 import { ActionSheetModel } from "../../models/action-sheet-model";
 import { CustomActionSheetComponent } from "../../components/custom-action-sheet";
+import { CacheService } from "../../services/cache.service";
 
 @Component({
     templateUrl: 'action-detail.html'
@@ -46,7 +47,9 @@ export class ActionDetailComponent {
         private cameraHelper: CameraHelper,
         private alertHelper: AlertHelper,
         public mainService: MainService,
-        private navCtrl: NavController) {
+        private navCtrl: NavController,
+        private cacheService: CacheService,
+        private helperService: HelperService) {
         this.rootPath = Configuration.Url;
         this.model = params.get('action');
         this.model.files = [];
@@ -111,6 +114,9 @@ export class ActionDetailComponent {
                 call.call(null);
             }
         }, error => {
+            if (call != null) {
+                call.call(null);
+            }
             console.log(error);
         })
     }
@@ -137,35 +143,45 @@ export class ActionDetailComponent {
 
     public files(event: Event): void {
         event.preventDefault();
-        this.cameraHelper.takeFromDevice((file) => {
-            this.comment.files.push(file);
-        });
+        if (this.cacheService.isOnline()) {
+            this.cameraHelper.takeFromDevice((file) => {
+                this.comment.files.push(file);
+            });
+        } else {
+            this.helperService.presentToastMessage(Configuration.ErrorMessage);
+        }
+
     }
 
     public send(event: Event): void {
         event.preventDefault();
         document.getElementById('commentinput').focus();
-        if (this.comment.content != '' || this.comment.files.length > 0) {
-            this.comment.actionID = this.model.actionID;
-            this.commentService.add(this.comment).subscribe(data => {
-                let result = data.json();
-                this.totalComments += 1;
-                result.index = this.totalComments + 1;
-                result.comments = [];
-                this.comments.push(result);
-                this.comment = new CommentModel();
-                let dimension = this.content.getContentDimensions();
-                this.content.scrollTo(0, dimension.scrollHeight);
+        if (this.cacheService.isOnline()) {
+            if (this.comment.content != '' || this.comment.files.length > 0) {
+                this.comment.actionID = this.model.actionID;
+                this.commentService.add(this.comment).subscribe(data => {
+                    let result = data.json();
+                    this.totalComments += 1;
+                    result.index = this.totalComments + 1;
+                    result.comments = [];
+                    this.comments.push(result);
+                    this.comment = new CommentModel();
+                    let dimension = this.content.getContentDimensions();
+                    this.content.scrollTo(0, dimension.scrollHeight);
 
-                let action = this.mainService.actions.find(t => t.actionID == this.model.actionID);
-                if (action != undefined) {
-                    let actionIndex = this.mainService.actions.indexOf(action);
-                    this.mainService.actions.splice(actionIndex, 1);
-                    this.mainService.actions.splice(0, 0, action);
-                }
-            }, error => {
-                console.log(error);
-            })
+                    let action = this.mainService.actions.find(t => t.actionID == this.model.actionID);
+                    if (action != undefined) {
+                        this.actionService.updateLocalAction(action, true);
+                        let actionIndex = this.mainService.actions.indexOf(action);
+                        this.mainService.actions.splice(actionIndex, 1);
+                        this.mainService.actions.splice(0, 0, action);
+                    }
+                }, error => {
+                    console.log(error);
+                })
+            }
+        } else {
+            this.helperService.presentToastMessage(Configuration.ErrorMessage);
         }
     }
 
@@ -276,7 +292,7 @@ export class ActionDetailComponent {
                                     }
                                 }
                             }, error => {
-                                console.log(error);
+                                this.helperService.presentToastMessage(Configuration.ErrorMessage);
                             });
                         }
                     )
@@ -310,60 +326,64 @@ export class ActionDetailComponent {
     }
 
     public changeStatus(): void {
-        this.model.status = this.model.status == 0 ? 1 : 0;
-        this.showAnimate = this.model.status == 1;
+        if (this.cacheService.isOnline()) {
+            this.model.status = this.model.status == 0 ? 1 : 0;
+            this.showAnimate = this.model.status == 1;
 
-        let statusRemove = this.model.status == 0 ? 'ended' : 'active';
-        let statusAdd = this.model.status == 0 ? 'active' : 'ended';
+            let statusRemove = this.model.status == 0 ? 'ended' : 'active';
+            let statusAdd = this.model.status == 0 ? 'active' : 'ended';
 
-        this.actionService.addLocalAction(this.model, statusAdd);
-        this.actionService.removeLocalAction(this.model, statusRemove);
+            this.actionService.addLocalAction(this.model, statusAdd);
+            this.actionService.removeLocalAction(this.model, statusRemove);
 
-        this.actionService.changeStatus(this.model).subscribe(data => {
-            let add = this.model.status === 1 ? -1 : 1;
-            this.mainService.countAll += add;
+            this.actionService.changeStatus(this.model).subscribe(data => {
+                let add = this.model.status === 1 ? -1 : 1;
+                this.mainService.countAll += add;
 
-            if (this.model.assignedUsers.length > 0) {
-                for (let i = 0; i < this.model.assignedUsers.length; i++) {
-                    let user = this.mainService.users.find(t => t.userID == this.model.assignedUsers[i].userID);
-                    if (user != null) {
-                        user.countActiveActions += add;
+                if (this.model.assignedUsers.length > 0) {
+                    for (let i = 0; i < this.model.assignedUsers.length; i++) {
+                        let user = this.mainService.users.find(t => t.userID == this.model.assignedUsers[i].userID);
+                        if (user != null) {
+                            user.countActiveActions += add;
+                        }
+                    }
+                } else {
+                    this.mainService.users[0].countActiveActions += add;
+                }
+
+                if (this.model.projects.length > 0) {
+                    for (var i = 0; i < this.model.projects.length; i++) {
+                        let project = this.mainService.projects.find(t => t.projectID == this.model.projects[i].projectID);
+                        if (project) {
+                            project.countActions += add;
+                        }
                     }
                 }
-            } else {
-                this.mainService.users[0].countActiveActions += add;
-            }
 
-            if (this.model.projects.length > 0) {
-                for (var i = 0; i < this.model.projects.length; i++) {
-                    let project = this.mainService.projects.find(t => t.projectID == this.model.projects[i].projectID);
-                    if (project) {
-                        project.countActions += add;
-                    }
+                let countByProject = 0;
+                for (let i = 0; i < this.mainService.projects.length; i++) {
+                    countByProject += this.mainService.projects[i].countActions;
                 }
-            }
 
-            let countByProject = 0;
-            for (let i = 0; i < this.mainService.projects.length; i++) {
-                countByProject += this.mainService.projects[i].countActions;
-            }
+                let action = this.mainService.actions.find(t => t.actionID == this.model.actionID);
+                if (action != undefined) {
+                    let index = this.mainService.actions.indexOf(action);
+                    this.mainService.actions.splice(index, 1);
+                }
 
-            let action = this.mainService.actions.find(t => t.actionID == this.model.actionID);
-            if (action != undefined) {
-                let index = this.mainService.actions.indexOf(action);
-                this.mainService.actions.splice(index, 1);
-            }
-
-            this.mainService.projectRaw.countActions = this.mainService.countAll - countByProject;
-            if (this.showAnimate) {
-                setTimeout(() => {
+                this.mainService.projectRaw.countActions = this.mainService.countAll - countByProject;
+                if (this.showAnimate) {
+                    setTimeout(() => {
+                        this.navCtrl.pop();
+                    }, 1200);
+                } else {
                     this.navCtrl.pop();
-                }, 1200);
-            } else {
-                this.navCtrl.pop();
-            }
-        }, error => {
-            console.log(error);
-        });
+                }
+            }, error => {
+                console.log(error);
+            });
+        } else {
+            this.helperService.presentToastMessage(Configuration.ErrorMessage);
+        }
     }
 }

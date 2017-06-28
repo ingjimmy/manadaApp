@@ -6,7 +6,7 @@ import { Component, ViewChild } from '@angular/core';
 import { ItemSliding } from 'ionic-angular';
 import { ModalController, NavController, InfiniteScroll } from "ionic-angular";
 import { ProjectListPage } from "../project-list/project-list";
-import { FileService } from "../../services/index";
+import { FileService, HelperService } from "../../services/index";
 import { ActionCrudComponent } from "../action-crud/action-crud";
 import { ActionDetailComponent } from "../action-detail/action-detail";
 import { AlertHelper } from "../../helpers/alert-helper";
@@ -33,7 +33,8 @@ export class ActionListComponent {
         private alertHelper: AlertHelper,
         public photoViewer: PhotoViewer,
         private browserTab: BrowserTab,
-        private cache: CacheService) {
+        private cacheService: CacheService,
+        private helperService: HelperService) {
         this.rootPath = Configuration.Url;
     }
 
@@ -59,20 +60,24 @@ export class ActionListComponent {
     }
 
     public bindDocuments(call?: (hasNextPage: boolean) => void): void {
-        this.fileService.getAll(this.mainService.fileFilter).subscribe(resp => {
-            let response: IResult = resp.json();
-            response.results.forEach(element => {
-                element.img = `${Configuration.Url}${element.path}`;
-                this.mainService.files.push(element);
-                this.mainService.fileFilter.hasNextPage = response.hasNextPage;
+        if (this.cacheService.isOnline()) {
+            this.fileService.getAll(this.mainService.fileFilter).subscribe(resp => {
+                let response: IResult = resp.json();
+                response.results.forEach(element => {
+                    element.img = `${Configuration.Url}${element.path}`;
+                    this.mainService.files.push(element);
+                    this.mainService.fileFilter.hasNextPage = response.hasNextPage;
 
-                if (call != null) {
-                    call.call(null, response.hasNextPage);
-                }
+                    if (call != null) {
+                        call.call(null, response.hasNextPage);
+                    }
+                });
+            }, error => {
+                console.log(error);
             });
-        }, error => {
-            console.log(error);
-        });
+        } else {
+            this.helperService.presentToastMessage(Configuration.ErrorMessage);
+        }
     }
 
     public newAction(): void {
@@ -85,61 +90,65 @@ export class ActionListComponent {
     }
 
     public done(action: any): void {
-        let model: any = {};
-        model.actionID = action.actionID;
-        model.status = action.status;
-        model.status = model.status == 0 ? 1 : 0;
+        if (this.cacheService.isOnline()) {
+            let model: any = {};
+            model.actionID = action.actionID;
+            model.status = action.status;
+            model.status = model.status == 0 ? 1 : 0;
 
-        action.remove = true;
+            action.remove = true;
 
-        this.actionService.changeStatus(model).subscribe(data => {
-            setTimeout(() => {
-                let index = this.mainService.actions.indexOf(action);
-                this.mainService.actions.splice(index, 1);
-                
-                action.status = model.status;
-                action.remove = false;
+            this.actionService.changeStatus(model).subscribe(data => {
+                setTimeout(() => {
+                    let index = this.mainService.actions.indexOf(action);
+                    this.mainService.actions.splice(index, 1);
 
-                let statusRemove = action.status == 0 ? 'ended' : 'active';
-                let statusAdd = action.status == 0 ? 'active' : 'ended';
+                    action.status = model.status;
+                    action.remove = false;
 
-                this.actionService.addLocalAction(action, statusAdd);
-                this.actionService.removeLocalAction(action, statusRemove);                
-            }, 500);
+                    let statusRemove = action.status == 0 ? 'ended' : 'active';
+                    let statusAdd = action.status == 0 ? 'active' : 'ended';
 
-            let add = action.status === 0 ? -1 : 1;
+                    this.actionService.addLocalAction(action, statusAdd);
+                    this.actionService.removeLocalAction(action, statusRemove);
+                }, 500);
 
-            this.mainService.countAll += add;
+                let add = action.status === 0 ? -1 : 1;
 
-            if (action.assignedUsers.length > 0) {
-                for (let i = 0; i < action.assignedUsers.length; i++) {
-                    let user = this.mainService.users.find(t => t.userID == action.assignedUsers[i].userID);
-                    if (user != null) {
-                        user.countActiveActions += add;
+                this.mainService.countAll += add;
+
+                if (action.assignedUsers.length > 0) {
+                    for (let i = 0; i < action.assignedUsers.length; i++) {
+                        let user = this.mainService.users.find(t => t.userID == action.assignedUsers[i].userID);
+                        if (user != null) {
+                            user.countActiveActions += add;
+                        }
+                    }
+                } else {
+                    this.mainService.users[0].countActiveActions += add;
+                }
+
+                if (action.projects.length > 0) {
+                    for (var i = 0; i < action.projects.length; i++) {
+                        let project = this.mainService.projects.find(t => t.projectID == action.projects[i].projectID);
+                        if (project) {
+                            project.countActions += add;
+                        }
                     }
                 }
-            } else {
-                this.mainService.users[0].countActiveActions += add;
-            }
 
-            if (action.projects.length > 0) {
-                for (var i = 0; i < action.projects.length; i++) {
-                    let project = this.mainService.projects.find(t => t.projectID == action.projects[i].projectID);
-                    if (project) {
-                        project.countActions += add;
-                    }
+                let countByProject = 0;
+                for (let i = 0; i < this.mainService.projects.length; i++) {
+                    countByProject += this.mainService.projects[i].countActions;
                 }
-            }
 
-            let countByProject = 0;
-            for (let i = 0; i < this.mainService.projects.length; i++) {
-                countByProject += this.mainService.projects[i].countActions;
-            }
-
-            this.mainService.projectRaw.countActions = this.mainService.countAll - countByProject;
-        }, error => {
-            console.log(error);
-        });
+                this.mainService.projectRaw.countActions = this.mainService.countAll - countByProject;
+            }, error => {
+                console.log(error);
+            });
+        } else {
+            this.helperService.presentToastMessage(Configuration.ErrorMessage);
+        }
     }
 
     public openmenu(action: any, slidingItem: ItemSliding): void {
@@ -178,22 +187,26 @@ export class ActionListComponent {
     }
 
     public remove(action: any): void {
-        this.alertHelper.confirm(
-            '¿Are you sure to delete the action?',
-            () => {
-                action.remove = true;
-                setTimeout(() => {
-                    let index = this.mainService.actions.indexOf(action);
-                    this.mainService.actions.splice(index, 1);
+        if (this.cacheService.isOnline()) {
+            this.alertHelper.confirm(
+                '¿Are you sure to delete the action?',
+                () => {
+                    action.remove = true;
+                    setTimeout(() => {
+                        let index = this.mainService.actions.indexOf(action);
+                        this.mainService.actions.splice(index, 1);
 
-                    this.actionService.removeLocalAction(action, 'ended');
-                }, 500);
+                        this.actionService.removeLocalAction(action, 'ended');
+                    }, 500);
 
-                this.actionService.delete(action.actionID).subscribe(data => { }, error => {
-                    console.log(error);
-                });
-            }
-        );
+                    this.actionService.delete(action.actionID).subscribe(data => { }, error => {
+                        console.log(error);
+                    });
+                }
+            );
+        } else {
+            this.helperService.presentToastMessage(Configuration.ErrorMessage);
+        }
     }
 
     public openListProjects(action: any, modalCtrl: ModalController): void {
@@ -245,7 +258,7 @@ export class ActionListComponent {
     }
 
     public doRefresh(refresher: any): void {
-        this.cache.clearGroup(`${Configuration.UrlApi}/actions`).then(t => {
+        this.cacheService.clearAll().then(t => {
             this.mainService.bind(() => {
                 this.mainService.syncUp();
                 refresher.complete();

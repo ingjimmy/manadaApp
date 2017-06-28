@@ -1,7 +1,7 @@
 import { NavParams, ViewController } from 'ionic-angular';
 import { Component, ViewChild } from '@angular/core';
 import { CommentModel } from "../../models/comment-model";
-import { CommentService, MainService, HelperService } from "../../services/index";
+import { CommentService, MainService, HelperService, ActionService } from "../../services/index";
 import { AlertHelper } from "../../helpers/alert-helper";
 import { Configuration } from "../../configuration/configuration";
 
@@ -18,7 +18,8 @@ export class CommentCrudComponent {
         private commentService: CommentService,
         private mainService: MainService,
         private alertHelper: AlertHelper,
-        private helperService: HelperService) {
+        private helperService: HelperService,
+        private actionService: ActionService) {
         this.model = params.get('comment');
         this.parent = params.get('parent');
     }
@@ -98,6 +99,7 @@ export class CommentCrudComponent {
     private updateActionPosition(comment: any) {
         let action = this.mainService.actions.find(t => t.actionID == comment.actionID);
         if (action != undefined) {
+            this.actionService.updateLocalAction(action, true);
             let actionIndex = this.mainService.actions.indexOf(action);
             this.mainService.actions.splice(actionIndex, 1);
             this.mainService.actions.splice(0, 0, action);

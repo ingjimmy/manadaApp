@@ -34,6 +34,7 @@ import { CameraHelper } from "../helpers/camera-helper";
 import { CustomActionSheetComponent } from "../components/custom-action-sheet";
 import { Focuser } from "../directives/aut-focus";
 import { CacheService } from "../services/cache.service";
+import { FormatDatePipe } from '../pipes/format-date/format-date';
 
 @NgModule({
   declarations: [
@@ -53,11 +54,13 @@ import { CacheService } from "../services/cache.service";
     TillDatePipe,
     CommentCrudComponent,
     CustomActionSheetComponent,
-    Focuser
+    Focuser,
+    FormatDatePipe
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp, {
+        backButtonText: '',
         ios: {
           scrollAssist: false, 
           autoFocusAssist: false,

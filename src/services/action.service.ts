@@ -75,7 +75,9 @@ export class ActionService {
                   local.results[index] = action;
                 }
 
-                this.cache.saveItem(t, local);
+                this.cache.saveItem(t, local).catch(t => {
+                  this.cache.clearExpired(true);
+                });
               }
             }
           }).catch(error => { console.log(error); });
@@ -115,7 +117,9 @@ export class ActionService {
               let local: IResult = obj;
               if (local.results != undefined) {
                 local.results.unshift(action);
-                this.cache.saveItem(t, local);
+                this.cache.saveItem(t, local).catch(t => {
+                  this.cache.clearExpired(true);
+                });
               }
             }).catch(error => { console.log(error); });
           }
@@ -157,7 +161,9 @@ export class ActionService {
                 if (removeAction != undefined) {
                   let index = local.results.indexOf(removeAction);
                   local.results.splice(index, 1);
-                  this.cache.saveItem(t, local);
+                  this.cache.saveItem(t, local).catch(t => {
+                    this.cache.clearExpired(true);
+                  });
                 }
               }
             }).catch(error => { console.log(error); });

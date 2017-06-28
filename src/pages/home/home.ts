@@ -37,7 +37,7 @@ export class HomePage {
           localStorage.setItem('accessToken', this.mainService.currentUser.access_token);
           localStorage.setItem('userID', this.mainService.currentUser.user_id.toString());
           localStorage.setItem('type', this.mainService.currentUser.user_type.toString());
-          this.oneSignal.sendTag('user_id', this.mainService.currentUser.user_id.toString());
+          this.oneSignal.sendTag('user_id', this.mainService.currentUser.user_id.toString());          
           this.navCtrl.setRoot(ActionsPage);
         }, error => {
           loader.dismiss();

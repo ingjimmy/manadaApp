@@ -27,11 +27,13 @@
         </button>
       </ion-card-header>
       <ion-card-content>
-        <span class="custom-comment-date" [innerHTML]="model.creationDate"></span>
+        <span class="custom-comment-date" [innerHTML]="model.creationDate | formatDate"></span>
+        <span *ngIf="model.dueDate != null && model.finalizedDate == null"> - due date <span [innerHTML]="model.dueDate | dateColor"></span></span>
+        <span *ngIf="model.finalizedDate != null"> - end date <span [innerHTML]="model.finalizedDate | dateColor:model.dueDate"></span></span>
         <p [innerHTML]="model.subject"></p>
-        <p>
-          <span class="users" *ngFor="let user of model.assignedUsers"><ion-icon name="icon-user"></ion-icon> {{ user.names }}</span>
-          <span class="users" *ngFor="let project of model.projects">{{ project.name }}</span>
+        <p class="custom-content-users">
+          <span class="users custom-white-space" *ngFor="let user of model.assignedUsers"><ion-icon name="icon-user"></ion-icon> {{ user.names }}</span>
+          <span class="users custom-white-space" *ngFor="let project of model.projects">{{ project.name }}</span>
         </p>
       </ion-card-content>
       <div *ngFor="let file of model.files | commentType:0" class="custom-card-image">

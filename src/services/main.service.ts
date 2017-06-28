@@ -11,6 +11,7 @@ import { FileFilter } from "../filters/file-filter";
 import { SyncModel } from "../models/sync-model";
 import { SyncEnum } from "../enums/sync-enum";
 import { CacheService } from "./cache.service";
+import { Configuration } from "../configuration/configuration";
 
 @Injectable()
 export class MainService {
@@ -62,7 +63,7 @@ export class MainService {
               let index = this.syncArray.indexOf(element);
               this.syncArray.splice(index, 1);
 
-              this.cacheService.saveItem('sync-key', this.syncArray);
+              this.cacheService.saveItem('sync-key', this.syncArray, null, Configuration.MinutesInMonth);
             }, error => console.log(error));
           }
         });
