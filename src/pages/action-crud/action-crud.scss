@@ -8,6 +8,8 @@
     word-break: break-all;
     white-space: pre-wrap;
     overflow-x: hidden;
+    padding: 16px;
+    font-size: medium;
 }
 *[contenteditable] {
 -webkit-user-select: auto !important;

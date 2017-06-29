@@ -48,9 +48,7 @@
         <label>Due date</label>
         <span class="no-border">{{model.dueDate}}</span>
     </ion-item>
-    <ion-item>
-        <div #subject class="subject-action" contenteditable="true" placeholder="Describe the action"></div>
-    </ion-item>
+    <div #subject class="subject-action" contenteditable="true" placeholder="Describe the action"></div>
     <div>
         <button ion-button clear icon-left (click)="attach($event)">        
             <ion-icon name="attach"></ion-icon>
@@ -62,9 +60,9 @@
                 <img [src]="rootPath + file.path">
             </ion-avatar>
             <h2>{{file.name}}</h2>
-            <button (touchstart)="removeFile($event, file)" ion-button clear item-end>
-        <ion-icon color="danger" name="trash"></ion-icon>
-      </button>
+            <button [disabled]="isBusy" (touchstart)="removeFile($event, file)" ion-button clear item-end>
+                <ion-icon color="danger" name="trash"></ion-icon>
+            </button>
         </ion-item>
     </ion-list>
 </ion-content>
