@@ -43,11 +43,11 @@ export class CacheService {
     }
   }
 
-  ready(): Promise<any> {
+  public ready(): Promise<any> {
     return this._storage.ready().then(() => Promise.resolve());
   }
 
-  enableCache(enable: boolean = true) {
+  public enableCache(enable: boolean = true) {
     this.cacheEnabled = enable;
   }
 
@@ -56,11 +56,11 @@ export class CacheService {
       .then(() => this._storage.clear());
   }
 
-  setDefaultTTL(ttl: number): number {
+  public setDefaultTTL(ttl: number): number {
     return this.ttl = ttl;
   }
 
-  setOfflineInvalidate(offlineInvalidate: boolean) {
+  public setOfflineInvalidate(offlineInvalidate: boolean) {
     this.invalidateOffline = !offlineInvalidate;
   }
 
@@ -75,15 +75,15 @@ export class CacheService {
     });
   }
 
-  getNetworkStatusChanges() {
+  public getNetworkStatusChanges() {
     return this.networkStatusChanges;
   }
 
-  isOnline() {
+  public isOnline() {
     return this.networkStatus;
   }
 
-  saveItem(key: string, data: any, groupKey: string = 'none', ttl: number = this.ttl): Promise<any> {
+  public saveItem(key: string, data: any, groupKey: string = 'none', ttl: number = this.ttl): Promise<any> {
     if (!this.cacheEnabled) {
       return Promise.reject(MESSAGES[1]);
     }
@@ -100,7 +100,7 @@ export class CacheService {
     });
   }
 
-  removeItem(key: string): Promise<any> {
+  public removeItem(key: string): Promise<any> {
     if (!this.cacheEnabled) {
       return Promise.reject(MESSAGES[1]);
     }
@@ -108,7 +108,7 @@ export class CacheService {
     return this._storage.remove(key);
   }
 
-  getRawItem(key: string): Promise<any> {
+  public getRawItem(key: string): Promise<any> {
     if (!this.cacheEnabled) {
       return Promise.reject(MESSAGES[1]);
     }
@@ -121,7 +121,7 @@ export class CacheService {
       .catch(() => Promise.reject(MESSAGES[3] + key));
   }
 
-  getItem(key: string): Promise<any> {
+  public getItem(key: string): Promise<any> {
 
     if (!this.cacheEnabled) {
       return Promise.reject(MESSAGES[1]);
@@ -158,7 +158,7 @@ export class CacheService {
     }
   }
 
-  loadFromObservable(key: string, observable: any, groupKey?: string, ttl?: number): Observable<any> {
+  public loadFromObservable(key: string, observable: any, groupKey?: string, ttl?: number): Observable<any> {
     if (!this.cacheEnabled) return observable;
     observable = observable.share();
     return Observable.fromPromise(this.getItem(key))
@@ -171,7 +171,7 @@ export class CacheService {
       });
   }
 
-  loadFromDelayedObservable(key: string, observable: any, groupKey?: string, ttl: number = this.ttl, delayType: string = 'expired'): Observable<any> {
+  public loadFromDelayedObservable(key: string, observable: any, groupKey?: string, ttl: number = this.ttl, delayType: string = 'expired'): Observable<any> {
     if (!this.cacheEnabled) return observable;
 
     const observableSubject = new Subject();
@@ -210,7 +210,7 @@ export class CacheService {
     return observableSubject.asObservable();
   }
 
-  clearAll(): Promise<any> {
+  public clearAll(): Promise<any> {
     if (!this.cacheEnabled) {
       return Promise.reject(MESSAGES[2]);
     }
@@ -218,7 +218,7 @@ export class CacheService {
     return this.resetDatabase();
   }
 
-  clearExpired(ignoreOnlineStatus = false): Promise<any> {
+  public clearExpired(ignoreOnlineStatus = false): Promise<any> {
     if (!this.cacheEnabled) {
       return Promise.reject(MESSAGES[2]);
     }
@@ -236,7 +236,7 @@ export class CacheService {
     return Promise.all(promises);
   }
 
-  clearGroup(groupKey: string): Promise<any> {
+  public clearGroup(groupKey: string): Promise<any> {
     if (!this.cacheEnabled) {
       return Promise.reject(MESSAGES[2]);
     }

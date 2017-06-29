@@ -64,8 +64,8 @@
           <span class="users" *ngFor="let project of action.projects">{{ project.name }}</span>
         </p>
         </div> 
-        <ion-note class="custom-ion-note" *ngIf="action.status == 0" item-end [innerHtml]="action.dueDate | dateColor"></ion-note>              
-        <ion-note class="custom-ion-note" *ngIf="action.status == 1" item-end [innerHtml]="action.finalizedDate | dateColor:action.dueDate"></ion-note>
+        <div class="custom-ion-note" *ngIf="action.status == 0" item-end [innerHtml]="action.dueDate | dateColor"></div>              
+        <div class="custom-ion-note" *ngIf="action.status == 1" item-end [innerHtml]="action.finalizedDate | dateColor:action.dueDate"></div>
       </button>
       <ion-item-options *ngIf="action.status == 0" side="right" (ionSwipe)="done(action)">
         <button class="button-swipe button-more" ion-button (click)="openmenu(action, item)" color="light">

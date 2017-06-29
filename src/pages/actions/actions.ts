@@ -1,12 +1,9 @@
-import { AccountComponent } from './../account/account';
 import { Component } from '@angular/core';
 import { MenuController, ModalController, ItemSliding } from 'ionic-angular';
-import { ActionListComponent } from "../action-list/action-list";
-import { MainService, UserService, ProjectService, HelperService } from './../../services/index';
-import { UserCrudComponent } from "../user-crud/user-crud";
-import { ProjectCrudComponent } from "../project-crud/project-crud";
+
+import { AccountComponent, ActionListComponent, UserCrudComponent, ProjectCrudComponent } from '../../pages';
+import { MainService, UserService, ProjectService, HelperService, CacheService } from './../../services';
 import { AlertHelper } from "../../helpers/alert-helper";
-import { CacheService } from "../../services/cache.service";
 import { Configuration } from "../../configuration/configuration";
 
 @Component({

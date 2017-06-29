@@ -1,8 +1,9 @@
-import { Configuration } from './../configuration/configuration';
 import { Injectable } from '@angular/core';
 import { Http, RequestOptions, URLSearchParams, Response } from '@angular/http'
 import { Observable } from 'rxjs/Observable';
+
 import { FileFilter } from "../filters/file-filter";
+import { Configuration } from './../configuration/configuration';
 
 @Injectable()
 export class FileService {

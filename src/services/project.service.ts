@@ -1,8 +1,9 @@
-import { Configuration } from './../configuration/configuration';
-import { ProjectFilter } from './../filters/project-filter';
 import { Injectable } from '@angular/core';
 import { Http, Response, RequestOptions, URLSearchParams } from '@angular/http'
 import { Observable } from 'rxjs/Observable';
+
+import { Configuration } from './../configuration/configuration';
+import { ProjectFilter } from './../filters/project-filter';
 
 @Injectable()
 export class ProjectService {

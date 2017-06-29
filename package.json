@@ -1,8 +1,8 @@
 {
     "name": "manada",
-    "version": "0.0.1",
-    "author": "Ionic Framework",
-    "homepage": "http://ionicframework.com/",
+    "version": "2.0.0",
+    "author": "Jimmy Rodriguez Avila",
+    "homepage": "http://www.dasigno.com/",
     "private": true,
     "scripts": {
         "clean": "ionic-app-scripts clean",

@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import * as moment from 'moment';
 import { ViewController, NavParams } from "ionic-angular";
-import { ActionModel } from "../../models/action-model";
+
+import { ActionModel } from "../../models";
+import * as moment from 'moment';
 
 @Component({
     templateUrl: 'calendar.html'

@@ -7,3 +7,4 @@ export * from './user.service';
 export * from './comment.service'
 export * from './file.service'
 export * from './leader.service'
+export * from './cache.service'

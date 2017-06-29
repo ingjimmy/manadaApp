@@ -1,10 +1,11 @@
-import { IResult } from './../models/IResult';
 import { Injectable } from '@angular/core';
 import { Http, Response, RequestOptions, URLSearchParams } from '@angular/http'
 import { Observable } from 'rxjs/Observable';
+
+import { CacheService } from './cache.service';
+import { IResult } from './../models';
 import { Configuration } from "../configuration/configuration";
 import { ActionFilter } from "../filters/action-filter";
-import { CacheService } from "./cache.service";
 
 @Injectable()
 export class ActionService {
@@ -58,7 +59,7 @@ export class ActionService {
     return this.http.get(`${Configuration.UrlApi}/actions/countactive`);
   }
 
-  public updateLocalAction(action: any, firstItem: boolean) {
+  public updateLocalAction(action: any, firstItem: boolean): void {
     if (action.actionID != undefined) {
       this.cache.getAllKeys().then(keys => {
         keys.forEach(t => {
@@ -86,7 +87,7 @@ export class ActionService {
     }
   }
 
-  public addLocalAction(action: any, status: string) {
+  public addLocalAction(action: any, status: string): void {
     this.cache.getAllKeys().then(keys => {
       keys.forEach(t => {
         let params: URLSearchParams = new URLSearchParams(t);
@@ -128,7 +129,7 @@ export class ActionService {
     }).catch(error => { console.log(error); });
   }
 
-  public removeLocalAction(action: any, status: string) {
+  public removeLocalAction(action: any, status: string): void {
     this.cache.getAllKeys().then(keys => {
       keys.forEach(t => {
         let params: URLSearchParams = new URLSearchParams(t);

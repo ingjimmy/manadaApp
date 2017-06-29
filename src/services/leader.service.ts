@@ -1,8 +1,9 @@
-import { Configuration } from './../configuration/configuration';
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http'
 import { Observable } from 'rxjs/Observable';
-import { LeaderModel } from "../models/leader-model";
+
+import { Configuration } from './../configuration/configuration';
+import { LeaderModel } from "../models";
 
 @Injectable()
 export class LeaderService {

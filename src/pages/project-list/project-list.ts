@@ -1,8 +1,7 @@
-import { MainService } from './../../services/main.service';
 import { Component } from '@angular/core';
 import { NavParams, ViewController } from "ionic-angular";
-import { ActionService, HelperService } from "../../services/index";
-import { CacheService } from "../../services/cache.service";
+
+import { MainService, ActionService, HelperService, CacheService } from './../../services';
 import { Configuration } from "../../configuration/configuration";
 
 @Component({

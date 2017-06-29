@@ -24,7 +24,7 @@ export class AlertHelper {
         prompt.present();
     }
 
-    public alert(message: string) {
+    public alert(message: string): void {
         let alert = this.alertCtrl.create({
             title: message,
             buttons: ['OK']
@@ -33,7 +33,7 @@ export class AlertHelper {
         alert.present();
     }
 
-    public confirm(message: string, call: () => void) {
+    public confirm(message: string, call: () => void): void {
         let alert = this.alertCtrl.create({
             title: message,
             buttons: [

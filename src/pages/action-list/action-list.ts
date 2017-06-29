@@ -1,26 +1,22 @@
-import { Configuration } from './../../configuration/configuration';
-import { IResult } from './../../models/IResult';
-import { ActionService } from './../../services/action.service';
-import { MainService } from './../../services/main.service';
 import { Component, ViewChild } from '@angular/core';
-import { ItemSliding } from 'ionic-angular';
-import { ModalController, NavController, InfiniteScroll } from "ionic-angular";
-import { ProjectListPage } from "../project-list/project-list";
-import { FileService, HelperService } from "../../services/index";
-import { ActionCrudComponent } from "../action-crud/action-crud";
-import { ActionDetailComponent } from "../action-detail/action-detail";
-import { AlertHelper } from "../../helpers/alert-helper";
-import { CustomActionSheetComponent } from "../../components/custom-action-sheet";
-import { ActionSheetModel } from "../../models/action-sheet-model";
 import { PhotoViewer } from "@ionic-native/photo-viewer";
 import { BrowserTab } from "@ionic-native/browser-tab";
-import { CacheService } from "../../services/cache.service";
+import { ModalController, NavController, InfiniteScroll, Content, ItemSliding } from "ionic-angular";
+
+import { Configuration } from './../../configuration/configuration';
+import { IResult, ActionSheetModel } from './../../models';
+import { ActionService, MainService, FileService, HelperService, CacheService } from './../../services';
+import { ProjectListPage, ActionCrudComponent, ActionDetailComponent } from "./../../pages";
+import { AlertHelper } from "../../helpers/alert-helper";
+import { CustomActionSheetComponent } from "../../components/custom-action-sheet";
 
 @Component({
     templateUrl: 'action-list.html'
 })
 export class ActionListComponent {
     @ViewChild(InfiniteScroll) infiniteScroll: InfiniteScroll;
+    @ViewChild(Content) content: Content;
+    public isEnableClick: boolean = true;
     public rootPath: string;
     public enableSearch: boolean = false;
     public intervalSearch: any = null;
@@ -36,6 +32,18 @@ export class ActionListComponent {
         private cacheService: CacheService,
         private helperService: HelperService) {
         this.rootPath = Configuration.Url;
+    }
+
+    public ngAfterViewInit(): void {
+        this.content.ionScroll.subscribe(data => {
+            this.isEnableClick = false;
+        })
+
+        this.content.ionScrollEnd.subscribe(data => {
+            setTimeout(() => { 
+                this.isEnableClick = true;
+            }, 200);
+        })
     }
 
     public filter(value: string): void {
@@ -86,7 +94,9 @@ export class ActionListComponent {
     }
 
     public detail(action: any): void {
-        this.navCtrl.push(ActionDetailComponent, { action: action });
+        if (this.isEnableClick) {
+            this.navCtrl.push(ActionDetailComponent, { action: action });
+        }
     }
 
     public done(action: any): void {
@@ -276,5 +286,5 @@ export class ActionListComponent {
 
     public trackByFn(index, item): void {
         return item.actionID;
-    }
+    }    
 }

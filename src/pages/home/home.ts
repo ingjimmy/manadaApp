@@ -1,9 +1,10 @@
-import { OneSignal } from '@ionic-native/onesignal';
-import { UserService, AuthService, MainService } from './../../services/index';
-import { LoginModel } from './../../models/login-model';
 import { Component } from '@angular/core';
+import { OneSignal } from '@ionic-native/onesignal';
 import { NavController, LoadingController } from 'ionic-angular';
-import { ActionsPage } from "../actions/actions";
+
+import { UserService, AuthService, MainService } from './../../services';
+import { LoginModel } from './../../models';
+import { ActionsPage } from "./../../pages";
 import { AlertHelper } from "../../helpers/alert-helper";
 
 @Component({

@@ -1,16 +1,13 @@
-import { ActionModel } from './../models/action-model';
-import { ActionDetailComponent } from './../pages/action-detail/action-detail';
-import { Component, ViewChild } from '@angular/core';
-import { Platform, NavController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Keyboard } from '@ionic-native/keyboard';
-
-import { HomePage } from '../pages/home/home';
-import { TokenModel } from "../models/token-model";
-import { MainService } from './../services/index';
-import { ActionsPage } from './../pages/actions/actions';
+import { Component, ViewChild } from '@angular/core';
+import { Platform, NavController } from 'ionic-angular';
 import { OneSignal } from "@ionic-native/onesignal";
+
+import { ActionModel, TokenModel } from './../models';
+import { MainService } from './../services';
+import { ActionDetailComponent, HomePage, ActionsPage } from './../pages';
 import { AlertHelper } from "../helpers/alert-helper";
 import { Configuration } from "../configuration/configuration";
 
@@ -36,7 +33,7 @@ export class MyApp {
         mainService.currentUser.access_token = localStorage.getItem('accessToken');
         mainService.currentUser.user_id = parseInt(localStorage.getItem('userID'));
         mainService.currentUser.user_type = parseInt(localStorage.getItem('type'));
-        
+
         this.rootPage = ActionsPage;
       } else {
         this.rootPage = HomePage;
@@ -55,8 +52,8 @@ export class MyApp {
       });
       this.oneSignal.endInit();
 
-      this.statusBar.styleDefault();   
-      
+      this.statusBar.styleDefault();
+
       this.splashScreen.hide();
       this.keyboard.disableScroll(true);
     });

@@ -1,7 +1,8 @@
-import { Configuration } from './../../configuration/configuration';
 import { Component } from '@angular/core';
 import { NavParams, ViewController } from "ionic-angular";
-import { ProjectService, MainService, HelperService } from "../../services/index";
+
+import { Configuration } from './../../configuration/configuration';
+import { ProjectService, MainService, HelperService } from "../../services";
 import { AlertHelper } from "../../helpers/alert-helper";
 
 @Component({

@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { NavParams, ViewController } from "ionic-angular";
-import { UserModel } from "../../models/user-model";
-import { UserService, MainService, HelperService } from "../../services/index";
+
+import { UserModel } from "../../models";
+import { UserService, MainService, HelperService } from "../../services";
 import { AlertHelper } from "../../helpers/alert-helper";
 import { Configuration } from "../../configuration/configuration";
 

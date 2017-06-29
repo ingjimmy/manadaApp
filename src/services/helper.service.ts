@@ -1,12 +1,12 @@
-import { ToastController } from 'ionic-angular';
 import { Injectable } from '@angular/core';
+import { ToastController } from 'ionic-angular';
 
 @Injectable()
 export class HelperService {
 
   constructor(private toastCtrl: ToastController) { }
 
-  removeFromArray(array: Array<any>, item: any) {
+  public removeFromArray(array: Array<any>, item: any): void {
     let index = array.indexOf(item);
     array.splice(index, 1);
   }

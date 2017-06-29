@@ -1,9 +1,10 @@
-import { Configuration } from './../configuration/configuration';
-import { UserFilter } from './../filters/user-filter';
 import { Injectable } from '@angular/core';
 import { Http, Response, RequestOptions, URLSearchParams } from '@angular/http'
 import { Observable } from 'rxjs/Observable';
-import { SettingModel } from "../models/settings-model";
+
+import { Configuration } from './../configuration/configuration';
+import { UserFilter } from './../filters/user-filter';
+import { SettingModel } from "../models";
 
 @Injectable()
 export class UserService {
@@ -43,5 +44,5 @@ export class UserService {
 
   public updateSetting(id:number, setting:SettingModel) {
     return this.http.put(`${Configuration.UrlApi}/users/${id}/Setting/${setting.userSettingID}`, setting);
-  }
+  } 
 }

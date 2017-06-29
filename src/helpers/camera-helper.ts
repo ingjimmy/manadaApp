@@ -1,8 +1,9 @@
-import { Configuration } from './../configuration/configuration';
-import { ActionSheetController, LoadingController } from 'ionic-angular';
 import { Injectable } from '@angular/core';
 import { Camera } from '@ionic-native/camera';
 import { Transfer, TransferObject } from '@ionic-native/transfer';
+import { ActionSheetController, LoadingController } from 'ionic-angular';
+
+import { Configuration } from './../configuration/configuration';
 
 @Injectable()
 export class CameraHelper {
@@ -15,7 +16,7 @@ export class CameraHelper {
         this.rootPath = Configuration.Url;
     }
 
-    public takeFromDevice(call: (data: any) => void) {
+    public takeFromDevice(call: (data: any) => void): void {
         let actionSheet = this.actionSheetCtrl.create({
             title: 'Select Image Source',
             buttons: [

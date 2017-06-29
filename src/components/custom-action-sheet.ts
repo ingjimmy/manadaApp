@@ -1,6 +1,7 @@
-import { Platform, NavParams, ViewController } from 'ionic-angular';
 import { Component, ViewChild } from '@angular/core';
-import { ActionSheetModel } from "../models/action-sheet-model";
+import { Platform, NavParams, ViewController } from 'ionic-angular';
+
+import { ActionSheetModel } from "../models";
 
 @Component({
     templateUrl: 'custom-action-sheet.html'

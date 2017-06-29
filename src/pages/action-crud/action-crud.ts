@@ -1,16 +1,15 @@
 import { Component, ViewChild, Renderer } from '@angular/core';
-import { Platform, NavParams, ViewController, ModalController, Content } from "ionic-angular";
-import { ActionModel } from "../../models/action-model";
-import { MainService, ActionService, HelperService } from "../../services/index";
-import { CalendarComponent } from "../calendar/calendar";
 import { Keyboard } from '@ionic-native/keyboard';
+import { Platform, NavParams, ViewController, ModalController, Content } from "ionic-angular";
+
+import { ActionModel, SyncModel } from "../../models";
+import { MainService, ActionService, HelperService, CacheService } from "../../services/index";
+import { CalendarComponent } from "../../pages";
 import { Configuration } from "../../configuration/configuration";
 import { CameraHelper } from "../../helpers/camera-helper";
 import { AlertHelper } from "../../helpers/alert-helper";
-import * as moment from 'moment';
-import { SyncModel } from "../../models/sync-model";
 import { SyncEnum } from "../../enums/sync-enum";
-import { CacheService } from "../../services/cache.service";
+import * as moment from 'moment';
 
 @Component({
     templateUrl: 'action-crud.html'
@@ -242,7 +241,7 @@ export class ActionCrudComponent {
         }
     }
 
-    public removeFile(event: Event, file: any): any {
+    public removeFile(event: Event, file: any): void {
         event.preventDefault();
         let index = this.model.files.indexOf(file);
         this.model.files.splice(index, 1);

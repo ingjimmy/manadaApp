@@ -1,7 +1,8 @@
-import { NavParams, ViewController } from 'ionic-angular';
 import { Component, ViewChild } from '@angular/core';
-import { CommentModel } from "../../models/comment-model";
-import { CommentService, MainService, HelperService, ActionService } from "../../services/index";
+import { NavParams, ViewController } from 'ionic-angular';
+
+import { CommentModel } from "../../models";
+import { CommentService, MainService, HelperService, ActionService } from "../../services";
 import { AlertHelper } from "../../helpers/alert-helper";
 import { Configuration } from "../../configuration/configuration";
 

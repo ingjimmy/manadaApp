@@ -1,21 +1,18 @@
-import { Configuration } from './../../configuration/configuration';
-import { IResult } from './../../models/IResult';
-import { NavParams, Platform, Content, ActionSheetController, InfiniteScroll, Footer, ModalController, NavController } from 'ionic-angular';
 import { Component, ViewChild, Renderer } from '@angular/core';
-import { ActionModel } from "../../models/action-model";
-import { ActionService, CommentService, MainService, HelperService } from "../../services/index";
-import { CommentModel } from "../../models/comment-model";
-import { CommentFilter } from "../../filters/comment-filter";
 import { Keyboard } from '@ionic-native/keyboard';
 import { PhotoViewer } from '@ionic-native/photo-viewer';
 import { BrowserTab } from "@ionic-native/browser-tab";
-import { CommentCrudComponent } from "../comment-crud/comment-crud";
+import { NavParams, Platform, Content, ActionSheetController, InfiniteScroll, Footer, ModalController, NavController } from 'ionic-angular';
+
+import { Configuration } from './../../configuration/configuration';
+import { IResult, ActionModel, CommentModel } from './../../models';
+import { ActionService, CommentService, MainService, HelperService, CacheService } from "../../services";
+import { CommentFilter } from "../../filters/comment-filter";
+import { CommentCrudComponent, ActionCrudComponent } from "../../pages";
 import { CameraHelper } from "../../helpers/camera-helper";
 import { AlertHelper } from "../../helpers/alert-helper";
-import { ActionCrudComponent } from "../action-crud/action-crud";
-import { ActionSheetModel } from "../../models/action-sheet-model";
+import { ActionSheetModel } from "../../models";
 import { CustomActionSheetComponent } from "../../components/custom-action-sheet";
-import { CacheService } from "../../services/cache.service";
 
 @Component({
     templateUrl: 'action-detail.html'
@@ -65,9 +62,7 @@ export class ActionDetailComponent {
                 try {
                     this.content.scrollToBottom();
                     this.infiniteScroll.enable(true);
-                } catch (error) {
-                    console.log(error);
-                }
+                } catch (error) {}
             }, 200);
         });
     }

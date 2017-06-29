@@ -1,17 +1,16 @@
-import { IResult } from './../models/IResult';
-import { ActionService } from './action.service';
-import { ProjectService } from './project.service';
 import { Injectable } from '@angular/core';
-import { UserService } from "./user.service";
+
+import { IResult, TokenModel, SyncModel } from './../models';
 import { UserFilter } from "../filters/user-filter";
 import { ProjectFilter } from "../filters/project-filter";
 import { ActionFilter } from "../filters/action-filter";
-import { TokenModel } from "../models/token-model";
 import { FileFilter } from "../filters/file-filter";
-import { SyncModel } from "../models/sync-model";
 import { SyncEnum } from "../enums/sync-enum";
-import { CacheService } from "./cache.service";
 import { Configuration } from "../configuration/configuration";
+import { UserService } from "./user.service";
+import { ProjectService } from "./project.service";
+import { ActionService } from "./action.service";
+import { CacheService } from "./cache.service";
 
 @Injectable()
 export class MainService {
@@ -49,7 +48,7 @@ export class MainService {
     }, 60000);
   }
 
-  public syncUp() {
+  public syncUp(): void {
     this.cacheService.getItem('sync-key').then(data => {
       this.syncArray = data;
       if (this.syncArray.length > 0 && this.cacheService.isOnline()) {
@@ -68,7 +67,7 @@ export class MainService {
           }
         });
       }
-    }).catch(error => { console.log(error) });
+    }).catch(error => { });
   }
 
   public bindUsers(): void {
@@ -169,15 +168,7 @@ export class MainService {
     this.editUser = {};
   }
 
-  changeColor(event, action, color) {
-
-  }
-
-  displayChangeColor(event, action) {
-
-  }
-
-  updateMenuItems(action: any) {
+  public updateMenuItems(action: any): void {
     let push: boolean = false;
 
     if (action.assignedUsers.length > 0) {

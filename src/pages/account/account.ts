@@ -1,17 +1,13 @@
 import { OneSignal } from '@ionic-native/onesignal';
 import { Component } from '@angular/core';
-import { UserModel } from "../../models/user-model";
-import { MainService, UserService, HelperService } from "../../services/index";
-import { SettingModel } from "../../models/settings-model";
 import { NavController, ModalController } from "ionic-angular";
+
+import { UserModel, SettingModel, LeaderModel, UpdatePasswordModel } from "../../models";
+import { MainService, UserService, HelperService, LeaderService, CacheService } from "../../services/index";
 import { HomePage } from "../home/home";
-import { LeaderService } from "../../services/leader.service";
-import { LeaderModel } from "../../models/leader-model";
-import { ActionCrudComponent } from "../action-crud/action-crud";
+import { ActionCrudComponent } from "../../pages";
 import { AlertHelper } from "../../helpers/alert-helper";
-import { UpdatePasswordModel } from "../../models/update-password-model";
 import { Configuration } from "../../configuration/configuration";
-import { CacheService } from "../../services/cache.service";
 
 @Component({
     templateUrl: 'account.html'
@@ -69,7 +65,7 @@ export class AccountComponent {
         }
     }
 
-    public updatePassword(form: any) {
+    public updatePassword(form: any): void {
         if (form.valid) {
             this.leaderModel.password = this.passwordModel.password;
             this.leaderService.update(this.leaderModel).subscribe(data => {
