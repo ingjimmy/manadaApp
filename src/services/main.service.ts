@@ -87,7 +87,6 @@ export class MainService {
   public bindActions(call?: (enabled: boolean) => void): void {
     this.actionService.getAll(this.actionFilter).subscribe(resp => {
       let response: IResult = resp;
-
       if (this.actionFilter.page == 0) {
         this.actions = [];
       }

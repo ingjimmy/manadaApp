@@ -25,7 +25,7 @@ export class ActionService {
     requestOptions.params = params;
     if (filter.searchCriteria == '') {
       let request = this.http.get(`${Configuration.UrlApi}/actions`, requestOptions).map(res => res.json());
-      return this.cache.loadFromDelayedObservable(params.toString(), request, `${Configuration.UrlApi}/actions`);
+      return this.cache.loadFromDelayedObservable(params.toString(), request);
     } else {
       return this.http.get(`${Configuration.UrlApi}/actions`, requestOptions).map(res => res.json());
     }
@@ -76,7 +76,7 @@ export class ActionService {
                   local.results[index] = action;
                 }
 
-                this.cache.saveItem(t, local).catch(t => {
+                this.cache.saveItem(t, local).catch(sav => {
                   this.cache.clearExpired(true);
                 });
               }
@@ -118,7 +118,8 @@ export class ActionService {
               let local: IResult = obj;
               if (local.results != undefined) {
                 local.results.unshift(action);
-                this.cache.saveItem(t, local).catch(t => {
+                this.cache.saveItem(t, local).then(sav => {                  
+                }).catch(sav => {
                   this.cache.clearExpired(true);
                 });
               }
@@ -155,19 +156,7 @@ export class ActionService {
           }
 
           if (isRemove) {
-            this.cache.getItem(t).then(obj => {
-              let local: IResult = obj;
-              if (local.results != undefined) {
-                let removeAction = local.results.find(t => t.actionID = action.actionID);
-                if (removeAction != undefined) {
-                  let index = local.results.indexOf(removeAction);
-                  local.results.splice(index, 1);
-                  this.cache.saveItem(t, local).catch(t => {
-                    this.cache.clearExpired(true);
-                  });
-                }
-              }
-            }).catch(error => { console.log(error); });
+            this.cache.removeItem(t);
           }
         }
       });

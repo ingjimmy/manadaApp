@@ -57,6 +57,8 @@
 }
 .item-inner {
     border-bottom: 1px solid #F1F1F1 !important;
+    max-height: 111px;
+    overflow: hidden;
 }
 .color-bar {
     width: 5px;
@@ -72,8 +74,7 @@
     transition: all 0.3s ease-in-out;
 }
 .custom-list-h {
-    max-height: 111px;
-    overflow: hidden;
+    max-height: 112px;
 }
 .custom-content-img {
     float:left;

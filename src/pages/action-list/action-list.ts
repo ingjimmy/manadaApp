@@ -120,7 +120,7 @@ export class ActionListComponent {
                     let statusAdd = action.status == 0 ? 'active' : 'ended';
 
                     this.actionService.addLocalAction(action, statusAdd);
-                    this.actionService.removeLocalAction(action, statusRemove);
+                    this.actionService.removeLocalAction(action, statusRemove);                    
                 }, 500);
 
                 let add = action.status === 0 ? -1 : 1;
@@ -259,7 +259,7 @@ export class ActionListComponent {
             } else {
                 this.mainService.actionFilter.page++;
                 this.mainService.bindActions(enabled => {
-                    infiniteScroll.complete();
+                    infiniteScroll.complete(); 
                 });
             }
         } else {
@@ -269,8 +269,7 @@ export class ActionListComponent {
 
     public doRefresh(refresher: any): void {
         this.cacheService.clearAll().then(t => {
-            this.mainService.bind(() => {
-                this.mainService.syncUp();
+            this.mainService.bind(() => {                
                 refresher.complete();
             });
         }).catch(error => { console.log(error) });
