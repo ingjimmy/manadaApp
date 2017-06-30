@@ -1,17 +1,15 @@
 <ion-content>
-  <ion-list>
-    <ion-list-header class="custom-ion-list-header" inset>
-      <img class="logo-image" src="assets/images/logo.svg">
-    </ion-list-header>
-    <form (submit)="send(form)" #form="ngForm">
-      <ion-item class="custom-home-ion-item">
-        <ion-input required type="email" [(ngModel)]="login.username" name="username" placeholder="Email"></ion-input>
-      </ion-item>
-      <ion-item class="custom-home-ion-item">
-        <ion-input required type="password" [(ngModel)]="login.password" name="password" placeholder="Password"></ion-input>
-      </ion-item>
-      <button class="button-clear-manada fontcolor2" [disabled]="!form.valid" ion-button color="primary" type="submit" clear block>Login</button>
-      <button ion-button (click)="forgot()" class="forgot" type="button" clear block>¿Forgot your password?</button>
-    </form>
-  </ion-list>
+  <div class="custom-ion-list-header">
+    <img class="logo-image" src="assets/images/logo.svg">
+  </div>
+  <form (submit)="send(form)" #form="ngForm">
+    <ion-item class="custom-home-ion-item">
+      <ion-input required type="email" [(ngModel)]="login.username" name="username" placeholder="Email"></ion-input>
+    </ion-item>
+    <ion-item class="custom-home-ion-item">
+      <ion-input required type="password" [(ngModel)]="login.password" name="password" placeholder="Password"></ion-input>
+    </ion-item>
+    <button class="button-clear-manada fontcolor2" [disabled]="!form.valid" ion-button color="primary" type="submit" clear block>Login</button>
+    <button ion-button (click)="forgot()" class="forgot" type="button" clear block>¿Forgot your password?</button>
+  </form>
 </ion-content>
