@@ -22,7 +22,7 @@ export const MESSAGES = {
 @Injectable()
 export class CacheService {
 
-  private ttl: number = 60 * 60; // one hour
+  private ttl: number = 60 * 60 * 8;
   private cacheEnabled: boolean = true;
   private invalidateOffline: boolean = false;
   private networkStatusChanges: Observable<boolean>;

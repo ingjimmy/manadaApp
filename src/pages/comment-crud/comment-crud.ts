@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavParams, ViewController } from 'ionic-angular';
+import { Keyboard } from '@ionic-native/keyboard';
 
 import { CommentModel } from "../../models";
 import { CommentService, MainService, HelperService, ActionService } from "../../services";
@@ -20,7 +21,8 @@ export class CommentCrudComponent {
         private mainService: MainService,
         private alertHelper: AlertHelper,
         private helperService: HelperService,
-        private actionService: ActionService) {
+        private actionService: ActionService,
+        private keyboard: Keyboard) {
         this.model = params.get('comment');
         this.parent = params.get('parent');
     }
@@ -33,6 +35,20 @@ export class CommentCrudComponent {
             this.model.parentID = this.parent.commentID;
             this.model.actionID = this.parent.actionID;
         }
+
+        let div = document.querySelectorAll('[contenteditable]')[0];
+        window.setTimeout(() => {
+            var sel, range;            
+            if (window.getSelection && document.createRange) {
+                this.keyboard.show();
+                range = document.createRange();
+                range.selectNodeContents(div);
+                range.collapse(true);
+                sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);                
+            }
+        }, 750);
     }
 
     public dismiss(): void {

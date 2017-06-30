@@ -83,8 +83,8 @@ export class ActionCrudComponent {
         }
 
         setTimeout(() => {
-            this.myInput.nativeElement.focus();
-        }, 100);
+             this.myInput.nativeElement.focus();
+        }, 1);        
     }
 
     public dismiss(): void {
@@ -126,6 +126,15 @@ export class ActionCrudComponent {
                     let index = this.mainService.actions.indexOf(act);
                     this.mainService.actions.splice(index, 1);
                     this.mainService.actions.splice(0, 0, result);
+
+                    if (this.model.assignedUsers.length > 0) {
+                        this.mainService.bindUsers();
+                    }
+
+                    if (this.model.projects.length > 0) {
+                        this.mainService.bindProjects();
+                    }
+
                     this.dismiss();
                     this.isBusy = false;
                 }, error => {
