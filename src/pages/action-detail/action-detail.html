@@ -36,14 +36,16 @@
           <span class="users custom-white-space" *ngFor="let project of model.projects">{{ project.name }}</span>
         </p>
       </ion-card-content>
-      <div *ngFor="let file of model.files | commentType:0" class="custom-card-image">
-        <img (click)="openPicture(file)" [src]="rootPath + file.path" />
-      </div>
-      <button class="custom-button-file" *ngFor="let file of model.files | commentType:1" ion-button clear block color="primary"
-        (click)="openFile(file)">
+      <div *ngIf="model.files.length > 0">
+        <div *ngFor="let file of model.files | commentType:0" class="custom-card-image">
+          <img (click)="openPicture(file)" [src]="rootPath + file.path" />
+        </div>
+        <button class="custom-button-file" *ngFor="let file of model.files | commentType:1" ion-button clear block color="primary"
+          (click)="openFile(file)">
         <ion-icon name="attach"></ion-icon>        
         {{file.name}}
       </button>
+      </div>
     </ion-card>
     <ion-card class="custom-card" *ngFor="let comment of comments">
       <div class="color-bar tag{{comment.color}}"></div>
@@ -56,7 +58,8 @@
         <span class="custom-comment-date" [innerHTML]="comment.modificationDate | tillDate"></span>
         <p [innerHTML]="comment.content"></p>
       </ion-card-content>
-      <div *ngFor="let file of comment.files | commentType:0" class="custom-card-image">
+      <div *ngIf="comment.files.length > 0">
+        <div *ngFor="let file of comment.files | commentType:0" class="custom-card-image">
         <img (click)="openPicture(file)" [src]="rootPath + file.path" />
       </div>
       <button class="custom-button-file" *ngFor="let file of comment.files | commentType:1" ion-button clear block color="primary"
@@ -64,7 +67,14 @@
         <ion-icon name="attach"></ion-icon>        
         {{file.name}}
       </button>
-      <button  *ngIf="model.status == 0" class="custom-response-comment-button fontcolor2" type="button" ion-button clear left (click)="newSubcomment(comment)" color="primary">Comment</button>
+      <div style="width: 100%;" *ngFor="let file of comment.files | commentType:2">
+        <audio style="width: calc(100% - 10px);margin: 5px;" controls [src]="rootPath + file.path">
+          no allow
+        </audio>
+      </div>      
+      </div>      
+      <button *ngIf="model.status == 0" class="custom-response-comment-button fontcolor2" type="button" ion-button clear left (click)="newSubcomment(comment)"
+        color="primary">Comment</button>
       <ion-card class="custom-card" *ngFor="let subcomment of comment.comments">
         <ion-card-header>
           {{subcomment.user.names}}
