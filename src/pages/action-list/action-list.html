@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header [hidden]="mainService.isOpenMenu">
   <ion-navbar *ngIf="!enableSearch">
     <ion-title class="custom-title">
       {{mainService.title}}
@@ -29,7 +29,7 @@
   <ion-refresher (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <div *ngIf="mainService.viewDocument">
+  <div *ngIf="mainService.viewDocument" [hidden]="mainService.isOpenMenu">
     <ion-card *ngFor="let file of mainService.files">
       <img *ngIf="file.type == 0" [src]="file.img" (click)="openPicture(file)" />
       <div *ngIf="file.type == 1" class="custom-file-document" (click)="openFile(file)">
@@ -42,7 +42,7 @@
       </ion-card-content>
     </ion-card>
   </div>
-  <ion-list no-lines *ngIf="!mainService.viewDocument">
+  <ion-list no-lines *ngIf="!mainService.viewDocument" [hidden]="mainService.isOpenMenu">
       <button *ngFor="let actionLocal of mainService.syncArray" type="button" class="primary-button custom-trash-action" ion-item detail-none>
         <div class="list-button">          
           <h2>{{actionLocal.data.subject}}</h2> 

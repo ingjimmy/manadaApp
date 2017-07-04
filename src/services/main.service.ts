@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Menu } from "ionic-angular";
 
 import { IResult, TokenModel, SyncModel } from './../models';
 import { UserFilter } from "../filters/user-filter";
@@ -16,7 +15,7 @@ import { CacheService } from "./cache.service";
 
 @Injectable()
 export class MainService {
-  public globalMenu: Menu;
+  public isOpenMenu: boolean = false;
   public currentUser: TokenModel;
   public users: Array<any> = [];
   public projects: Array<any> = [];

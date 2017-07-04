@@ -51,8 +51,12 @@ export class MyApp {
         console.log(error);
       });
       this.oneSignal.endInit();
-
-      this.statusBar.styleDefault();
+      if (this.platform.is('ios')) {
+        this.statusBar.overlaysWebView(true);
+        this.statusBar.hide();
+      } else {
+        this.statusBar.styleDefault();
+      }
 
       this.splashScreen.hide();
       this.keyboard.disableScroll(true);

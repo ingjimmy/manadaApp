@@ -24,3 +24,9 @@
         border:none !important;
     }
 }
+.custom-side-left {
+    transform: translateX(304px);
+}
+.custom-animate-menu {
+    transition: transform 0.250s ease-in-out;
+}

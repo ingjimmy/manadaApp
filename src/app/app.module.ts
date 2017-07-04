@@ -46,18 +46,21 @@ import { Focuser } from "../directives/aut-focus";
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp, {
-        backButtonText: '',
+      backButtonText: '',
+      platforms: {
         ios: {
-          scrollAssist: false, 
+          statusbarPadding: false,
+          scrollAssist: false,
           autoFocusAssist: false,
           inputBlurring: false
         }
+      }
     }),
     IonicStorageModule.forRoot({
       name: 'manadadb',
-         driverOrder: ['indexeddb', 'sqlite', 'websql']
+      driverOrder: ['indexeddb', 'sqlite', 'websql']
     }),
-    HttpModule   
+    HttpModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

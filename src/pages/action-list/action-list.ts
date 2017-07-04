@@ -165,15 +165,6 @@ export class ActionListComponent {
         slidingItem.close();
         let options: Array<ActionSheetModel> = [
             {
-                name: 'Color',
-                handler: (data) => {
-                    action.color = data;
-                    this.actionService.updateLocalAction(action, false);
-                    this.actionService.patch(action).subscribe(data => { }, error => { });
-                },
-                colors: true
-            },
-            {
                 name: 'Edit',
                 handler: () => {
                     let editPop = this.modalCtrl.create(ActionCrudComponent, { action: action });
@@ -288,10 +279,6 @@ export class ActionListComponent {
     }    
 
     public toogleMenu(): void {
-        if (this.mainService.globalMenu.isOpen) {
-            this.mainService.globalMenu.close();
-        } else {
-            this.mainService.globalMenu.open();
-        }
+        this.mainService.isOpenMenu = !this.mainService.isOpenMenu;
     }
 }
