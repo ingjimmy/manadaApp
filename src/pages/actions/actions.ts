@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { MenuController, ModalController, ItemSliding } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { MenuController, ModalController, ItemSliding, Menu } from 'ionic-angular';
 
 import { AccountComponent, ActionListComponent, UserCrudComponent, ProjectCrudComponent } from '../../pages';
 import { MainService, UserService, ProjectService, HelperService, CacheService } from './../../services';
@@ -11,7 +11,7 @@ import { Configuration } from "../../configuration/configuration";
   templateUrl: 'actions.html',
 })
 export class ActionsPage {
-
+  @ViewChild(Menu) menu: Menu;
   public rootPage: any = ActionListComponent;
   constructor(
     public mainService: MainService,
@@ -24,6 +24,10 @@ export class ActionsPage {
     private cacheService: CacheService) {
     this.mainService.bind();
   }
+
+  public ionViewDidLoad(): void {
+        this.mainService.globalMenu = this.menu;
+    }
 
   public allActions(): void {
     this.mainService.viewDocument = false;

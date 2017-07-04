@@ -54,11 +54,12 @@
     padding-left: 0 !important;
     position: relative;  
     border:none !important;  
-}
-.item-inner {
+
+    .item-inner {
     border-bottom: 1px solid #F1F1F1 !important;
     max-height: 111px;
     overflow: hidden;
+}
 }
 .color-bar {
     width: 5px;
@@ -132,4 +133,17 @@
 
 .custom-trash-action {
     opacity: 0.4;
+}
+.menu-content-reveal {
+    box-shadow: none !important;
+    border-left: 1px solid #F1F1F1 !important;
+    box-sizing: border-box;
+}
+.custom-toogle-menu {
+    font-weight: bold;
+    color: #000 !important;
+    font-size: 29px;
+    margin: 0 0 0 10px !important;
+    padding: 0 !important;
+    height: auto !important;
 }

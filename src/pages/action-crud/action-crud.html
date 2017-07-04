@@ -18,6 +18,11 @@
     </ion-navbar>
 </ion-header>
 <ion-content fixed>
+    <div #subject class="subject-action" contenteditable="true" placeholder="Describe the action"></div>
+    <ion-item (touchstart)="calendar()" class="custom-row-autocomplete">
+        <label>Due date</label>
+        <span class="no-border">{{model.dueDate}}</span>
+    </ion-item>
     <ion-item text-wrap class="custom-row-autocomplete">
         <label>To</label>
         <p>
@@ -43,12 +48,7 @@
         <ion-list class="custom-list-users">
             <button *ngFor="let project of projects" (touchstart)="addProject($event, project)" ion-item detail-none type="button">{{project.name}}</button>
         </ion-list>
-    </ion-item>
-    <ion-item (touchstart)="calendar()" class="custom-row-autocomplete">
-        <label>Due date</label>
-        <span class="no-border">{{model.dueDate}}</span>
-    </ion-item>
-    <div #subject class="subject-action" contenteditable="true" placeholder="Describe the action"></div>
+    </ion-item>        
     <div>
         <button ion-button clear icon-left (click)="attach($event)">        
             <ion-icon name="attach"></ion-icon>

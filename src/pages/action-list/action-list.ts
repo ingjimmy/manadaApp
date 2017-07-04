@@ -286,4 +286,12 @@ export class ActionListComponent {
     public trackByFn(index, item): void {
         return item.actionID;
     }    
+
+    public toogleMenu(): void {
+        if (this.mainService.globalMenu.isOpen) {
+            this.mainService.globalMenu.close();
+        } else {
+            this.mainService.globalMenu.open();
+        }
+    }
 }

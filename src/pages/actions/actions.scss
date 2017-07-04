@@ -1,25 +1,19 @@
 .custom-list-button {
     color:#666 !important;
+
+    .item-inner {
+        border-bottom: none !important;
+    }
 }
 .custom-action-ion-note {
     margin-top:8px !important;
     font-size: 13px !important;
+    color: #666 !important;
 }
 .custom-divider {
     font-weight: bold !important;
     font-size: 18px !important;
-    color:#000;
-    background-color: transparent;
-    padding-left: 9px !important;
-
-    button {
-        font-weight: bold !important;
-        font-size: 18px !important;
-        background-color: transparent;
-        width: 100%;
-        color:#000;
-        text-align: left; 
-    }
+    color:#000 !important;    
 }
 .custom-ion-list {
     border:none !important;

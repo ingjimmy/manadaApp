@@ -82,9 +82,19 @@ export class ActionCrudComponent {
                 200 + "ms; -webkit-transition-timing-function: ease-out; transition-timing-function: ease-out;";
         }
 
-        setTimeout(() => {
-             this.myInput.nativeElement.focus();
-        }, 1);        
+        let div = document.querySelectorAll('[contenteditable]')[0];
+        window.setTimeout(() => {
+            var sel, range;            
+            if (window.getSelection && document.createRange) {
+                this.keyboard.show();
+                range = document.createRange();
+                range.selectNodeContents(div);
+                range.collapse(true);
+                sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);                
+            }
+        }, 750);        
     }
 
     public dismiss(): void {
