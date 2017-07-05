@@ -26,11 +26,14 @@
 }
 .custom-side-left {
     transform: translateX(85%);
+        border-left: 1px solid #ddd;
+    box-sizing: border-box;
 }
 .custom-animate-menu {
     transition: transform 0.200s ease-in-out;
 }
 .custom-menu-item {
+
     .menu-inner {
         width: 85%;
     }

@@ -50,7 +50,7 @@ import { Focuser } from "../directives/aut-focus";
       platforms: {
         ios: {
           statusbarPadding: false,
-          scrollAssist: false,
+          scrollAssist: true,
           autoFocusAssist: false,
           inputBlurring: false
         }

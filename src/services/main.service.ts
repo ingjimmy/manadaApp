@@ -130,7 +130,6 @@ export class MainService {
 
       if (this.actionFilter.searchCriteria == '' && this.actionFilter.status == 'active') {
         this.actions = [];
-
         if (this.actionFilter.userID != null) {
           this.actions = response.results.filter(t => {
             var hasUser = t.assignedUsers.find(t => t.userID == this.actionFilter.userID) != null;
@@ -141,7 +140,10 @@ export class MainService {
           });
         } else if (this.actionFilter.projectID != null) {
           this.actions = response.results.filter(t => {
-            var hasUser = t.projects.find(t => t.projectD == this.actionFilter.projectID) != null;
+            var hasUser = t.projects.find(t => t.projectID == this.actionFilter.projectID) != null;
+            if (!hasUser && this.actionFilter.projectID == 0) {
+              hasUser = t.projects.length == 0;
+            }
             return hasUser;
           });
         } else {
