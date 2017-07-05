@@ -12,4 +12,6 @@ export class ActionModel {
     projects:Array<any> = new Array<any>();
     actionID?:number;
     status:number;
+    shortSubject:string;
+    comments:Array<any> = null;
 }

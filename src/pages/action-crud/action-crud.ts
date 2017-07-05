@@ -159,6 +159,8 @@ export class ActionCrudComponent {
                 item.type = SyncEnum.creation;
 
                 if (!this.cacheService.isOnline()) {
+                    this.model.shortSubject = this.helperService.getShortSubject(this.model.subject);
+                    this.model.actionID = parseInt(moment().format('YYYYMDHHmmss')) * -1;
                     this.mainService.syncArray.push(item);
                     this.cacheService.saveItem('sync-key', this.mainService.syncArray, null, Configuration.MinutesInMonth);
                     this.dismiss();
@@ -171,7 +173,7 @@ export class ActionCrudComponent {
                         this.keyboard.close();
 
                         this.mainService.updateMenuItems(result);
-                        this.actionService.addLocalAction(result, 'active');
+                        this.actionService.addLocalAction(result);
 
                         setTimeout(() => {
                             this.dismiss();

@@ -15,18 +15,24 @@ export class ActionService {
   public getAll(filter: ActionFilter): Observable<any> {
     let params: URLSearchParams = new URLSearchParams();
 
-    for (var key in filter) {
-      if (key.toString() != 'hasNextPage') {
-        params.set(key.toString(), filter[key]);
-      }
-    }
+    if (filter.searchCriteria == '' && filter.status == 'active') {
+      params.set('getAll', 'true');
 
-    let requestOptions = new RequestOptions();
-    requestOptions.params = params;
-    if (filter.searchCriteria == '') {
+      let requestOptions = new RequestOptions();
+      requestOptions.params = params;
+
       let request = this.http.get(`${Configuration.UrlApi}/actions`, requestOptions).map(res => res.json());
-      return this.cache.loadFromDelayedObservable(params.toString(), request);
+      return this.cache.loadFromDelayedObservable('active-actions', request);
     } else {
+      for (var key in filter) {
+        if (key.toString() != 'hasNextPage') {
+          params.set(key.toString(), filter[key]);
+        }
+      }
+
+      let requestOptions = new RequestOptions();
+      requestOptions.params = params;
+
       return this.http.get(`${Configuration.UrlApi}/actions`, requestOptions).map(res => res.json());
     }
   }
@@ -61,105 +67,53 @@ export class ActionService {
 
   public updateLocalAction(action: any, firstItem: boolean): void {
     if (action.actionID != undefined) {
-      this.cache.getAllKeys().then(keys => {
-        keys.forEach(t => {
-          this.cache.getItem(t).then(obj => {
-            let local: IResult = obj;
-            if (local.results != undefined) {
-              let actionL = local.results.find(t => t.actionID == action.actionID);
-              if (actionL != undefined) {
-                var index = local.results.indexOf(actionL);
-                if (firstItem) {
-                  local.results.splice(index, 1);
-                  local.results.splice(0, 0, action);
-                } else {
-                  local.results[index] = action;
-                }
-
-                this.cache.saveItem(t, local).catch(sav => {
-                  this.cache.clearExpired(true);
-                });
-              }
+      this.cache.getItem('active-actions').then(obj => {
+        let local: IResult = obj;
+        if (local.results != undefined) {
+          let actionL = local.results.find(t => t.actionID == action.actionID);
+          if (actionL != undefined) {
+            var index = local.results.indexOf(actionL);
+            if (firstItem) {
+              local.results.splice(index, 1);
+              local.results.splice(0, 0, action);
+            } else {
+              local.results[index] = action;
             }
-          }).catch(error => { console.log(error); });
-        });
+
+            this.cache.saveItem('active-actions', local).catch(sav => {
+              this.cache.clearExpired(true);
+            });
+          }
+        }
       }).catch(error => { console.log(error); });
     }
   }
 
-  public addLocalAction(action: any, status: string): void {
-    this.cache.getAllKeys().then(keys => {
-      keys.forEach(t => {
-        let params: URLSearchParams = new URLSearchParams(t);
-
-        if (params.get('status') == status && params.get('page') == '0') {
-          let isInclude: boolean = !params.has('userID') && !params.has('projectID');
-
-          if (action.assignedUsers.length > 0) {
-            for (let index = 0; index < action.assignedUsers.length; index++) {
-              var user = action.assignedUsers[index];
-              if (params.get('userID') == user.userID.toString()) {
-                isInclude = true;
-              }
-            }
-          }
-
-          if (action.projects.length > 0) {
-            for (let index = 0; index < action.projects.length; index++) {
-              var project = action.projects[index];
-              if (params.get('projectID') == project.projectID.toString()) {
-                isInclude = true;
-              }
-            }
-          }
-
-          if (isInclude) {
-            this.cache.getItem(t).then(obj => {
-              let local: IResult = obj;
-              if (local.results != undefined) {
-                local.results.unshift(action);
-                this.cache.saveItem(t, local).then(sav => {                  
-                }).catch(sav => {
-                  this.cache.clearExpired(true);
-                });
-              }
-            }).catch(error => { console.log(error); });
-          }
-        }
+  public addLocalAction(action: any): void {
+    this.cache.getItem('active-actions').then(obj => {
+      let local: IResult = obj;
+      local.results.unshift(action);
+      this.cache.saveItem('active-actions', local).then(sav => {
+      }).catch(sav => {
+        this.cache.clearExpired(true);
       });
     }).catch(error => { console.log(error); });
   }
 
-  public removeLocalAction(action: any, status: string): void {
-    this.cache.getAllKeys().then(keys => {
-      keys.forEach(t => {
-        let params: URLSearchParams = new URLSearchParams(t);
-        if (params.get('status') == status && params.get('page') == '0') {
-          let isRemove: boolean = !params.has('userID') && !params.has('projectID');
+  public removeLocalAction(action: any): void {
+    this.cache.getItem('active-actions').then(obj => {
+      let local: IResult = obj;
 
-          if (action.assignedUsers.length > 0) {
-            for (let index = 0; index < action.assignedUsers.length; index++) {
-              var user = action.assignedUsers[index];
-              if (params.get('userID') == user.userID.toString()) {
-                isRemove = true;
-              }
-            }
-          }
+      let actionLocal = local.results.find(t => t.actionID == action.actionID);
+      if (actionLocal != undefined) {
+        let index = local.results.indexOf(actionLocal);
+        local.results.splice(index, 1);
 
-          if (action.projects.length > 0) {
-            for (let index = 0; index < action.projects.length; index++) {
-              var project = action.projects[index];
-              if (params.get('projectID') == project.projectID.toString()) {
-                isRemove = true;
-              }
-            }
-          }
-
-          if (isRemove) {
-            this.cache.removeItem(t);
-          }
-        }
-      });
+        this.cache.saveItem('active-actions', local).then(sav => {
+        }).catch(sav => {
+          this.cache.clearExpired(true);
+        });
+      }
     }).catch(error => { console.log(error); });
   }
 }

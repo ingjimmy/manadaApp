@@ -20,4 +20,18 @@ export class HelperService {
 
     toast.present();
   }
+
+  public getShortSubject(subject: string): string {
+    if (subject != '') {
+      let reg = /(<([^>]+)>)/ig
+      let shortSubject = subject.replace(reg, '');
+      if (shortSubject.length > 140) {
+        shortSubject = shortSubject.substring(0, 139);
+      }      
+
+      return shortSubject;
+    } else {
+      return '';
+    }
+  }
 }

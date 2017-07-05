@@ -68,7 +68,16 @@ body {
 .custom-title {
     width: auto !important;
     padding-left: 22px !important;
+    font-size: 18px !important;
 }
 .custom-order {
     order:3;
+}
+.custom-attach-button {
+    font-size: 20px !important;
+
+    span {
+        font-size: 20px !important;
+        font-weight: bold;
+    }
 }

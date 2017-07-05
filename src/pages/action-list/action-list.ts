@@ -116,11 +116,11 @@ export class ActionListComponent {
                     action.status = model.status;
                     action.remove = false;
 
-                    let statusRemove = action.status == 0 ? 'ended' : 'active';
-                    let statusAdd = action.status == 0 ? 'active' : 'ended';
-
-                    this.actionService.addLocalAction(action, statusAdd);
-                    this.actionService.removeLocalAction(action, statusRemove);                    
+                    if (action.status == 1) {
+                        this.actionService.removeLocalAction(action);
+                    } else {
+                        this.actionService.addLocalAction(action);
+                    }                                        
                 }, 500);
 
                 let add = action.status === 0 ? -1 : 1;
@@ -196,8 +196,6 @@ export class ActionListComponent {
                     setTimeout(() => {
                         let index = this.mainService.actions.indexOf(action);
                         this.mainService.actions.splice(index, 1);
-
-                        this.actionService.removeLocalAction(action, 'ended');
                     }, 500);
 
                     this.actionService.delete(action.actionID).subscribe(data => { }, error => {

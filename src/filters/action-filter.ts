@@ -5,4 +5,5 @@ export class ActionFilter {
     hasNextPage:boolean = false;  
     searchCriteria:string = '';  
     userID?:number;
+    getAll:boolean = false;
 }

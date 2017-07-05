@@ -7,7 +7,7 @@
       </button>
         </ion-buttons>
         <ion-title>
-            {{updateUser != undefined ? 'Update data' : 'New team member'}}
+            {{updateUser != undefined ? 'Update member' : 'New member'}}
         </ion-title> 
         <ion-buttons end>
             <button class="fontcolor2" [disabled]="!form.valid && isBusy" (click)="send(form)" ion-button icon-right>

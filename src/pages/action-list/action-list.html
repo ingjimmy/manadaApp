@@ -11,7 +11,7 @@
   </ion-navbar>
   <ion-navbar *ngIf="enableSearch">
     <div>
-      <input class="input-save" placeholder="Search" type="search" name="search" (input)="getItems($event)" />
+      <input class="input-save custom-input-search" placeholder="Search" type="search" name="search" (input)="getItems($event)" />
     </div>
     <ion-buttons end>
       <button (click)="toggleSearch()" ion-button clear color="primary">
@@ -27,7 +27,9 @@
 </ion-header>
 <ion-content>
   <ion-refresher (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content></ion-refresher-content>
+    <ion-refresher-content pullingIcon="none"
+      pullingText=""
+      refreshingText=""></ion-refresher-content>
   </ion-refresher>
   <div *ngIf="mainService.viewDocument" [hidden]="mainService.isOpenMenu">
     <ion-card *ngFor="let file of mainService.files">
@@ -43,9 +45,9 @@
     </ion-card>
   </div>
   <ion-list no-lines *ngIf="!mainService.viewDocument" [hidden]="mainService.isOpenMenu">
-      <button *ngFor="let actionLocal of mainService.syncArray" type="button" class="primary-button custom-trash-action" ion-item detail-none>
+      <button *ngFor="let actionLocal of mainService.syncArray" type="button" (click)="detail(actionLocal.data)" class="primary-button custom-trash-action" ion-item detail-none>
         <div class="list-button">          
-          <h2>{{actionLocal.data.subject}}</h2> 
+          <h2>{{actionLocal.data.shortSubject}}</h2> 
         <p>
           <span class="users" *ngFor="let user of actionLocal.data.assignedUsers"><ion-icon name="icon-user"></ion-icon> {{ user.names }}</span>
           <span class="users" *ngFor="let project of actionLocal.data.projects">{{ project.name }}</span>
@@ -92,7 +94,7 @@
   </ion-infinite-scroll>
 </ion-content>
 <ion-footer>
-  <ion-toolbar class="custom-footer-bar">
+  <ion-toolbar class="custom-footer-bar" [ngClass]="{'custom-footer-noline': this.mainService.isOpenMenu, 'custom-footer-bar': true}">
     <button class="custom-toogle-menu" ion-button clear (click)="toogleMenu()">
       <ion-icon name="menu"></ion-icon>
     </button>

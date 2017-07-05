@@ -13,6 +13,7 @@ import { CameraHelper } from "../../helpers/camera-helper";
 import { AlertHelper } from "../../helpers/alert-helper";
 import { ActionSheetModel } from "../../models";
 import { CustomActionSheetComponent } from "../../components/custom-action-sheet";
+import * as moment from 'moment';
 
 @Component({
     templateUrl: 'action-detail.html'
@@ -50,21 +51,37 @@ export class ActionDetailComponent {
         this.rootPath = Configuration.Url;
         this.model = params.get('action');
         this.model.files = [];
-        this.commentFilter.actionID = this.model.actionID;
-        this.commentFilter.page = 0;
-        this.actionService.get(this.model.actionID).subscribe(data => {
-            this.model = data.json();
-        }, error => {
-            console.log(error);
-        });
-        this.bindComments(() => {
+        if (this.model.actionID > 0) {
+            this.commentFilter.actionID = this.model.actionID;
+            this.commentFilter.page = 0;
+            this.actionService.get(this.model.actionID).subscribe(data => {
+                this.model = data.json();
+            }, error => {
+                console.log(error);
+            });
+            this.bindComments(() => {
+                setTimeout(() => {
+                    try {
+                        this.content.scrollToBottom();
+                        this.infiniteScroll.enable(true);
+                    } catch (error) { }
+                }, 200);
+            });
+        } else {
+            this.model.creator = this.mainService.users.length > 0 ? this.mainService.users[0] : {};
+            this.model.creationDate = moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
+            this.model.status = 0;
+            if (this.model.comments == null) {
+                this.model.comments = [];
+            }
+
+            this.comments = this.model.comments;
             setTimeout(() => {
                 try {
                     this.content.scrollToBottom();
-                    this.infiniteScroll.enable(true);
-                } catch (error) {}
+                } catch (error) { }
             }, 200);
-        });
+        }
     }
 
     public ionViewDidLoad(): void {
@@ -151,32 +168,57 @@ export class ActionDetailComponent {
     public send(event: Event): void {
         event.preventDefault();
         document.getElementById('commentinput').focus();
-        if (this.cacheService.isOnline()) {
-            if (this.comment.content != '' || this.comment.files.length > 0) {
-                this.comment.actionID = this.model.actionID;
-                this.commentService.add(this.comment).subscribe(data => {
-                    let result = data.json();
-                    this.totalComments += 1;
-                    result.index = this.totalComments + 1;
-                    result.comments = [];
-                    this.comments.push(result);
+        if (this.model.actionID < 0) {
+            this.cacheService.getItem('sync-key').then(data => {
+                let actionCache = data.find(t => t.data.actionID == this.model.actionID);
+                if (actionCache != undefined) {                    
+                    let addComment = new CommentModel();
+                    addComment.content = this.comment.content;
+                    addComment.creationDate = moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
+                    addComment.user = this.mainService.users.length > 0 ? this.mainService.users[0] : {};
+                    addComment.index = this.model.comments.length + 2;
+                    this.model.comments.push(addComment);                    
+
+                    let index = data.indexOf(actionCache);
+                    actionCache.data = this.model;
+                    data[index] = actionCache;
+
+                    this.cacheService.saveItem('sync-key', data, null, Configuration.MinutesInMonth);
+                    this.mainService.bindSyncArray(data);
                     this.comment = new CommentModel();
                     let dimension = this.content.getContentDimensions();
                     this.content.scrollTo(0, dimension.scrollHeight);
+                }
+            }).catch(error => { });
 
-                    let action = this.mainService.actions.find(t => t.actionID == this.model.actionID);
-                    if (action != undefined) {
-                        this.actionService.updateLocalAction(action, true);
-                        let actionIndex = this.mainService.actions.indexOf(action);
-                        this.mainService.actions.splice(actionIndex, 1);
-                        this.mainService.actions.splice(0, 0, action);
-                    }
-                }, error => {
-                    console.log(error);
-                })
-            }
         } else {
-            this.helperService.presentToastMessage(Configuration.ErrorMessage);
+            if (this.cacheService.isOnline()) {
+                if (this.comment.content != '' || this.comment.files.length > 0) {
+                    this.comment.actionID = this.model.actionID;
+                    this.commentService.add(this.comment).subscribe(data => {
+                        let result = data.json();
+                        this.totalComments += 1;
+                        result.index = this.totalComments + 1;
+                        result.comments = [];
+                        this.comments.push(result);
+                        this.comment = new CommentModel();
+                        let dimension = this.content.getContentDimensions();
+                        this.content.scrollTo(0, dimension.scrollHeight);
+
+                        let action = this.mainService.actions.find(t => t.actionID == this.model.actionID);
+                        if (action != undefined) {
+                            this.actionService.updateLocalAction(action, true);
+                            let actionIndex = this.mainService.actions.indexOf(action);
+                            this.mainService.actions.splice(actionIndex, 1);
+                            this.mainService.actions.splice(0, 0, action);
+                        }
+                    }, error => {
+                        console.log(error);
+                    })
+                }
+            } else {
+                this.helperService.presentToastMessage(Configuration.ErrorMessage);
+            }
         }
     }
 
@@ -325,11 +367,11 @@ export class ActionDetailComponent {
             this.model.status = this.model.status == 0 ? 1 : 0;
             this.showAnimate = this.model.status == 1;
 
-            let statusRemove = this.model.status == 0 ? 'ended' : 'active';
-            let statusAdd = this.model.status == 0 ? 'active' : 'ended';
-
-            this.actionService.addLocalAction(this.model, statusAdd);
-            this.actionService.removeLocalAction(this.model, statusRemove);
+            if (this.model.status == 1) {
+                this.actionService.removeLocalAction(this.model);
+            } else {
+                this.actionService.addLocalAction(this.model);
+            }
 
             this.actionService.changeStatus(this.model).subscribe(data => {
                 let add = this.model.status === 1 ? -1 : 1;

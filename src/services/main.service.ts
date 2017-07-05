@@ -11,6 +11,8 @@ import { UserService } from "./user.service";
 import { ProjectService } from "./project.service";
 import { ActionService } from "./action.service";
 import { CacheService } from "./cache.service";
+import { HelperService } from "./index";
+import { CommentService } from "./comment.service"
 
 
 @Injectable()
@@ -41,31 +43,63 @@ export class MainService {
     private userService: UserService,
     private projectService: ProjectService,
     private actionService: ActionService,
-    private cacheService: CacheService) {
+    private cacheService: CacheService,
+    private helperService: HelperService,
+    private commentService: CommentService) {
     this.userFilter.enableCounters = true;
     this.projectFilter.enableCounters = true;
     this.actionFilter.status = 'active';
-    this.intervalSync = setInterval(() => {
-      this.syncUp();
-    }, 60000);
+
+    this.cacheService.getNetworkStatusChanges().subscribe(status => {
+      if (status) { 
+        this.syncUp();
+      }
+    })
+  }
+
+  public bindSyncArray(data: SyncModel[]): void {
+    if (this.actionFilter.userID != null) {
+        this.syncArray = data.filter(t => {
+          var hasUser = t.data.assignedUsers.find(t => t.userID == this.actionFilter.userID) != null;
+          if (!hasUser && this.actionFilter.userID == this.currentUser.user_id) {
+            hasUser = t.data.assignedUsers.length == 0;
+          }
+          return hasUser;
+        });
+      } else if (this.actionFilter.projectID != null) {
+        this.syncArray = data.filter(t => {
+          var hasUser = t.data.projects.find(t => t.projectD == this.actionFilter.projectID) != null;
+          return hasUser;
+        });
+      } else {
+        this.syncArray = data;
+      }    
   }
 
   public syncUp(): void {
     this.cacheService.getItem('sync-key').then(data => {
-      this.syncArray = data;
-      if (this.syncArray.length > 0 && this.cacheService.isOnline()) {
-        this.syncArray.forEach(element => {
+      if (data.length > 0 && this.cacheService.isOnline()) {
+        data.forEach(element => {
           if (element.type == SyncEnum.creation) {
+            let index = data.indexOf(element);
+            delete element.data.actionID;
             this.actionService.add(element.data).subscribe(result => {
               let action = result.json();
               this.updateMenuItems(action);
-              this.actionService.addLocalAction(action, 'active');
+              this.actionService.addLocalAction(action);
 
-              let index = this.syncArray.indexOf(element);
-              this.syncArray.splice(index, 1);
+              if (element.data.comments != null) {                
+                element.data.comments.forEach(comm => {
+                  comm.actionID = action.actionID;
+                  this.commentService.add(comm).subscribe(data => {}, error => {});
+                });
+              }
+              
+              data.splice(index, 1);
 
-              this.cacheService.saveItem('sync-key', this.syncArray, null, Configuration.MinutesInMonth);
-            }, error => console.log(error));
+              this.cacheService.saveItem('sync-key', data, null, Configuration.MinutesInMonth);
+              this.bindSyncArray(data);
+            }, error => {});
           }
         });
       }
@@ -76,33 +110,64 @@ export class MainService {
     this.userService.getAll(this.userFilter).subscribe(resp => {
       let response: IResult = resp.json();
       this.users = response.results;
-    }, err => { console.log(err); })
+    }, err => { })
   }
 
   public bindProjects(): void {
     this.projectService.getAll(this.projectFilter).subscribe(resp => {
       let response: IResult = resp.json();
       this.projects = response.results;
-    }, err => { console.log(err); })
+    }, err => { })
   }
 
   public bindActions(call?: (enabled: boolean) => void): void {
+    this.cacheService.getItem('sync-key').then(data => {
+      this.bindSyncArray(data);
+    }).catch(error => { })    
+
     this.actionService.getAll(this.actionFilter).subscribe(resp => {
       let response: IResult = resp;
-      if (this.actionFilter.page == 0) {
+
+      if (this.actionFilter.searchCriteria == '' && this.actionFilter.status == 'active') {
         this.actions = [];
+
+        if (this.actionFilter.userID != null) {
+          this.actions = response.results.filter(t => {
+            var hasUser = t.assignedUsers.find(t => t.userID == this.actionFilter.userID) != null;
+            if (!hasUser && this.actionFilter.userID == this.currentUser.user_id) {
+              hasUser = t.assignedUsers.length == 0;
+            }
+            return hasUser;
+          });
+        } else if (this.actionFilter.projectID != null) {
+          this.actions = response.results.filter(t => {
+            var hasUser = t.projects.find(t => t.projectD == this.actionFilter.projectID) != null;
+            return hasUser;
+          });
+        } else {
+          this.actions = response.results;
+        }
+
+        this.actionFilter.hasNextPage = false;
+        if (call != null) {
+          call.call(null, false);
+        }
+      } else {
+        if (this.actionFilter.page == 0) {
+          this.actions = [];
+        }
+
+        response.results.forEach(element => {
+          this.actions.push(element);
+        });
+
+        this.actionFilter.hasNextPage = response.hasNextPage;
+
+        if (call != null) {
+          call.call(null, response.hasNextPage);
+        }
       }
-
-      response.results.forEach(element => {
-        this.actions.push(element);
-      });
-
-      this.actionFilter.hasNextPage = response.hasNextPage;
-
-      if (call != null) {
-        call.call(null, response.hasNextPage);
-      }
-    }, err => { console.log(err); })
+    }, err => { this.helperService.presentToastMessage(Configuration.ErrorMessage); })
   }
 
   public bindCountActions(): void {

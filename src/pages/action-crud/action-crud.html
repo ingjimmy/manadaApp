@@ -49,7 +49,7 @@
             <button *ngFor="let project of projects" (touchstart)="addProject($event, project)" ion-item detail-none type="button">{{project.name}}</button>
         </ion-list>
     </ion-item>        
-    <div>
+    <div class="custom-attach-button">
         <button ion-button clear icon-left (click)="attach($event)">        
             <ion-icon name="attach"></ion-icon>
         </button>

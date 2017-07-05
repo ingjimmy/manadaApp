@@ -4,7 +4,7 @@
 <ion-header>
   <ion-navbar>
     <ion-buttons end>
-      <button class="fontcolor2" *ngIf="model.status == 0" (click)="changeStatus()" ion-button icon-right>
+      <button class="fontcolor2" *ngIf="model.status == 0 && model.actionID > 0" (click)="changeStatus()" ion-button icon-right>
           Done
       </button>
       <button class="fontcolor2" *ngIf="model.status == 1" (click)="changeStatus()" ion-button icon-right>
@@ -22,7 +22,7 @@
       <div class="color-bar tag{{model.color}}"></div>
       <ion-card-header>
         1. {{model.creator.names}}
-        <button class="custom-button-edit" (click)="displayMenuAction()" type="button">
+        <button *ngIf="model.actionID > 0" class="custom-button-edit" (click)="displayMenuAction()" type="button">
           <ion-icon class="custom-icon-edit custom-icon-edit-comment" name="icon-edit"></ion-icon>
         </button>
       </ion-card-header>
@@ -51,7 +51,7 @@
       <div class="color-bar tag{{comment.color}}"></div>
       <ion-card-header>
         {{comment.index}}. {{comment.user.names}}
-        <ion-icon *ngIf="model.status == 0 && comment.user.userID == mainService.currentUser.user_id" (click)="displayMenuComment(comment)"
+        <ion-icon *ngIf="model.status == 0 && comment.user.userID == mainService.currentUser.user_id && model.actionID > 0" (click)="displayMenuComment(comment)"
           class="custom-icon-edit custom-icon-edit-comment" name="icon-edit"></ion-icon>
       </ion-card-header>
       <ion-card-content>
@@ -73,7 +73,7 @@
         </audio>
       </div>      
       </div>      
-      <button *ngIf="model.status == 0" class="custom-response-comment-button fontcolor2" type="button" ion-button clear left (click)="newSubcomment(comment)"
+      <button *ngIf="model.status == 0 && model.actionID > 0" class="custom-response-comment-button fontcolor2" type="button" ion-button clear left (click)="newSubcomment(comment)"
         color="primary">Comment</button>
       <ion-card class="custom-card" *ngFor="let subcomment of comment.comments">
         <ion-card-header>
@@ -105,7 +105,7 @@
   </ion-list>
   <ion-toolbar>
     <ion-buttons start>
-      <button (touchstart)="files($event)" ion-button icon-left color="primary">        
+      <button class="custom-attach-button" (touchstart)="files($event)" ion-button icon-left color="primary">        
         <ion-icon name="attach"></ion-icon>
       </button>
     </ion-buttons>

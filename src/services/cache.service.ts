@@ -70,7 +70,7 @@ export class CacheService {
       disconnect = Observable.fromEvent(window, 'offline').map(() => false);
 
     this.networkStatusChanges = Observable.merge(connect, disconnect).share();
-    this.networkStatusChanges.subscribe(status => {
+    this.networkStatusChanges.subscribe(status => {      
       this.networkStatus = status;
     });
   }
@@ -210,7 +210,7 @@ export class CacheService {
     return observableSubject.asObservable();
   }
 
-  public clearAll(): Promise<any> {
+   public clearAll(): Promise<any> {
     if (!this.cacheEnabled) {
       return Promise.reject(MESSAGES[2]);
     }

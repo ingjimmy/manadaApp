@@ -21,6 +21,7 @@ export class ActionsPage {
     private alertHelper: AlertHelper,
     private helperService: HelperService,
     private cacheService: CacheService) {
+    this.mainService.syncUp();
     this.mainService.bind();
   }
 

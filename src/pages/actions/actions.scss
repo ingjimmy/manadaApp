@@ -25,8 +25,18 @@
     }
 }
 .custom-side-left {
-    transform: translateX(304px);
+    transform: translateX(85%);
 }
 .custom-animate-menu {
-    transition: transform 0.250s ease-in-out;
+    transition: transform 0.200s ease-in-out;
+}
+.custom-menu-item {
+    .menu-inner {
+        width: 85%;
+    }
+}
+.custom-footer-noline {
+    .toolbar-background-ios {
+        border: none !important;
+    }
 }
