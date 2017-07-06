@@ -55,7 +55,7 @@
         </div>         
       </button>
     <ion-item-sliding #item *ngFor="let action of mainService.actions; trackBy:trackByFn" [ngClass]="{'custom-list-h': true,  'remove-item': action.remove}">
-      <button type="button" class="primary-button" ion-item detail-none (click)="detail(action)">
+      <button type="button" class="primary-button" ion-item detail-none tappable (click)="detail(action)">
         <div class="list-button">          
           <h2>
             <span class="custom-new-updates" *ngIf="action.countUpdates > 0"></span> {{action.shortSubject}}

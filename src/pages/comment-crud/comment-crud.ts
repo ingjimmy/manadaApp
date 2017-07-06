@@ -52,6 +52,7 @@ export class CommentCrudComponent {
     }
 
     public dismiss(): void {
+        this.keyboard.close();
         this.viewCtrl.dismiss();
     }
 

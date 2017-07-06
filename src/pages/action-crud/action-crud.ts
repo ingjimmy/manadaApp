@@ -98,6 +98,7 @@ export class ActionCrudComponent {
     }
 
     public dismiss(): void {
+        this.keyboard.close();
         this.viewCtrl.dismiss();
     }
 

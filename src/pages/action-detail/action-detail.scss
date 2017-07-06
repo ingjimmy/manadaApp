@@ -94,6 +94,9 @@
     border:1px solid #F1F1F1;
     border-radius: 5px;
     padding: 8px !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 .custom-content-users {
     margin-top:5px;
