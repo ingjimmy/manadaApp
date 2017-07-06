@@ -8,6 +8,9 @@ $font-path: "../assets/fonts";
 
 @include makeIcon(icon-edit, '\e90c');
 @include makeIcon(icon-user, '\e901');
+@include makeIcon(icon-clip, '\e904');
+@include makeIcon(icon-check, '\e903');
+@include makeIcon(icon-custom-menu, '\e90e');
 
 // Shared Variables
 // --------------------------------------------------

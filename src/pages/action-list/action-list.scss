@@ -35,10 +35,12 @@
         text-overflow: ellipsis;
         word-wrap: break-word;
         overflow: hidden;        
-        text-indent: 59px;
-        direction: rtl;
         text-align: left;
-        max-height: 55px;
+        max-height: 75px;
+
+        [item-end] {
+            margin:0;
+        }
     }    
 }
 .button-swipe {
@@ -56,10 +58,14 @@
     border:none !important;  
 
     .item-inner {
-    border-bottom: 1px solid #F1F1F1 !important;
-    max-height: 111px;
-    overflow: hidden;
-}
+        border-bottom: 1px solid #F1F1F1 !important;
+        max-height: 133px;
+        overflow: hidden;
+    }
+    p {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
 }
 .color-bar {
     width: 5px;
@@ -75,7 +81,7 @@
     transition: all 0.3s ease-in-out;
 }
 .custom-list-h {
-    max-height: 112px;
+    max-height: 134px;
 }
 .custom-content-img {
     float:left;
@@ -141,7 +147,7 @@
 .custom-toogle-menu {
     font-weight: bold;
     color: #000 !important;
-    font-size: 29px;
+    font-size: 20px;
     margin: 0 0 0 10px !important;
     padding: 0 !important;
     height: auto !important;
@@ -155,4 +161,8 @@
 .custom-input-search {
     font-size: 18px !important;
     padding: 7px 7px 7px 17px !important;
+}
+.custom-icon-check {
+    font-size: 14px;
+    margin-left: 5px;
 }

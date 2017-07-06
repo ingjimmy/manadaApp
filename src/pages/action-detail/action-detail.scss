@@ -12,10 +12,22 @@
 
     ion-card-header {
         padding-bottom: 4px !important;
+        color:#000;
+    }    
+}
+
+.custom-comment-card {
+    ion-card-content {
+        padding-bottom: 0 !important;
     }
 }
+
 .custom-response-comment-button {
     margin: 0 !important;
+    span {
+        font-size: 14px; 
+        color:#666;
+    }
 }
 .custom-card-image {
     padding:  10px 10px 0 10px !important;
@@ -77,4 +89,22 @@
     white-space: nowrap;
     margin-bottom: 5px !important;
     float: left;
+}
+#commentinput {
+    border:1px solid #F1F1F1;
+    border-radius: 5px;
+    padding: 8px !important;
+}
+.custom-content-users {
+    margin-top:5px;
+
+    span {
+        border:1px solid #C4C4C4;
+        color:#8e9093;
+        font-size: 12px;
+        padding: 2px;
+    }
+}
+.custom-clear {
+    clear: both;
 }

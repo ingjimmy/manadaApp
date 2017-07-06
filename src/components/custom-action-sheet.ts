@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { Platform, NavParams, ViewController } from 'ionic-angular';
 
 import { ActionSheetModel } from "../models";
@@ -8,7 +8,7 @@ import { ActionSheetModel } from "../models";
 })
 export class CustomActionSheetComponent {
     public options:Array<ActionSheetModel>;
-    @ViewChild('background') background;
+    private dvBack:any;
     constructor(
         public platform: Platform,
         public params: NavParams,
@@ -17,14 +17,21 @@ export class CustomActionSheetComponent {
         }
     
     public ionViewDidLoad(): void {
+        this.dvBack = document.createElement('div');
+        this.dvBack.className = 'custom-background';
+        document.querySelectorAll('ion-app')[0].appendChild(this.dvBack);
+        
         setTimeout(() => {
-            this.background.nativeElement.style.opacity = 0.4;
-        }, 200);
+            this.dvBack.style.opacity = '0.4';            
+        }, 10);
     }
 
     public dismiss(): void {
-        this.background.nativeElement.style.opacity = 0;
+        this.dvBack.style.opacity = '0';
         this.viewCtrl.dismiss();
+        setTimeout(() => {
+            this.dvBack.remove();            
+        }, 300);        
     }
 
     public resolveHandler(event: Event, option: ActionSheetModel, data?: any): void {        

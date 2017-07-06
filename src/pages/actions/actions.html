@@ -1,7 +1,7 @@
 <ion-menu [content]="content" [swipeEnabled]="false" type="reveal" class="show-menu custom-menu-item" (click)="this.mainService.isOpenMenu = !this.mainService.isOpenMenu">
   <ion-content>
-    <button class="custom-divider custom-list-button" ion-item detail-none (click)="allActions()">All Actions <ion-note class="custom-action-ion-note" *ngIf="mainService.countAll > 0" item-end>{{mainService.countAll}}</ion-note></button>
-    <button class="custom-divider custom-list-button" ion-item detail-none (click)="addUser()">My team +</button>
+    <button class="custom-divider custom-list-button custom-menu-margin-top" ion-item detail-none (click)="allActions()">All Actions <ion-note class="custom-action-ion-note" *ngIf="mainService.countAll > 0" item-end>{{mainService.countAll}}</ion-note></button>
+    <button class="custom-divider custom-list-button custom-menu-margin-top" ion-item detail-none (click)="addUser()">My team +</button>
     <ion-list class="custom-ion-list">
       <ion-item-sliding #item *ngFor="let user of mainService.users; first as isFirst">
         <button class="custom-list-button" ion-item detail-none (click)="filterUser(user)">{{user.names}} 
@@ -18,7 +18,7 @@
         </ion-item-options>
       </ion-item-sliding>
     </ion-list>
-    <button class="custom-divider custom-list-button" ion-item detail-none (click)="addProject()">Projects +</button>
+    <button class="custom-divider custom-list-button custom-menu-margin-top" ion-item detail-none (click)="addProject()">Projects +</button>
     <button class="custom-list-button" ion-item detail-none (click)="filterProject(mainService.projectRaw)">{{mainService.projectRaw.name}}  
       <ion-note class="custom-action-ion-note" *ngIf="mainService.projectRaw.countActions > 0" item-end>{{mainService.projectRaw.countActions}}</ion-note>
     </button>
@@ -37,7 +37,7 @@
         </ion-item-options>
       </ion-item-sliding>
     </ion-list>
-    <button class="custom-divider custom-list-button" ion-item detail-none (click)="account()">Account</button>
+    <button class="custom-divider custom-list-button custom-menu-margin-top custom-menu-margin-bottom" ion-item detail-none (click)="account()">Account</button>
   </ion-content>
 </ion-menu>
 <ion-nav [root]="rootPage" #content swipeBackEnabled="false" [ngClass]="{'custom-animate-menu': true,  'custom-side-left': mainService.isOpenMenu}"></ion-nav>

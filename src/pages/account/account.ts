@@ -65,6 +65,10 @@ export class AccountComponent {
         }
     }
 
+    public toogleMenu(): void {
+         this.mainService.isOpenMenu = !this.mainService.isOpenMenu;
+    }
+
     public updatePassword(form: any): void {
         if (form.valid) {
             this.leaderModel.password = this.passwordModel.password;

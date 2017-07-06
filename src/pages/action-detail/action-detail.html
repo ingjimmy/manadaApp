@@ -19,7 +19,6 @@
   </ion-infinite-scroll>
   <ion-list>
     <ion-card class="custom-card">
-      <div class="color-bar tag{{model.color}}"></div>
       <ion-card-header>
         1. {{model.creator.names}}
         <button *ngIf="model.actionID > 0" class="custom-button-edit" (click)="displayMenuAction()" type="button">
@@ -31,10 +30,13 @@
         <span *ngIf="model.dueDate != null && model.finalizedDate == null"> - due date <span [innerHTML]="model.dueDate | dateColor"></span></span>
         <span *ngIf="model.finalizedDate != null"> - end date <span [innerHTML]="model.finalizedDate | dateColor:model.dueDate"></span></span>
         <p [innerHTML]="model.subject"></p>
-        <p class="custom-content-users">
+        <div class="custom-content-users">
           <span class="users custom-white-space" *ngFor="let user of model.assignedUsers"><ion-icon name="icon-user"></ion-icon> {{ user.names }}</span>
           <span class="users custom-white-space" *ngFor="let project of model.projects">{{ project.name }}</span>
-        </p>
+          <div class="custom-clear">
+            
+          </div>
+        </div>
       </ion-card-content>
       <div *ngIf="model.files.length > 0">
         <div *ngFor="let file of model.files | commentType:0" class="custom-card-image">
@@ -47,7 +49,7 @@
       </button>
       </div>
     </ion-card>
-    <ion-card class="custom-card" *ngFor="let comment of comments">
+    <ion-card class="custom-card custom-comment-card" *ngFor="let comment of comments">
       <div class="color-bar tag{{comment.color}}"></div>
       <ion-card-header>
         {{comment.index}}. {{comment.user.names}}
@@ -73,7 +75,7 @@
         </audio>
       </div>      
       </div>      
-      <button *ngIf="model.status == 0 && model.actionID > 0" class="custom-response-comment-button fontcolor2" type="button" ion-button clear left (click)="newSubcomment(comment)"
+      <button *ngIf="model.status == 0 && comment.commentID != null" class="custom-response-comment-button fontcolor2" type="button" ion-button clear left (click)="newSubcomment(comment)"
         color="primary">Comment</button>
       <ion-card class="custom-card" *ngFor="let subcomment of comment.comments">
         <ion-card-header>
@@ -106,14 +108,13 @@
   <ion-toolbar>
     <ion-buttons start>
       <button class="custom-attach-button" (touchstart)="files($event)" ion-button icon-left color="primary">        
-        <ion-icon name="attach"></ion-icon>
+        <ion-icon name="icon-clip"></ion-icon>
       </button>
     </ion-buttons>
     <input id="commentinput" style="width: 100%;" class="input-save" type="text" name="content" [(ngModel)]="comment.content">
-    <ion-buttons end>
-      <button class="fontcolor2" (touchstart)="send($event)" ion-button icon-right color="primary">
-        Send
-        <ion-icon name="send"></ion-icon>
+    <ion-buttons end *ngIf="comment.content != ''">
+      <button (touchstart)="send($event)" ion-button icon-right color="primary">
+        Comment        
       </button>
     </ion-buttons>
   </ion-toolbar>

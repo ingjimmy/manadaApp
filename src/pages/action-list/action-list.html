@@ -21,8 +21,8 @@
   </ion-navbar>
   <ion-toolbar class="custom-ion-toolbar" no-border-top>
     <button [ngClass]="{'custom-filter-home': true, 'custom-selected': mainService.selected == 'active' && !mainService.viewDocument}" ion-button clear (click)="filter('active')">Active</button>
-    <button [ngClass]="{'custom-filter-home': true, 'custom-selected': mainService.selected == 'ended' && !mainService.viewDocument}" ion-button clear (click)="filter('ended')">Done</button>
-    <button [ngClass]="{'custom-filter-home': true, 'custom-selected': mainService.viewDocument}" *ngIf="mainService.actionFilter.projectID != null" ion-button clear (click)="docs()">Docs</button>
+    <button [ngClass]="{'custom-filter-home': true, 'custom-selected': mainService.selected == 'ended' && !mainService.viewDocument}" ion-button clear (click)="filter('ended')">Done <ion-icon class="custom-icon-check" name="icon-check"></ion-icon></button>
+    <button [ngClass]="{'custom-filter-home': true, 'custom-selected': mainService.viewDocument}" *ngIf="mainService.actionFilter.projectID != null" ion-button clear (click)="docs()">Docs </button>
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -47,25 +47,26 @@
   <ion-list no-lines *ngIf="!mainService.viewDocument" [hidden]="mainService.isOpenMenu">
       <button *ngFor="let actionLocal of mainService.syncArray" type="button" (click)="detail(actionLocal.data)" class="primary-button custom-trash-action" ion-item detail-none>
         <div class="list-button">          
-          <h2>{{actionLocal.data.shortSubject}}</h2> 
+          <h2>{{actionLocal.data.shortSubject}} <span [innerHtml]="actionLocal.data.dueDate | dateColor"></span></h2> 
         <p>
           <span class="users" *ngFor="let user of actionLocal.data.assignedUsers"><ion-icon name="icon-user"></ion-icon> {{ user.names }}</span>
           <span class="users" *ngFor="let project of actionLocal.data.projects">{{ project.name }}</span>
         </p>
-        </div>
-        <ion-note class="custom-ion-note" *ngIf="actionLocal.data.dueDate != undefined" item-end [innerHtml]="actionLocal.data.dueDate | dateColor"></ion-note>         
+        </div>         
       </button>
     <ion-item-sliding #item *ngFor="let action of mainService.actions; trackBy:trackByFn" [ngClass]="{'custom-list-h': true,  'remove-item': action.remove}">
       <button type="button" class="primary-button" ion-item detail-none (click)="detail(action)">
         <div class="list-button">          
-          <h2><span class="custom-new-updates" *ngIf="action.countUpdates > 0"></span> {{action.shortSubject}}</h2> 
+          <h2>
+            <span class="custom-new-updates" *ngIf="action.countUpdates > 0"></span> {{action.shortSubject}}
+            <span *ngIf="action.status == 0" item-end [innerHtml]="action.dueDate | dateColor"></span>              
+            <span *ngIf="action.status == 1" item-end [innerHtml]="action.finalizedDate | dateColor:action.dueDate"></span>
+          </h2> 
         <p>
           <span class="users" *ngFor="let user of action.assignedUsers"><ion-icon name="icon-user"></ion-icon> {{ user.names }}</span>
           <span class="users" *ngFor="let project of action.projects">{{ project.name }}</span>
         </p>
-        </div> 
-        <div class="custom-ion-note" *ngIf="action.status == 0" item-end [innerHtml]="action.dueDate | dateColor"></div>              
-        <div class="custom-ion-note" *ngIf="action.status == 1" item-end [innerHtml]="action.finalizedDate | dateColor:action.dueDate"></div>
+        </div>         
       </button>
       <ion-item-options *ngIf="action.status == 0" side="right" (ionSwipe)="done(action)">
         <button class="button-swipe button-more" ion-button (click)="openmenu(action, item)" color="light">
@@ -96,7 +97,7 @@
 <ion-footer>
   <ion-toolbar class="custom-footer-bar" [ngClass]="{'custom-footer-noline': this.mainService.isOpenMenu, 'custom-footer-bar': true}">
     <button class="custom-toogle-menu" ion-button clear (click)="toogleMenu()">
-      <ion-icon name="menu"></ion-icon>
+      <ion-icon name="icon-custom-menu"></ion-icon>
     </button>
     <ion-buttons end>
       <button class="button-clear-manada fontcolor2" (click)="newAction()" ion-button icon-right color="primary">

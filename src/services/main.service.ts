@@ -64,15 +64,15 @@ export class MainService {
           if (!hasUser && this.actionFilter.userID == this.currentUser.user_id) {
             hasUser = t.data.assignedUsers.length == 0;
           }
-          return hasUser;
+          return hasUser && t.type == SyncEnum.creation;
         });
       } else if (this.actionFilter.projectID != null) {
         this.syncArray = data.filter(t => {
           var hasUser = t.data.projects.find(t => t.projectD == this.actionFilter.projectID) != null;
-          return hasUser;
+          return hasUser && t.type == SyncEnum.creation;
         });
       } else {
-        this.syncArray = data;
+        this.syncArray = data.filter(t => { return t.type == SyncEnum.creation });
       }    
   }
 
@@ -100,6 +100,12 @@ export class MainService {
               this.cacheService.saveItem('sync-key', data, null, Configuration.MinutesInMonth);
               this.bindSyncArray(data);
             }, error => {});
+          } else if (element.type == SyncEnum.comment) {
+            this.commentService.add(element.data).subscribe(result => {
+              let index = data.indexOf(element);
+              data.splice(index, 1);
+              this.cacheService.saveItem('sync-key', data, null, Configuration.MinutesInMonth);
+            }, error => {});
           }
         });
       }
@@ -121,7 +127,7 @@ export class MainService {
   }
 
   public bindActions(call?: (enabled: boolean) => void): void {
-    this.cacheService.getItem('sync-key').then(data => {
+    this.cacheService.getItem('sync-key').then(data => { 
       this.bindSyncArray(data);
     }).catch(error => { })    
 

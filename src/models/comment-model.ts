@@ -1,5 +1,5 @@
 export class CommentModel {
-    content:string;
+    content:string = '';
     actionID:number;
     commentID:number;
     color:string;

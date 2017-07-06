@@ -65,14 +65,14 @@
     </div>
 </ion-content>
 <ion-footer>
-    <ion-toolbar class="custom-footer-bar">
-        <button class="fontcolor2" ion-button menuToggle color="primary">
-      <ion-icon name="menu"></ion-icon>
+  <ion-toolbar class="custom-footer-bar" [ngClass]="{'custom-footer-noline': this.mainService.isOpenMenu, 'custom-footer-bar': true}">
+    <button class="custom-toogle-menu" ion-button clear (click)="toogleMenu()">
+      <ion-icon name="icon-custom-menu"></ion-icon>
     </button>
-        <ion-buttons end>
-            <button class="button-clear-manada fontcolor2" (click)="newAction()" ion-button icon-right color="primary">
+    <ion-buttons end>
+      <button class="button-clear-manada fontcolor2" (click)="newAction()" ion-button icon-right color="primary">
         New action
       </button>
-        </ion-buttons>
-    </ion-toolbar>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-footer>

@@ -10,6 +10,7 @@ import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 import { Storage } from '@ionic/storage';
+import { Configuration } from "../configuration/configuration";
 
 export const MESSAGES = {
   0: 'Cache initialization error: ',
@@ -138,6 +139,16 @@ export class CacheService {
       }
 
       return CacheService.decodeRawData(data);
+    });
+  }
+
+  public getItemOrSaveIfNotExist(key: string): Promise<any> {
+    return this._storage.keys().then(keys => {
+      if (keys.find(t => t == key) != undefined) {
+        return this.getItem(key);
+      } else { 
+        return this.saveItem(key, [], null, Configuration.MinutesInMonth).then(data => { return CacheService.decodeRawData(data); });
+      }
     });
   }
 

@@ -11,9 +11,10 @@ import { CommentFilter } from "../../filters/comment-filter";
 import { CommentCrudComponent, ActionCrudComponent } from "../../pages";
 import { CameraHelper } from "../../helpers/camera-helper";
 import { AlertHelper } from "../../helpers/alert-helper";
-import { ActionSheetModel } from "../../models";
+import { ActionSheetModel, SyncModel } from "../../models";
 import { CustomActionSheetComponent } from "../../components/custom-action-sheet";
 import * as moment from 'moment';
+import { SyncEnum } from "../../enums/sync-enum";
 
 @Component({
     templateUrl: 'action-detail.html'
@@ -52,21 +53,32 @@ export class ActionDetailComponent {
         this.model = params.get('action');
         this.model.files = [];
         if (this.model.actionID > 0) {
-            this.commentFilter.actionID = this.model.actionID;
-            this.commentFilter.page = 0;
-            this.actionService.get(this.model.actionID).subscribe(data => {
-                this.model = data.json();
-            }, error => {
-                console.log(error);
-            });
-            this.bindComments(() => {
-                setTimeout(() => {
-                    try {
-                        this.content.scrollToBottom();
-                        this.infiniteScroll.enable(true);
-                    } catch (error) { }
-                }, 200);
-            });
+            if (this.cacheService.isOnline()) {
+                this.commentFilter.actionID = this.model.actionID;
+                this.commentFilter.page = 0;
+                this.actionService.get(this.model.actionID).subscribe(data => {
+                    this.model = data.json();
+                }, error => {
+                    console.log(error);
+                });
+                this.bindComments(() => {
+                    setTimeout(() => {
+                        try {
+                            this.content.scrollToBottom();
+                            this.infiniteScroll.enable(true);
+                        } catch (error) { }
+                    }, 200);
+                });
+            } else {
+                this.cacheService.getItem('sync-key').then(data => {
+                    this.comments = data.filter(t => t.type == SyncEnum.comment && t.data.actionID == this.model.actionID).map(t => { return t.data; });
+                    setTimeout(() => {
+                        try {
+                            this.content.scrollToBottom();
+                        } catch (error) { }
+                    }, 200);
+                }).catch(error => { });
+            }
         } else {
             this.model.creator = this.mainService.users.length > 0 ? this.mainService.users[0] : {};
             this.model.creationDate = moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
@@ -169,15 +181,15 @@ export class ActionDetailComponent {
         event.preventDefault();
         document.getElementById('commentinput').focus();
         if (this.model.actionID < 0) {
-            this.cacheService.getItem('sync-key').then(data => {
+            this.cacheService.getItemOrSaveIfNotExist('sync-key').then(data => {
                 let actionCache = data.find(t => t.data.actionID == this.model.actionID);
-                if (actionCache != undefined) {                    
+                if (actionCache != undefined) {
                     let addComment = new CommentModel();
                     addComment.content = this.comment.content;
                     addComment.creationDate = moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
                     addComment.user = this.mainService.users.length > 0 ? this.mainService.users[0] : {};
                     addComment.index = this.model.comments.length + 2;
-                    this.model.comments.push(addComment);                    
+                    this.model.comments.push(addComment);
 
                     let index = data.indexOf(actionCache);
                     actionCache.data = this.model;
@@ -217,7 +229,27 @@ export class ActionDetailComponent {
                     })
                 }
             } else {
-                this.helperService.presentToastMessage(Configuration.ErrorMessage);
+                this.cacheService.getItemOrSaveIfNotExist('sync-key').then(data => {
+                    let addComment = new CommentModel();
+                    addComment.actionID = this.model.actionID;
+                    addComment.content = this.comment.content;
+                    addComment.creationDate = moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
+                    addComment.user = this.mainService.users.length > 0 ? this.mainService.users[0] : {};
+                    addComment.index = this.comments.length + 2;
+
+                    this.comments.push(addComment);
+                    this.comment = new CommentModel();
+
+                    let dimension = this.content.getContentDimensions();
+                    this.content.scrollTo(0, dimension.scrollHeight);
+
+                    let commentCache = new SyncModel();
+                    commentCache.data = addComment;
+                    commentCache.date = new Date();
+                    commentCache.type = SyncEnum.comment;
+                    data.unshift(commentCache);
+                    this.cacheService.saveItem('sync-key', data, null, Configuration.MinutesInMonth);
+                }).catch(error => { });
             }
         }
     }
@@ -261,20 +293,6 @@ export class ActionDetailComponent {
 
     public displayMenuAction(): void {
         let options: Array<ActionSheetModel> = [
-            {
-                name: 'Color',
-                handler: (data) => {
-                    this.model.color = data;
-                    let action = this.mainService.actions.find(t => t.actionID == this.model.actionID);
-                    if (action != undefined) {
-                        action.color = data;
-                    }
-
-                    this.actionService.updateLocalAction(this.model, false);
-                    this.actionService.patch(this.model).subscribe(data => { }, error => { });
-                },
-                colors: true
-            },
             {
                 name: 'Edit',
                 handler: () => {

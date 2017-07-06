@@ -161,9 +161,13 @@ export class ActionCrudComponent {
                 if (!this.cacheService.isOnline()) {
                     this.model.shortSubject = this.helperService.getShortSubject(this.model.subject);
                     this.model.actionID = parseInt(moment().format('YYYYMDHHmmss')) * -1;
-                    this.mainService.syncArray.push(item);
-                    this.cacheService.saveItem('sync-key', this.mainService.syncArray, null, Configuration.MinutesInMonth);
-                    this.dismiss();
+                    this.cacheService.getItemOrSaveIfNotExist('sync-key').then(data => {
+                        data.unshift(item);
+                        this.mainService.syncArray = data.filter(t => t.type == SyncEnum.creation);
+                        this.cacheService.saveItem('sync-key', data, null, Configuration.MinutesInMonth);
+                        this.dismiss();
+                    }).catch(error => { console.log(error); });                    
+                    
                 } else {
                     this.actionService.add(this.model).subscribe(data => {
                         this.isBusy = false;

@@ -52,6 +52,15 @@ body {
 .icon-user:before {
   content: "\e901";  
 }
+.icon-clip:before {
+    content: "\e904";
+}
+.icon-check:before {
+    content: "\e904";
+}
+.icon-custom-menu:before {
+    content: "\e90e";
+}
 .custom-icon-edit {
   font-size: 12px !important;
 }
@@ -74,10 +83,9 @@ body {
     order:3;
 }
 .custom-attach-button {
-    font-size: 20px !important;
-
+    font-size: 15px !important;
+    padding: 0 !important;
     span {
-        font-size: 20px !important;
-        font-weight: bold;
+        font-size: 15px !important;
     }
 }
