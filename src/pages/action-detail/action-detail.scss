@@ -11,7 +11,7 @@
     }
 
     ion-card-header {
-        padding-bottom: 4px !important;
+        padding-bottom: 4px;
         color:#000;
     }    
 }
@@ -24,9 +24,10 @@
 
 .custom-response-comment-button {
     margin: 0 !important;
+    height: 35px !important;
     span {
         font-size: 14px; 
-        color:#666;
+        color:#7F7F7F;
     }
 }
 .custom-card-image {
@@ -110,4 +111,17 @@
 }
 .custom-clear {
     clear: both;
+}
+.custom-visibility-hidde {
+    height: 20px;
+}
+.custom-card-padding {
+    padding-top: 0 !important;
+}
+.custom-card-subcomment {
+    margin-bottom: 8px !important;
+    padding-bottom: 8px !important;;
+}
+.custom-card-subcomment:last-child {
+    border: none !important;
 }

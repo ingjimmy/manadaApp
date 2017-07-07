@@ -55,7 +55,7 @@
         </div>         
       </button>
     <ion-item-sliding #item *ngFor="let action of mainService.actions; trackBy:trackByFn" [ngClass]="{'custom-list-h': true,  'remove-item': action.remove}">
-      <button type="button" class="primary-button" ion-item detail-none tappable (click)="detail(action)">
+      <button type="button" class="primary-button" ion-item detail-none (tap)="detail(action)">
         <div class="list-button">          
           <h2>
             <span class="custom-new-updates" *ngIf="action.countUpdates > 0"></span> {{action.shortSubject}}
@@ -70,22 +70,22 @@
       </button>
       <ion-item-options *ngIf="action.status == 0" side="right" (ionSwipe)="done(action)">
         <button class="button-swipe button-more" ion-button (click)="openmenu(action, item)" color="light">
-          <ion-icon class="custom-icon" name="more"></ion-icon>
+          <ion-icon class="custom-icon-swipe" name="icon-more"></ion-icon>
           <span>More</span>
         </button>
         <button class="button-swipe" ion-button expandable color="secondary" (click)="done(action)">
-          <ion-icon class="custom-icon" name="checkmark"></ion-icon>
+          <ion-icon class="custom-icon-swipe" name="icon-check"></ion-icon>
           <span>Done</span>
         </button>
       </ion-item-options>
       <ion-item-options *ngIf="action.status == 1" side="right" (ionSwipe)="done(action)">
         <button class="button-swipe" ion-button (click)="remove(action)" color="danger">
-          <ion-icon class="custom-icon" name="trash"></ion-icon>
+          <ion-icon class="custom-icon-swipe" name="icon-delete"></ion-icon>
           <span>Delete</span>
         </button>
         <button class="button-swipe button-more" ion-button expandable color="light" (click)="done(action)">
-          <ion-icon class="custom-icon" name="checkmark"></ion-icon>
-          <span>Reactive</span>
+          <ion-icon class="custom-icon-swipe" name="icon-react"></ion-icon>
+          <span>Reactivate</span>
         </button>
       </ion-item-options>
     </ion-item-sliding>

@@ -11,6 +11,9 @@ $font-path: "../assets/fonts";
 @include makeIcon(icon-clip, '\e904');
 @include makeIcon(icon-check, '\e903');
 @include makeIcon(icon-custom-menu, '\e90e');
+@include makeIcon(icon-more, '\e90f');
+@include makeIcon(icon-react, '\e913');
+@include makeIcon(icon-delete, '\e900');
 
 // Shared Variables
 // --------------------------------------------------

@@ -166,7 +166,12 @@ export class ActionCrudComponent {
                         data.unshift(item);
                         this.mainService.syncArray = data.filter(t => t.type == SyncEnum.creation);
                         this.cacheService.saveItem('sync-key', data, null, Configuration.MinutesInMonth);
-                        this.dismiss();
+                        this.showAnimate = true;
+                        this.keyboard.close();
+
+                        setTimeout(() => {
+                            this.dismiss();
+                        }, 1700);
                     }).catch(error => { console.log(error); });                    
                     
                 } else {

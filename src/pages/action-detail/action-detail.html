@@ -8,7 +8,7 @@
           Done
       </button>
       <button class="fontcolor2" *ngIf="model.status == 1" (click)="changeStatus()" ion-button icon-right>
-          Reactive
+          Reactivate
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -76,9 +76,13 @@
       </div>      
       </div>      
       <button *ngIf="model.status == 0 && comment.commentID != null" class="custom-response-comment-button fontcolor2" type="button" ion-button clear left (click)="newSubcomment(comment)"
-        color="primary">Comment</button>
-      <ion-card class="custom-card" *ngFor="let subcomment of comment.comments">
-        <ion-card-header>
+        color="primary">Comment
+      </button>
+      <div *ngIf="model.status == 1 || comment.commentID == null" class="custom-visibility-hidde">
+        
+      </div>
+      <ion-card class="custom-card custom-card-subcomment" *ngFor="let subcomment of comment.comments">
+        <ion-card-header class="custom-card-padding">
           {{subcomment.user.names}}
           <button (click)="displayMenuComment(subcomment)" class="custom-button-edit" type="button">
               <ion-icon *ngIf="model.status == 0" class="custom-icon-edit custom-icon-edit-comment"
@@ -88,7 +92,7 @@
         <ion-card-content>
           <span class="custom-comment-date" [innerHTML]="subcomment.modificationDate | tillDate"></span>
           <p [innerHTML]="subcomment.content"></p>
-        </ion-card-content>
+        </ion-card-content>        
       </ion-card>
     </ion-card>
   </ion-list>
