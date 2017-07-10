@@ -40,6 +40,7 @@ export class MainService {
   public countAll: number = 0;
   public intervalSync: any;
   public syncArray: Array<SyncModel> = new Array<SyncModel>();
+  private subscriber:any;
 
   constructor(
     private userService: UserService,
@@ -135,7 +136,11 @@ export class MainService {
       this.bindSyncArray(data);
     }).catch(error => { })
 
-    this.actionService.getAll(this.actionFilter).subscribe(resp => {
+    if (this.subscriber != undefined) {
+      this.subscriber.unsubscribe();
+    }
+
+    this.subscriber = this.actionService.getAll(this.actionFilter).subscribe(resp => {
       let response: IResult = resp;
 
       if (this.actionFilter.searchCriteria == '' && this.actionFilter.status == 'active') {

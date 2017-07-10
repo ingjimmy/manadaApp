@@ -32,7 +32,7 @@ export class ActionsPage {
   public ionViewDidLoad(): void {
     if (this.network.type != null) {
       this.connectSubscription = this.network.onchange().subscribe((data) => {
-        this.cacheService.setStatusNetwork(this.network.type != 'none');
+        //this.cacheService.setStatusNetwork(this.network.type != 'none');
       }, error => { console.log(error); })
     }
   }
