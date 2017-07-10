@@ -52,9 +52,7 @@ export class ActionDetailComponent {
         this.rootPath = Configuration.Url;
         this.model = params.get('action');
         this.model.files = [];
-    }
 
-    public ionViewDidLoad(): void {
         if (this.model.actionID > 0) {
             if (this.cacheService.isOnline()) {
                 this.commentFilter.actionID = this.model.actionID;
@@ -97,7 +95,9 @@ export class ActionDetailComponent {
                 } catch (error) { }
             }, 200);
         }
+    }
 
+    public ionViewDidLoad(): void {
         if (this.platform.is('ios') && this.model.status == 0) {
             this.addKeyboardListeners();
             let scrollContentElelment = this.content.getScrollElement();

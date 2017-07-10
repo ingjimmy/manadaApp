@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Response } from '@angular/http'
 
 import { IResult, TokenModel, SyncModel } from './../models';
 import { UserFilter } from "../filters/user-filter";
@@ -13,6 +14,7 @@ import { ActionService } from "./action.service";
 import { CacheService } from "./cache.service";
 import { HelperService } from "./index";
 import { CommentService } from "./comment.service"
+import { Observable } from "rxjs";
 
 
 @Injectable()
@@ -51,7 +53,7 @@ export class MainService {
     this.actionFilter.status = 'active';
 
     this.cacheService.getNetworkStatusChanges().subscribe(status => {
-      if (status) { 
+      if (status) {
         this.syncUp();
       }
     })
@@ -59,54 +61,56 @@ export class MainService {
 
   public bindSyncArray(data: SyncModel[]): void {
     if (this.actionFilter.userID != null) {
-        this.syncArray = data.filter(t => {
-          var hasUser = t.data.assignedUsers.find(t => t.userID == this.actionFilter.userID) != null;
-          if (!hasUser && this.actionFilter.userID == this.currentUser.user_id) {
-            hasUser = t.data.assignedUsers.length == 0;
-          }
-          return hasUser && t.type == SyncEnum.creation;
-        });
-      } else if (this.actionFilter.projectID != null) {
-        this.syncArray = data.filter(t => {
-          var hasUser = t.data.projects.find(t => t.projectD == this.actionFilter.projectID) != null;
-          return hasUser && t.type == SyncEnum.creation;
-        });
-      } else {
-        this.syncArray = data.filter(t => { return t.type == SyncEnum.creation });
-      }    
+      this.syncArray = data.filter(t => {
+        var hasUser = t.data.assignedUsers.find(t => t.userID == this.actionFilter.userID) != null;
+        if (!hasUser && this.actionFilter.userID == this.currentUser.user_id) {
+          hasUser = t.data.assignedUsers.length == 0;
+        }
+        return hasUser && t.type == SyncEnum.creation;
+      });
+    } else if (this.actionFilter.projectID != null) {
+      this.syncArray = data.filter(t => {
+        var hasUser = t.data.projects.find(t => t.projectD == this.actionFilter.projectID) != null;
+        return hasUser && t.type == SyncEnum.creation;
+      });
+    } else {
+      this.syncArray = data.filter(t => { return t.type == SyncEnum.creation });
+    }
   }
 
   public syncUp(): void {
     this.cacheService.getItem('sync-key').then(data => {
       if (data.length > 0 && this.cacheService.isOnline()) {
-        data.forEach(element => {
-          if (element.type == SyncEnum.creation) {
-            let index = data.indexOf(element);
-            delete element.data.actionID;
-            this.actionService.add(element.data).subscribe(result => {
-              let action = result.json();
-              this.updateMenuItems(action);
-              this.actionService.addLocalAction(action);
+        let arrayObj: Array<Observable<Response>> = [];
 
-              if (element.data.comments != null) {                
-                element.data.comments.forEach(comm => {
-                  comm.actionID = action.actionID;
-                  this.commentService.add(comm).subscribe(data => {}, error => {});
-                });
-              }
-              
-              data.splice(index, 1);
-
-              this.cacheService.saveItem('sync-key', data, null, Configuration.MinutesInMonth);
-              this.bindSyncArray(data);
-            }, error => {});
-          } else if (element.type == SyncEnum.comment) {
-            this.commentService.add(element.data).subscribe(result => {
-              let index = data.indexOf(element);
-              data.splice(index, 1);
-              this.cacheService.saveItem('sync-key', data, null, Configuration.MinutesInMonth);
-            }, error => {});
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].type == SyncEnum.creation) {
+            if (data[i].data.actionID != undefined) {
+              delete data[i].data.actionID;
+            }
+            arrayObj.push(this.actionService.add(data[i].data));
+          } else if (data[i].type == SyncEnum.comment) {
+            arrayObj.push(this.commentService.add(data[i].data));
           }
+        }
+        
+        Observable.forkJoin(arrayObj).subscribe(data => {
+          let actions:Array<any> = new Array<any>();
+          data.forEach(result => {
+            let action = result.json();
+            if (action.commentID == undefined) {
+              actions.push(action);
+              this.updateMenuItems(action);
+            }
+          });
+
+          this.actionService.addLocalArrayActions(actions); 
+
+          this.cacheService.saveItem('sync-key', [], null, Configuration.MinutesInMonth);
+          this.bindSyncArray([]);
+        }, error => {
+          this.cacheService.saveItem('sync-key', [], null, Configuration.MinutesInMonth);
+          this.bindSyncArray([]);
         });
       }
     }).catch(error => { });
@@ -127,9 +131,9 @@ export class MainService {
   }
 
   public bindActions(call?: (enabled: boolean) => void): void {
-    this.cacheService.getItem('sync-key').then(data => { 
+    this.cacheService.getItem('sync-key').then(data => {
       this.bindSyncArray(data);
-    }).catch(error => { })    
+    }).catch(error => { })
 
     this.actionService.getAll(this.actionFilter).subscribe(resp => {
       let response: IResult = resp;

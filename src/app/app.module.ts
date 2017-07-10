@@ -1,3 +1,4 @@
+import { Network } from '@ionic-native/network';
 import { IonicStorageModule } from '@ionic/storage';
 import { Transfer } from '@ionic-native/transfer';
 import { RequestOptions, HttpModule } from '@angular/http';
@@ -99,6 +100,7 @@ import { Focuser } from "../directives/aut-focus";
     LeaderService,
     OneSignal,
     CacheService,
+    Network,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     { provide: RequestOptions, useClass: CustomRequestOptions },
   ]

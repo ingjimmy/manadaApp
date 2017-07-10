@@ -40,7 +40,7 @@ export class ActionListComponent {
         })
 
         this.content.ionScrollEnd.subscribe(data => {
-            setTimeout(() => { 
+            setTimeout(() => {
                 this.isEnableClick = true;
             }, 200);
         })
@@ -120,7 +120,7 @@ export class ActionListComponent {
                         this.actionService.removeLocalAction(action);
                     } else {
                         this.actionService.addLocalAction(action);
-                    }                                        
+                    }
                 }, 500);
 
                 let add = action.status === 0 ? -1 : 1;
@@ -248,7 +248,7 @@ export class ActionListComponent {
             } else {
                 this.mainService.actionFilter.page++;
                 this.mainService.bindActions(enabled => {
-                    infiniteScroll.complete(); 
+                    infiniteScroll.complete();
                 });
             }
         } else {
@@ -256,10 +256,11 @@ export class ActionListComponent {
         }
     }
 
-    public doRefresh(refresher: any): void {
-        this.cacheService.clearAll().then(t => {
-            this.mainService.bind(() => {                
+    public doRefresh(refresher: any): void {        
+        this.cacheService.removeItem('active-actions').then(t => {
+            this.mainService.bind(() => {
                 refresher.complete();
+                this.mainService.syncUp();
             });
         }).catch(error => { console.log(error) });
     }
@@ -274,7 +275,7 @@ export class ActionListComponent {
 
     public trackByFn(index, item): void {
         return item.actionID;
-    }    
+    }
 
     public toogleMenu(): void {
         this.mainService.isOpenMenu = !this.mainService.isOpenMenu;

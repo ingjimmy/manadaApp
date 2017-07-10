@@ -22,7 +22,7 @@ export class AccountComponent {
     public showChangePassword:boolean = false;
     constructor(
         public navCtrl: NavController,
-        private mainService: MainService,
+        public mainService: MainService,
         private userService: UserService,
         private leaderService: LeaderService,
         private modalCtrl: ModalController,

@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header  [hidden]="mainService.isOpenMenu">
     <ion-navbar>
         <ion-title class="custom-title">
             Account
@@ -12,7 +12,7 @@
     </ion-toolbar>    
 </ion-header>
 <ion-content class="custom-content-padding">
-    <div *ngIf="selected == 'account'">
+    <div *ngIf="selected == 'account'" [hidden]="mainService.isOpenMenu">
         <form (submit)="send(form)" #form="ngForm">
             <ion-item>
                 <ion-label>Name</ion-label>
@@ -48,7 +48,7 @@
             <button ion-button color="danger" type="button" (click)="logout()" clear>Log out</button>
         </div>
     </div>
-    <div *ngIf="selected == 'email'">
+    <div *ngIf="selected == 'email'" [hidden]="mainService.isOpenMenu">
         <ion-list>
             <div *ngFor="let setting of settings">
                 <div class="custom-label-setting">

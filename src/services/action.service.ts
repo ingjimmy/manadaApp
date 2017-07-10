@@ -100,6 +100,20 @@ export class ActionService {
     }).catch(error => { console.log(error); });
   }
 
+  public addLocalArrayActions(actions: Array<any>): void {
+    this.cache.getItem('active-actions').then(obj => {
+      let local: IResult = obj;
+      actions.forEach(itm => {
+        local.results.unshift(itm);
+      });
+      
+      this.cache.saveItem('active-actions', local).then(sav => {
+      }).catch(sav => {
+        this.cache.clearExpired(true);
+      });
+    }).catch(error => { console.log(error); });
+  }
+
   public removeLocalAction(action: any): void {
     this.cache.getItem('active-actions').then(obj => {
       let local: IResult = obj;

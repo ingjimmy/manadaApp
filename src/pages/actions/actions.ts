@@ -1,5 +1,7 @@
+import { Subscription } from 'rxjs/Subscription';
 import { Component } from '@angular/core';
 import { MenuController, ModalController, ItemSliding } from 'ionic-angular';
+import { Network } from '@ionic-native/network';
 
 import { AccountComponent, ActionListComponent, UserCrudComponent, ProjectCrudComponent } from '../../pages';
 import { MainService, UserService, ProjectService, HelperService, CacheService } from './../../services';
@@ -12,6 +14,7 @@ import { Configuration } from "../../configuration/configuration";
 })
 export class ActionsPage {
   public rootPage: any = ActionListComponent;
+  private connectSubscription: Subscription;
   constructor(
     public mainService: MainService,
     private menuCtrl: MenuController,
@@ -20,9 +23,23 @@ export class ActionsPage {
     private projectSevice: ProjectService,
     private alertHelper: AlertHelper,
     private helperService: HelperService,
-    private cacheService: CacheService) {
+    private cacheService: CacheService,
+    private network: Network) {
     this.mainService.syncUp();
     this.mainService.bind();
+  }
+
+  public ionViewDidLoad(): void {
+    if (this.network.type != null) {
+      this.connectSubscription = this.network.onchange().subscribe((data) => {
+        this.cacheService.setStatusNetwork(this.network.type != 'none');
+      }, error => { console.log(error); })
+    }
+  }
+  public ionViewWillLeave(): void {
+    if (this.connectSubscription != undefined) {
+      this.connectSubscription.unsubscribe();
+    }
   }
 
   public allActions(): void {

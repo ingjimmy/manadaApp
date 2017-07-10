@@ -65,6 +65,10 @@ export class CacheService {
     this.invalidateOffline = !offlineInvalidate;
   }
 
+  public setStatusNetwork(value: boolean) {
+    this.networkStatus = value;
+  }
+
   private watchNetworkInit() {
     this.networkStatus = navigator.onLine;
     const connect = Observable.fromEvent(window, 'online').map(() => true),
