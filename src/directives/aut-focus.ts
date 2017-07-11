@@ -5,13 +5,15 @@ import { Directive, Renderer, ElementRef } from '@angular/core';
 })
 export class Focuser {
     constructor(
-        private renderer: Renderer, 
+        private renderer: Renderer,
         private elementRef: ElementRef) {
     }
     ngAfterViewInit() {
-        const element = this.elementRef.nativeElement;
+        //const element = this.elementRef.nativeElement;
+        
         setTimeout(() => {
-            this.renderer.invokeElementMethod(element, 'focus', []);
+            document.getElementsByTagName('input')[0].focus();
+            //this.renderer.invokeElementMethod(element, 'focus', []);
         }, 500);
     }
 }

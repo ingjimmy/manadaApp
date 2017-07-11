@@ -16,7 +16,7 @@
         </ion-buttons> 
     </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content no-bounce>
     <form (submit)="send(form)" #form="ngForm">
         <ion-item>
             <ion-input focuser required type="text" [(ngModel)]="model.name" name="name" placeholder="Names"></ion-input>

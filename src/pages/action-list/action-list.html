@@ -26,7 +26,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-refresher closeDuration="50" pullMin="130" (ionRefresh)="doRefresh($event)">
+  <ion-refresher closeDuration="0" pullMin="130" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content pullingText="" refreshingText=""></ion-refresher-content>
   </ion-refresher>
   <div *ngIf="mainService.viewDocument" [hidden]="mainService.isOpenMenu">

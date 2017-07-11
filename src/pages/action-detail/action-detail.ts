@@ -52,6 +52,54 @@ export class ActionDetailComponent {
         this.rootPath = Configuration.Url;
         this.model = params.get('action');
         this.model.files = [];
+
+        if (this.model.actionID > 0) {
+            if (this.cacheService.isOnline()) {
+                this.commentFilter.actionID = this.model.actionID;
+                this.commentFilter.page = 0;
+                this.actionService.get(this.model.actionID).subscribe(data => {
+                    this.model = data.json();
+                }, error => {
+                    console.log(error);
+                });
+                this.bindComments(() => {
+
+                    setTimeout(() => {
+                        try {
+                            this.content.scrollToBottom(0);
+                        } catch (error) { }
+                    }, 100);
+                    setTimeout(() => {
+                        try {
+                            this.infiniteScroll.enable(this.commentFilter.hasNextPage);
+                        } catch (error) { }
+                    }, 200);
+                });
+            } else {
+                this.cacheService.getItem('sync-key').then(data => {
+                    this.comments = data.filter(t => t.type == SyncEnum.comment && t.data.actionID == this.model.actionID).map(t => { return t.data; });
+                    setTimeout(() => {
+                        try {
+                            this.content.scrollToBottom(0);
+                        } catch (error) { }
+                    }, 200);
+                }).catch(error => { });
+            }
+        } else {
+            this.model.creator = this.mainService.users.length > 0 ? this.mainService.users[0] : {};
+            this.model.creationDate = moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
+            this.model.status = 0;
+            if (this.model.comments == null) {
+                this.model.comments = [];
+            }
+
+            this.comments = this.model.comments;
+            setTimeout(() => {
+                try {
+                    this.content.scrollToBottom(0);
+                } catch (error) { }
+            }, 200);
+        }
     }
 
     public ionViewWillLeave(): void {
@@ -71,56 +119,6 @@ export class ActionDetailComponent {
             inputSearch.style.cssText = scrollContentElelment.style.cssText + "transition: all " + 200 + "ms; -webkit-transition: all " +
                 200 + "ms; -webkit-transition-timing-function: ease-out; transition-timing-function: ease-out;"
         }
-
-        setTimeout(() => {
-            if (this.model.actionID > 0) {
-                if (this.cacheService.isOnline()) {
-                    this.commentFilter.actionID = this.model.actionID;
-                    this.commentFilter.page = 0;
-                    this.actionService.get(this.model.actionID).subscribe(data => {
-                        this.model = data.json();
-                    }, error => {
-                        console.log(error);
-                    });
-                    this.bindComments(() => {
-
-                        setTimeout(() => {
-                            try {
-                                this.content.scrollToBottom(0);
-                            } catch (error) { }
-                        }, 100);
-                        setTimeout(() => {
-                            try {
-                                this.infiniteScroll.enable(this.commentFilter.hasNextPage);
-                            } catch (error) { }
-                        }, 200);
-                    });
-                } else {
-                    this.cacheService.getItem('sync-key').then(data => {
-                        this.comments = data.filter(t => t.type == SyncEnum.comment && t.data.actionID == this.model.actionID).map(t => { return t.data; });
-                        setTimeout(() => {
-                            try {
-                                this.content.scrollToBottom(0);
-                            } catch (error) { }
-                        }, 200);
-                    }).catch(error => { });
-                }
-            } else {
-                this.model.creator = this.mainService.users.length > 0 ? this.mainService.users[0] : {};
-                this.model.creationDate = moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
-                this.model.status = 0;
-                if (this.model.comments == null) {
-                    this.model.comments = [];
-                }
-
-                this.comments = this.model.comments;
-                setTimeout(() => {
-                    try {
-                        this.content.scrollToBottom(0);
-                    } catch (error) { }
-                }, 200);
-            }
-        }, 200);
     }
 
     public bindComments(call?: (hasNextPage: boolean) => void): void {
@@ -142,7 +140,7 @@ export class ActionDetailComponent {
             let countUpdates = this.comments.filter(e => { return e.countUpdates > 0; }).length;
             if (countUpdates > 0) {
                 this.mainService.bindUsers();
-                
+
                 let action = this.mainService.actions.find(t => t.actionID == this.model.actionID);
                 if (action != undefined) {
                     action.countUpdates -= countUpdates;
