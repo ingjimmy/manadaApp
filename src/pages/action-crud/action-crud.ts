@@ -290,6 +290,6 @@ export class ActionCrudComponent {
     }
 
     public scrollUp(event): void {
-        this.content.scrollTo(0, 200);
+        //this.content.scrollTo(0, 200);
     }
 }

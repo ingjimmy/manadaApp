@@ -23,7 +23,7 @@
             <ion-col *ngFor="let weekDay of weekdays">{{weekDay}}</ion-col>
         </ion-row>
         <ion-row *ngFor="let date of weeks" class="calendar-days">
-            <ion-col (click)="setDate(day)" *ngFor="let day of date">
+            <ion-col (click)="setDate(day)" tappable *ngFor="let day of date">
                 <span *ngIf="day.day != undefined" [ngClass]="{'calendar-selected-day': day.date == model.dueDate}">{{day.day}}</span>
             </ion-col>
         </ion-row>

@@ -254,17 +254,12 @@ export class ActionListComponent {
         }
     }
 
-    public toggleSearch(): void {
+    public toggleSearch(event: Event): void {
+        event.stopPropagation();
         this.enableSearch = !this.enableSearch;
         this.mainService.actionFilter.searchCriteria = '';
         if (!this.enableSearch) {
-            this.keyboard.close();
             this.mainService.bindActions();
-        } else {
-            setTimeout(() => {
-                document.getElementById('txt-search').focus();
-                this.keyboard.show();
-            }, 10);
         }
     }
 
