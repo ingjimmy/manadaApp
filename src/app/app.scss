@@ -17,15 +17,19 @@
 
 .tagcolor1{
     background: $color1 !important;
+    color:#fff;
 }
 .tagcolor2{
     background: $color2 !important;
+    color:#fff;
 }
 .tagcolor3{
     background: $color3 !important;
+    color:#fff;
 }
 .tagcolor4{
     background: $color4 !important;
+    color:#fff;
 }
 .fontcolor1{
     color: $color1 !important;
@@ -70,6 +74,9 @@ body {
 .icon-delete:before {
     content: "\e900";
 }
+.icon-close:before {
+    content: "\e905";
+}
 .custom-icon-edit {
   font-size: 12px !important;
 }
@@ -87,6 +94,10 @@ body {
     width: auto !important;
     padding-left: 22px !important;
     font-size: 18px !important;
+    
+    div {
+        padding-left: 0 !important;
+    }
 }
 .custom-order {
     order:3;

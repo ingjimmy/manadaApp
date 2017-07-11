@@ -1,6 +1,6 @@
 import { Component, ViewChild, Renderer } from '@angular/core';
 import { Keyboard } from '@ionic-native/keyboard';
-import { Platform, NavParams, ViewController, ModalController, Content } from "ionic-angular";
+import { Platform, NavParams, ViewController, ModalController, Content, Footer } from "ionic-angular";
 
 import { ActionModel, SyncModel } from "../../models";
 import { MainService, ActionService, HelperService, CacheService } from "../../services/index";
@@ -18,6 +18,7 @@ export class ActionCrudComponent {
     @ViewChild('inputname') myInput;
     @ViewChild('subject') subject;
     @ViewChild(Content) content: Content;
+    @ViewChild(Footer) footer: Footer;
     public model: ActionModel = new ActionModel();
     public updateAction: any;
     public users: Array<any> = new Array<any>();
@@ -104,17 +105,21 @@ export class ActionCrudComponent {
 
     private addKeyboardListeners(): void {
         let scrollContentElelment = this.content.getScrollElement();
+        let footerElement = this.footer.getNativeElement();
 
-        this.keyboardHideSub = this.keyboard.onKeyboardHide().subscribe(() => {
-            let newHeight = 44;
-            let marginBottom = newHeight + 'px';
-            this.renderer.setElementStyle(scrollContentElelment, 'marginBottom', marginBottom);
+        this.keyboardHideSub = this.keyboard.onKeyboardHide().subscribe((e) => {
+            this.renderer.setElementStyle(scrollContentElelment, 'marginBottom', '44px');
+            this.renderer.setElementStyle(footerElement, 'marginBottom', '0px');
         });
 
         this.keyboardShowSub = this.keyboard.onKeyboardShow().subscribe((e) => {
             let newHeight = (e['keyboardHeight']);
             let marginBottom = newHeight + 44 + 'px';
             this.renderer.setElementStyle(scrollContentElelment, 'marginBottom', marginBottom);
+            this.renderer.setElementStyle(footerElement, 'marginBottom', newHeight + 'px');
+            setTimeout(() => {
+                this.content.scrollToBottom();
+            }, 200);
         });
     }
 
@@ -276,5 +281,15 @@ export class ActionCrudComponent {
         event.preventDefault();
         let index = this.model.files.indexOf(file);
         this.model.files.splice(index, 1);
+    }
+
+    public footerTouchStart(event): void {
+        if (event.target.localName !== "input" && event.target.localName !== "button") {
+            event.preventDefault();
+        }
+    }
+
+    public scrollUp(event): void {
+        this.content.scrollTo(0, 200);
     }
 }

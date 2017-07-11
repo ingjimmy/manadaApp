@@ -13,6 +13,7 @@
                 <span (touchstart)="resolveHandler($event, option, null)" class="custom-no-color"></span>
             </ng-template>
             <ng-template #withoutcolor>
+                <ion-icon name="{{option.icon}}"></ion-icon>
                 {{option.name}}
             </ng-template>
         </li>

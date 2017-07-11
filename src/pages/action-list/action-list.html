@@ -11,7 +11,7 @@
   </ion-navbar>
   <ion-navbar *ngIf="enableSearch">
     <div>
-      <input class="input-save custom-input-search" placeholder="Search" type="search" name="search" (input)="getItems($event)" />
+      <input id="txt-search" class="input-save custom-input-search" placeholder="Search {{mainService.title}}" type="search" name="search" (input)="getItems($event)" />
     </div>
     <ion-buttons end>
       <button (click)="toggleSearch()" ion-button clear color="primary">
@@ -26,10 +26,8 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-refresher (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content pullingIcon="none"
-      pullingText=""
-      refreshingText=""></ion-refresher-content>
+  <ion-refresher closeDuration="50" pullMin="130" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pullingText="" refreshingText=""></ion-refresher-content>
   </ion-refresher>
   <div *ngIf="mainService.viewDocument" [hidden]="mainService.isOpenMenu">
     <ion-card *ngFor="let file of mainService.files">
@@ -73,7 +71,7 @@
           <ion-icon class="custom-icon-swipe" name="icon-more"></ion-icon>
           <span>More</span>
         </button>
-        <button class="button-swipe" ion-button expandable color="secondary" (click)="done(action)">
+        <button class="button-swipe tagcolor2" ion-button expandable (click)="done(action)">
           <ion-icon class="custom-icon-swipe" name="icon-check"></ion-icon>
           <span>Done</span>
         </button>

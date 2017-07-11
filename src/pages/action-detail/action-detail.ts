@@ -48,10 +48,14 @@ export class ActionDetailComponent {
         public mainService: MainService,
         private navCtrl: NavController,
         private cacheService: CacheService,
-        private helperService: HelperService) {        
+        private helperService: HelperService) {
         this.rootPath = Configuration.Url;
         this.model = params.get('action');
         this.model.files = [];
+    }
+
+    public ionViewWillLeave(): void {
+        this.keyboard.close();
     }
 
     public ionViewDidLoad(): void {
@@ -79,7 +83,7 @@ export class ActionDetailComponent {
                         console.log(error);
                     });
                     this.bindComments(() => {
-                        
+
                         setTimeout(() => {
                             try {
                                 this.content.scrollToBottom(0);
@@ -87,7 +91,7 @@ export class ActionDetailComponent {
                         }, 100);
                         setTimeout(() => {
                             try {
-                                this.infiniteScroll.enable(this.commentFilter.hasNextPage);                               
+                                this.infiniteScroll.enable(this.commentFilter.hasNextPage);
                             } catch (error) { }
                         }, 200);
                     });
@@ -138,7 +142,15 @@ export class ActionDetailComponent {
             let countUpdates = this.comments.filter(e => { return e.countUpdates > 0; }).length;
             if (countUpdates > 0) {
                 this.mainService.bindUsers();
-                this.mainService.bindActions();
+                
+                let action = this.mainService.actions.find(t => t.actionID == this.model.actionID);
+                if (action != undefined) {
+                    action.countUpdates -= countUpdates;
+                    if (action.countUpdates < 0) {
+                        action.countUpdates = 0;
+                    }
+                    this.actionService.updateLocalAction(action, false);
+                }
             }
 
             this.commentFilter.hasNextPage = result.hasNextPage;
@@ -303,6 +315,7 @@ export class ActionDetailComponent {
         let options: Array<ActionSheetModel> = [
             {
                 name: 'Edit',
+                icon: 'icon-edit',
                 handler: () => {
                     let pop = this.modalCtrl.create(ActionCrudComponent, {
                         action: this.model,
@@ -316,6 +329,7 @@ export class ActionDetailComponent {
             },
             {
                 name: 'Cancel',
+                icon: 'icon-close',
                 colors: false
             }
         ];
@@ -328,6 +342,7 @@ export class ActionDetailComponent {
         let options: Array<ActionSheetModel> = [
             {
                 name: 'Edit',
+                icon: 'icon-edit',
                 handler: () => {
                     let pop = this.modalCtrl.create(CommentCrudComponent, { comment: comment, comments: this.comments });
                     pop.present();
@@ -336,6 +351,7 @@ export class ActionDetailComponent {
             },
             {
                 name: 'Delete',
+                icon: 'icon-delete',
                 handler: () => {
                     this.alertHelper.confirm(
                         '¿Are you sure to delete the comment?',
@@ -364,6 +380,7 @@ export class ActionDetailComponent {
             },
             {
                 name: 'Cancel',
+                icon: 'icon-close',
                 colors: false
             }
         ];
@@ -403,11 +420,18 @@ export class ActionDetailComponent {
                 let add = this.model.status === 1 ? -1 : 1;
                 this.mainService.countAll += add;
 
+                let refreshUser: boolean = false;
+                let refreshProjects: boolean = false;
+
                 if (this.model.assignedUsers.length > 0) {
                     for (let i = 0; i < this.model.assignedUsers.length; i++) {
                         let user = this.mainService.users.find(t => t.userID == this.model.assignedUsers[i].userID);
                         if (user != null) {
                             user.countActiveActions += add;
+
+                            if (user.countUpdates > 0) {
+                                refreshUser = true;
+                            }
                         }
                     }
                 } else {
@@ -419,6 +443,10 @@ export class ActionDetailComponent {
                         let project = this.mainService.projects.find(t => t.projectID == this.model.projects[i].projectID);
                         if (project) {
                             project.countActions += add;
+
+                            if (project.countUpdates > 0) {
+                                refreshProjects = true;
+                            }
                         }
                     }
                 }
@@ -435,6 +463,15 @@ export class ActionDetailComponent {
                 }
 
                 this.mainService.projectRaw.countActions = this.mainService.countAll - countByProject;
+
+                if (refreshUser) {
+                    this.mainService.bindUsers();
+                }
+
+                if (refreshProjects) {
+                    this.mainService.bindProjects();
+                }
+
                 if (this.showAnimate) {
                     setTimeout(() => {
                         this.navCtrl.pop();

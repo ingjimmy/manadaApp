@@ -4,7 +4,6 @@ import { NavController, ModalController } from "ionic-angular";
 
 import { UserModel, SettingModel, LeaderModel, UpdatePasswordModel } from "../../models";
 import { MainService, UserService, HelperService, LeaderService, CacheService } from "../../services/index";
-import { HomePage } from "../home/home";
 import { ActionCrudComponent } from "../../pages";
 import { AlertHelper } from "../../helpers/alert-helper";
 import { Configuration } from "../../configuration/configuration";
@@ -92,9 +91,7 @@ export class AccountComponent {
         localStorage.clear();
         this.cacheService.clearAll();
         this.oneSignal.deleteTag('user_id');
-        let counter:number = this.navCtrl.length() - 1;
-        this.navCtrl.remove(0, counter);
-        this.navCtrl.setRoot(HomePage);
+        window['location'].reload();
     }
 
     public filter(option: string): void {
