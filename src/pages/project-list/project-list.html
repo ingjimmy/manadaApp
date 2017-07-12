@@ -1,15 +1,14 @@
 <ion-header>
-    <ion-toolbar>
-        <ion-title>
+    <ion-navbar>
+        <div class="custom-title custom-divider">
             Project list
-        </ion-title>
-        <ion-buttons start class="custom-order">
-            <button ion-button (click)="dismiss()">
-        <span ion-text color="primary" showWhen="ios">Cancel</span>
-        <ion-icon name="md-close" showWhen="android,windows"></ion-icon>
-      </button>
+        </div>
+        <ion-buttons end>
+            <button style="font-size: 13px;" (click)="dismiss()" ion-button icon-right>
+                <ion-icon name="icon-close"></ion-icon>
+            </button>
         </ion-buttons>
-    </ion-toolbar>
+    </ion-navbar>
 </ion-header>
 <ion-content>
     <ion-list>
