@@ -293,7 +293,8 @@ export class ActionCrudComponent {
         //this.content.scrollTo(0, 200);
     }
 
-    public focus(value: string): void {
+    public focus(event:Event, value: string): void {
+        event.preventDefault();
         document.getElementById(value).focus();
     }
 }

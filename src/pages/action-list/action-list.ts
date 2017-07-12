@@ -44,7 +44,7 @@ export class ActionListComponent {
         this.content.ionScrollEnd.subscribe(data => {
             setTimeout(() => {
                 this.isEnableClick = true;
-            }, 300);
+            }, 500);
         })
     }
 

@@ -15,11 +15,11 @@
 </ion-header>
 <ion-content>
     <div #subject class="subject-action" contenteditable="true" placeholder="Write your action here"></div>
-    <ion-item text-wrap class="custom-row-autocomplete" (click)="focus('inputname')"> 
+    <ion-item text-wrap class="custom-row-autocomplete" (touchstart)="focus($event, 'inputname')"> 
         <label>To</label>
         <p>
             <span *ngFor="let user of model.assignedUsers">{{user.names}}</span>
-            <input (focus)="scrollUp($event)" autocomplete="off" #inputname id="inputname" [(ngModel)]="username" (input)="displayUsers($event)" (keyup)="removeLast($event)" type="text"
+            <input autocomplete="off" #inputname id="inputname" [(ngModel)]="username" (input)="displayUsers($event)" (keyup)="removeLast($event)" type="text"
                 name="username" />
         </p>
     </ion-item>
@@ -28,11 +28,11 @@
             <button *ngFor="let user of users" (touchstart)="addUser($event, user)" ion-item detail-none type="button">{{user.names}}</button>
         </ion-list>
     </ion-item>
-    <ion-item text-wrap class="custom-row-autocomplete" (click)="focus('inputproject')">
+    <ion-item text-wrap class="custom-row-autocomplete" (touchstart)="focus($event, 'inputproject')">
         <label>Project</label>
         <p>
             <span *ngFor="let project of model.projects">{{project.name}}</span>
-            <input (focus)="scrollUp($event)" autocomplete="off" #inputproject id="inputproject" [(ngModel)]="projectname" (input)="displayProjects($event)" (keyup)="removeLastProject($event)"
+            <input autocomplete="off" #inputproject id="inputproject" [(ngModel)]="projectname" (input)="displayProjects($event)" (keyup)="removeLastProject($event)"
                 type="text" name="username" />
         </p>
     </ion-item>

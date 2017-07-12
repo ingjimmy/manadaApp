@@ -9,10 +9,10 @@
           <ion-note class="custom-action-ion-note" *ngIf="user.countActiveActions > 0" item-end>{{user.countActiveActions}}</ion-note>
         </button>
         <ion-item-options side="right" *ngIf="!isFirst">
-          <button class="button-swipe sublist" ion-button (click)="removeUser(user, item)" color="danger">
+          <button class="button-swipe sublist" ion-button (click)="removeUser(user, item)">
             Delete
           </button>
-          <button class="button-swipe sublist" ion-button color="secondary" (click)="editUser(user, item)">
+          <button class="button-swipe sublist" ion-button (click)="editUser(user, item)">
             Edit
           </button>
         </ion-item-options>
