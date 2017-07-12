@@ -82,6 +82,9 @@ export class MainService {
   public syncUp(): void {
     this.cacheService.getItem('sync-key').then(data => {
       if (data.length > 0 && this.cacheService.isOnline()) {
+        this.cacheService.saveItem('sync-key', [], null, Configuration.MinutesInMonth);
+        this.bindSyncArray([]);
+        
         let arrayObj: Array<Observable<Response>> = [];
 
         for (let i = 0; i < data.length; i++) {
@@ -105,10 +108,7 @@ export class MainService {
             }
           });
 
-          this.actionService.addLocalArrayActions(actions); 
-
-          this.cacheService.saveItem('sync-key', [], null, Configuration.MinutesInMonth);
-          this.bindSyncArray([]);
+          this.actionService.addLocalArrayActions(actions);           
         }, error => {
           this.cacheService.saveItem('sync-key', [], null, Configuration.MinutesInMonth);
           this.bindSyncArray([]);
@@ -274,7 +274,7 @@ export class MainService {
       }
     }
 
-    if (this.actionFilter.userID == null && this.actionFilter.projectID == null) {
+    if (this.actionFilter.userID == null && this.actionFilter.projectID == null || this.actionFilter.projectID == 0) {
       push = true;
     }
 

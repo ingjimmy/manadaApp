@@ -3,11 +3,11 @@
 </div>
 <ion-header>
     <ion-navbar>
-        <ion-title class="custom-title" style="padding-left: 17px !important;">
+        <div class="custom-title custom-divider">
             New Action
-        </ion-title>
+        </div>
         <ion-buttons end>
-            <button style="font-size: 13px;" [disabled]="isBusy" (click)="dismiss()" ion-button icon-right>
+            <button style="font-size: 13px;" (click)="dismiss()" ion-button icon-right>
                 <ion-icon name="icon-close"></ion-icon>
             </button>
         </ion-buttons>
@@ -15,15 +15,11 @@
 </ion-header>
 <ion-content>
     <div #subject class="subject-action" contenteditable="true" placeholder="Write your action here"></div>
-    <ion-item (click)="calendar()" tappable class="custom-row-autocomplete">
-        <label>Due date</label>
-        <span class="no-border">{{model.dueDate}}</span>
-    </ion-item>
-    <ion-item text-wrap class="custom-row-autocomplete">
+    <ion-item text-wrap class="custom-row-autocomplete" (click)="focus('inputname')"> 
         <label>To</label>
         <p>
             <span *ngFor="let user of model.assignedUsers">{{user.names}}</span>
-            <input (focus)="scrollUp($event)" autocomplete="off" #inputname [(ngModel)]="username" (input)="displayUsers($event)" (keyup)="removeLast($event)" type="text"
+            <input (focus)="scrollUp($event)" autocomplete="off" #inputname id="inputname" [(ngModel)]="username" (input)="displayUsers($event)" (keyup)="removeLast($event)" type="text"
                 name="username" />
         </p>
     </ion-item>
@@ -32,11 +28,11 @@
             <button *ngFor="let user of users" (touchstart)="addUser($event, user)" ion-item detail-none type="button">{{user.names}}</button>
         </ion-list>
     </ion-item>
-    <ion-item text-wrap class="custom-row-autocomplete">
+    <ion-item text-wrap class="custom-row-autocomplete" (click)="focus('inputproject')">
         <label>Project</label>
         <p>
             <span *ngFor="let project of model.projects">{{project.name}}</span>
-            <input (focus)="scrollUp($event)" autocomplete="off" [(ngModel)]="projectname" (input)="displayProjects($event)" (keyup)="removeLastProject($event)"
+            <input (focus)="scrollUp($event)" autocomplete="off" #inputproject id="inputproject" [(ngModel)]="projectname" (input)="displayProjects($event)" (keyup)="removeLastProject($event)"
                 type="text" name="username" />
         </p>
     </ion-item>
@@ -44,6 +40,10 @@
         <ion-list class="custom-list-users">
             <button *ngFor="let project of projects" (touchstart)="addProject($event, project)" ion-item detail-none type="button">{{project.name}}</button>
         </ion-list>
+    </ion-item>
+    <ion-item (click)="calendar()" tappable class="custom-row-autocomplete">
+        <label>Due date</label>
+        <span class="no-border">{{model.dueDate}}</span>
     </ion-item>
     <ion-list class="custom-list-files">
         <ion-item *ngFor="let file of model.files">

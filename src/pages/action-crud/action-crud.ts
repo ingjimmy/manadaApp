@@ -186,7 +186,7 @@ export class ActionCrudComponent {
                         this.model.actionID = result.actionID;
                         this.showAnimate = true;
                         this.keyboard.close();
-
+                        
                         this.mainService.updateMenuItems(result);
                         this.actionService.addLocalAction(result);
 
@@ -291,5 +291,9 @@ export class ActionCrudComponent {
 
     public scrollUp(event): void {
         //this.content.scrollTo(0, 200);
+    }
+
+    public focus(value: string): void {
+        document.getElementById(value).focus();
     }
 }

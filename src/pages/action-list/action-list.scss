@@ -26,7 +26,7 @@
 .list-button {
     padding: 7px 0;
     min-height: 80px;
-    margin-left: 20px; 
+    margin-left: 15px; 
 
     h2 {
         font-size: 1.5rem !important;
@@ -44,9 +44,16 @@
     }    
 }
 .button-swipe {
+    background-color: transparent;
+
     span {
-        padding: 0 6px;
+        padding: 0 6px;                
     }    
+
+    &.sublist {
+        font-weight: bold;
+        color: #000 !important;
+    }
 }
 .button-more {
     background-color: #C8C7CD !important;
@@ -160,7 +167,7 @@
 }
 .custom-input-search {
     font-size: 18px !important;
-    padding: 7px 7px 7px 17px !important;
+    padding: 7px 7px 7px 0 !important;
 }
 .custom-icon-check {
     font-size: 14px;

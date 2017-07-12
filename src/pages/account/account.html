@@ -1,11 +1,11 @@
-<ion-header  [hidden]="mainService.isOpenMenu">
-    <ion-navbar>
-        <ion-title class="custom-title">
+<ion-header [hidden]="mainService.isOpenMenu">
+    <ion-navbar style="padding-top:16px;">
+        <div class="custom-title custom-divider">
             Account
-        </ion-title>
+        </div>
     </ion-navbar>
     <ion-toolbar class="custom-ion-toolbar" no-border-top>
-        <button [ngClass]="{'custom-filter-home': true, 'custom-selected': selected == 'account' }"
+        <button style="padding-left:9px;" [ngClass]="{'custom-filter-home': true, 'custom-selected': selected == 'account' }"
             ion-button clear (click)="filter('account')">Account</button>
         <button [ngClass]="{'custom-filter-home': true, 'custom-selected': selected == 'email' }"
             ion-button clear (click)="filter('email')">Emails</button>        

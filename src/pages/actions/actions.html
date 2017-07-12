@@ -9,12 +9,12 @@
           <ion-note class="custom-action-ion-note" *ngIf="user.countActiveActions > 0" item-end>{{user.countActiveActions}}</ion-note>
         </button>
         <ion-item-options side="right" *ngIf="!isFirst">
-          <button class="button-swipe" ion-button (click)="removeUser(user, item)" color="danger">
-            <ion-icon name="trash"></ion-icon>
+          <button class="button-swipe sublist" ion-button (click)="removeUser(user, item)" color="danger">
+            Delete
           </button>
-          <button class="button-swipe" ion-button color="secondary" (click)="editUser(user, item)">
-          <ion-icon class="custom-icon-edit" name="icon-edit"></ion-icon>
-        </button>
+          <button class="button-swipe sublist" ion-button color="secondary" (click)="editUser(user, item)">
+            Edit
+          </button>
         </ion-item-options>
       </ion-item-sliding>
     </ion-list>
@@ -28,12 +28,12 @@
           <ion-note class="custom-action-ion-note" *ngIf="project.countActions > 0" item-end>{{project.countActions}}</ion-note>
         </button>
         <ion-item-options side="right">
-          <button class="button-swipe" ion-button (click)="removeProject(project, item)" color="danger">
-          <ion-icon name="trash"></ion-icon>
-        </button>
-          <button class="button-swipe" ion-button color="secondary" (click)="editProject(project, item)">
-          <ion-icon class="custom-icon-edit" name="icon-edit"></ion-icon>
-        </button>
+          <button class="button-swipe sublist" ion-button (click)="removeProject(project, item)">
+            Delete
+          </button>
+          <button class="button-swipe sublist" ion-button (click)="editProject(project, item)">
+            Edit
+          </button>
         </ion-item-options>
       </ion-item-sliding>
     </ion-list>

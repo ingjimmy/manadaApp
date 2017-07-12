@@ -32,6 +32,7 @@ export class ActionDetailComponent {
     public keyboardHideSub: any;
     public keyboardShowSub: any;
     public showAnimate: boolean = false;
+    public isBusy: boolean = false;
     constructor(
         public platform: Platform,
         public params: NavParams,
@@ -201,7 +202,8 @@ export class ActionDetailComponent {
         if (this.model.actionID < 0) {
             this.cacheService.getItemOrSaveIfNotExist('sync-key').then(data => {
                 let actionCache = data.find(t => t.data.actionID == this.model.actionID);
-                if (actionCache != undefined) {
+                if (actionCache != undefined && this.comment.content != '') {
+                    this.isBusy = true;
                     let addComment = new CommentModel();
                     addComment.content = this.comment.content;
                     addComment.creationDate = moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
@@ -218,6 +220,7 @@ export class ActionDetailComponent {
                     this.comment = new CommentModel();
                     let dimension = this.content.getContentDimensions();
                     this.content.scrollTo(0, dimension.scrollHeight);
+                    this.isBusy = false;
                 }
             }).catch(error => { });
 
@@ -225,6 +228,7 @@ export class ActionDetailComponent {
             if (this.cacheService.isOnline()) {
                 if (this.comment.content != '' || this.comment.files.length > 0) {
                     this.comment.actionID = this.model.actionID;
+                    this.isBusy = true;
                     this.commentService.add(this.comment).subscribe(data => {
                         let result = data.json();
                         this.totalComments += 1;
@@ -242,32 +246,38 @@ export class ActionDetailComponent {
                             this.mainService.actions.splice(actionIndex, 1);
                             this.mainService.actions.splice(0, 0, action);
                         }
+                        this.isBusy = false;
                     }, error => {
+                        this.isBusy = false;
                         console.log(error);
                     })
                 }
             } else {
-                this.cacheService.getItemOrSaveIfNotExist('sync-key').then(data => {
-                    let addComment = new CommentModel();
-                    addComment.actionID = this.model.actionID;
-                    addComment.content = this.comment.content;
-                    addComment.creationDate = moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
-                    addComment.user = this.mainService.users.length > 0 ? this.mainService.users[0] : {};
-                    addComment.index = this.comments.length + 2;
+                if (this.comment.content != '') {
+                    this.isBusy = true;
+                    this.cacheService.getItemOrSaveIfNotExist('sync-key').then(data => {
+                        let addComment = new CommentModel();
+                        addComment.actionID = this.model.actionID;
+                        addComment.content = this.comment.content;
+                        addComment.creationDate = moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
+                        addComment.user = this.mainService.users.length > 0 ? this.mainService.users[0] : {};
+                        addComment.index = this.comments.length + 2;
 
-                    this.comments.push(addComment);
-                    this.comment = new CommentModel();
+                        this.comments.push(addComment);
+                        this.comment = new CommentModel();
 
-                    let dimension = this.content.getContentDimensions();
-                    this.content.scrollTo(0, dimension.scrollHeight);
+                        let dimension = this.content.getContentDimensions();
+                        this.content.scrollTo(0, dimension.scrollHeight);
 
-                    let commentCache = new SyncModel();
-                    commentCache.data = addComment;
-                    commentCache.date = new Date();
-                    commentCache.type = SyncEnum.comment;
-                    data.unshift(commentCache);
-                    this.cacheService.saveItem('sync-key', data, null, Configuration.MinutesInMonth);
-                }).catch(error => { });
+                        let commentCache = new SyncModel();
+                        commentCache.data = addComment;
+                        commentCache.date = new Date();
+                        commentCache.type = SyncEnum.comment;
+                        data.unshift(commentCache);
+                        this.cacheService.saveItem('sync-key', data, null, Configuration.MinutesInMonth);
+                        this.isBusy = false;
+                    }).catch(error => { this.isBusy = false; });
+                }
             }
         }
     }
@@ -310,29 +320,12 @@ export class ActionDetailComponent {
     }
 
     public displayMenuAction(): void {
-        let options: Array<ActionSheetModel> = [
-            {
-                name: 'Edit',
-                icon: 'icon-edit',
-                handler: () => {
-                    let pop = this.modalCtrl.create(ActionCrudComponent, {
-                        action: this.model,
-                        call: (mod: ActionModel) => {
-                            this.model = mod;
-                        }
-                    });
-                    pop.present();
-                },
-                colors: false
-            },
-            {
-                name: 'Cancel',
-                icon: 'icon-close',
-                colors: false
+        let pop = this.modalCtrl.create(ActionCrudComponent, {
+            action: this.model,
+            call: (mod: ActionModel) => {
+                this.model = mod;
             }
-        ];
-
-        let pop = this.modalCtrl.create(CustomActionSheetComponent, { options: options });
+        });
         pop.present();
     }
 

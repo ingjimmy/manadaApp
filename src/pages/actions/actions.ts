@@ -2,7 +2,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Component } from '@angular/core';
 import { MenuController, ModalController, ItemSliding } from 'ionic-angular';
 import { Network } from '@ionic-native/network';
-import { ThreeDeeTouch, ThreeDeeTouchQuickAction, ThreeDeeTouchForceTouch } from '@ionic-native/three-dee-touch';
+import { ThreeDeeTouch, ThreeDeeTouchQuickAction } from '@ionic-native/three-dee-touch';
 
 import { AccountComponent, ActionListComponent, UserCrudComponent, ProjectCrudComponent, ActionCrudComponent } from '../../pages';
 import { MainService, UserService, ProjectService, HelperService, CacheService } from './../../services';

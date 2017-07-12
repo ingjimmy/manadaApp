@@ -8,7 +8,7 @@
           Done
       </button>
       <button class="fontcolor2" *ngIf="model.status == 1" (click)="changeStatus()" ion-button icon-right>
-          Reactivate
+          Make active
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -49,11 +49,12 @@
       </button>
       </div>
     </ion-card>
-    <ion-card class="custom-card custom-comment-card" *ngFor="let comment of comments">
+    <ion-card [ngClass]="{'custom-card custom-comment-card': true, 'custom-trash-action': comment.commentID == null}" *ngFor="let comment of comments">
       <div class="color-bar tag{{comment.color}}"></div>
       <ion-card-header>
-        {{comment.index}}. {{comment.user.names}}
-        <ion-icon *ngIf="model.status == 0 && comment.user.userID == mainService.currentUser.user_id && model.actionID > 0" (click)="displayMenuComment(comment)"
+        {{comment.index}}. {{comment.user.names}} 
+        <ion-icon *ngIf="comment.commentID == null" name="refresh"></ion-icon>
+        <ion-icon *ngIf="model.status == 0 && comment.user.userID == mainService.currentUser.user_id && comment.commentID != null" (click)="displayMenuComment(comment)"
           class="custom-icon-edit custom-icon-edit-comment" name="icon-edit"></ion-icon>
       </ion-card-header>
       <ion-card-content>
@@ -117,7 +118,7 @@
     </ion-buttons>
     <input id="commentinput" style="width: 100%;" class="input-save" type="text" name="content" [(ngModel)]="comment.content">
     <ion-buttons end *ngIf="comment.content != ''">
-      <button (touchstart)="send($event)" ion-button icon-right color="primary">
+      <button [disabled]="isBusy" (touchstart)="send($event)" ion-button icon-right color="primary">
         Comment        
       </button>
     </ion-buttons>

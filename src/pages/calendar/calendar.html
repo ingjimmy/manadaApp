@@ -1,13 +1,12 @@
 <ion-header>
-    <ion-toolbar>
-        <ion-buttons start class="custom-order">
-            <button ion-button (click)="dismiss()">
-        <span ion-text color="primary" showWhen="ios">Back</span>
-        <ion-icon name="md-close" showWhen="android,windows"></ion-icon>
-      </button>
+    <ion-navbar>
+        <ion-buttons end>
+            <button style="font-size: 13px;" (click)="dismiss()" ion-button icon-right>
+                <ion-icon name="icon-close"></ion-icon>
+            </button>
         </ion-buttons>
-    </ion-toolbar>
-</ion-header>>
+    </ion-navbar>     
+</ion-header>
 <ion-content>
     <ion-grid (swipe)="tapEvent($event)">
         <ion-row class="calendar-header">

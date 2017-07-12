@@ -1,17 +1,18 @@
 <ion-header [hidden]="mainService.isOpenMenu">
-  <ion-navbar *ngIf="!enableSearch">
-    <ion-title class="custom-title">
-      {{mainService.title}}
-    </ion-title>
+  <ion-navbar style="padding-top:16px;" *ngIf="!enableSearch">
+    <div class="custom-title custom-divider">
+      {{mainService.title}} <span *ngIf="mainService.actionFilter.status == 'active' && mainService.actions.length > 0">({{mainService.actions.length}})</span>
+    </div>
     <ion-buttons end>
       <button (click)="toggleSearch($event)" ion-button icon-only>
         <ion-icon name="search"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
-  <ion-navbar *ngIf="enableSearch">
-    <div>
-      <input id="txt-search" class="input-save custom-input-search" focuser placeholder="Search {{mainService.title}}" type="search" name="search" (input)="getItems($event)" />
+  <ion-navbar *ngIf="enableSearch"  style="padding-top:12px;">
+    <div class="custom-title custom-divider">
+      <input id="txt-search" class="input-save custom-input-search" focuser placeholder="Search {{mainService.title}}" type="search"
+        name="search" (input)="getItems($event)" />
     </div>
     <ion-buttons end>
       <button (click)="toggleSearch($event)" ion-button clear color="primary">
@@ -20,9 +21,12 @@
     </ion-buttons>
   </ion-navbar>
   <ion-toolbar class="custom-ion-toolbar" no-border-top>
-    <button [ngClass]="{'custom-filter-home': true, 'custom-selected': mainService.selected == 'active' && !mainService.viewDocument}" ion-button clear (click)="filter('active')">Active</button>
-    <button [ngClass]="{'custom-filter-home': true, 'custom-selected': mainService.selected == 'ended' && !mainService.viewDocument}" ion-button clear (click)="filter('ended')">Done <ion-icon class="custom-icon-check" name="icon-check"></ion-icon></button>
-    <button [ngClass]="{'custom-filter-home': true, 'custom-selected': mainService.viewDocument}" *ngIf="mainService.actionFilter.projectID != null" ion-button clear (click)="docs()">Docs </button>
+    <button style="padding-left:9px;" [ngClass]="{'custom-filter-home': true, 'custom-selected': mainService.selected == 'active' && !mainService.viewDocument}"
+      ion-button clear (click)="filter('active')">Active</button>
+    <button [ngClass]="{'custom-filter-home': true, 'custom-selected': mainService.selected == 'ended' && !mainService.viewDocument}"
+      ion-button clear (click)="filter('ended')">Done <ion-icon class="custom-icon-check" name="icon-check"></ion-icon></button>
+    <button [ngClass]="{'custom-filter-home': true, 'custom-selected': mainService.viewDocument}" *ngIf="mainService.actionFilter.projectID != null"
+      ion-button clear (click)="docs()">Docs </button>
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -43,15 +47,19 @@
     </ion-card>
   </div>
   <ion-list no-lines *ngIf="!mainService.viewDocument" [hidden]="mainService.isOpenMenu">
-      <div *ngFor="let actionLocal of mainService.syncArray" type="button" (click)="detail(actionLocal.data)" tappable class="primary-button custom-trash-action" ion-item detail-none>
-        <div class="list-button">          
-          <h2>{{actionLocal.data.shortSubject}} <span [innerHtml]="actionLocal.data.dueDate | dateColor"></span></h2> 
+    <div *ngFor="let actionLocal of mainService.syncArray" (click)="detail(actionLocal.data)" tappable class="primary-button custom-trash-action"
+      ion-item detail-none>
+      <div class="list-button">
+        <h2>{{actionLocal.data.shortSubject}} 
+          <span [innerHtml]="actionLocal.data.dueDate | dateColor"></span>
+          <ion-icon name="refresh"></ion-icon>
+        </h2>
         <p>
           <span class="users" *ngFor="let user of actionLocal.data.assignedUsers"><ion-icon name="icon-user"></ion-icon> {{ user.names }}</span>
           <span class="users" *ngFor="let project of actionLocal.data.projects">{{ project.name }}</span>
         </p>
-        </div>         
       </div>
+    </div>
     <ion-item-sliding #item *ngFor="let action of mainService.actions" [ngClass]="{'custom-list-h': true,  'remove-item': action.remove}">
       <button type="button" class="primary-button" ion-item detail-none (tap)="detail(action)">
         <div class="list-button">          
@@ -83,7 +91,7 @@
         </button>
         <button class="button-swipe button-more" ion-button expandable color="light" (click)="done(action)">
           <ion-icon class="custom-icon-swipe" name="icon-react"></ion-icon>
-          <span>Reactivate</span>
+          <span>Make active</span>
         </button>
       </ion-item-options>
     </ion-item-sliding>

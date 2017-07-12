@@ -92,7 +92,7 @@ body {
 }
 .custom-title {
     width: auto !important;
-    padding-left: 22px !important;
+    padding-left: 11px !important;
     font-size: 18px !important;
     
     div {
@@ -108,4 +108,12 @@ body {
     span {
         font-size: 15px !important;
     }
+}
+button {
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
 }

@@ -1,5 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
-import { NavParams, ViewController } from 'ionic-angular';
+import { Component, ViewChild, Renderer } from '@angular/core';
+import { NavParams, ViewController, Content, Footer, Platform } from 'ionic-angular';
 import { Keyboard } from '@ionic-native/keyboard';
 
 import { CommentModel } from "../../models";
@@ -12,8 +12,12 @@ import { Configuration } from "../../configuration/configuration";
 })
 export class CommentCrudComponent {
     @ViewChild('commentcontent') commentcontent;
+    @ViewChild(Content) content: Content;
+    @ViewChild(Footer) footer: Footer;
     public model: CommentModel;
     public parent: CommentModel = new CommentModel();
+    public keyboardHideSub: any;
+    public keyboardShowSub: any;
     constructor(
         public params: NavParams,
         public viewCtrl: ViewController,
@@ -22,12 +26,23 @@ export class CommentCrudComponent {
         private alertHelper: AlertHelper,
         private helperService: HelperService,
         private actionService: ActionService,
-        private keyboard: Keyboard) {
+        private keyboard: Keyboard,
+        public renderer: Renderer,
+        public platform: Platform) {
         this.model = params.get('comment');
         this.parent = params.get('parent');
     }
 
     public ionViewDidLoad(): void {
+        if (this.platform.is('ios')) {
+            this.addKeyboardListeners()
+
+            let scrollContentElelment = this.content.getScrollElement();
+
+            scrollContentElelment.style.cssText = scrollContentElelment.style.cssText + "transition: all " + 200 + "ms; -webkit-transition: all " +
+                200 + "ms; -webkit-transition-timing-function: ease-out; transition-timing-function: ease-out;";
+        }
+
         if (this.model != undefined) {
             this.commentcontent.nativeElement.innerHTML = this.model.content;
         } else {
@@ -49,6 +64,26 @@ export class CommentCrudComponent {
                 sel.addRange(range);                
             }
         }, 750);
+    }
+
+    private addKeyboardListeners(): void {
+        let scrollContentElelment = this.content.getScrollElement();
+        let footerElement = this.footer.getNativeElement();
+
+        this.keyboardHideSub = this.keyboard.onKeyboardHide().subscribe((e) => {
+            this.renderer.setElementStyle(scrollContentElelment, 'marginBottom', '44px');
+            this.renderer.setElementStyle(footerElement, 'marginBottom', '0px');
+        });
+
+        this.keyboardShowSub = this.keyboard.onKeyboardShow().subscribe((e) => {
+            let newHeight = (e['keyboardHeight']);
+            let marginBottom = newHeight + 44 + 'px';
+            this.renderer.setElementStyle(scrollContentElelment, 'marginBottom', marginBottom);
+            this.renderer.setElementStyle(footerElement, 'marginBottom', newHeight + 'px');
+            setTimeout(() => {
+                this.content.scrollToBottom();
+            }, 200);
+        });
     }
 
     public dismiss(): void {
@@ -121,6 +156,12 @@ export class CommentCrudComponent {
             let actionIndex = this.mainService.actions.indexOf(action);
             this.mainService.actions.splice(actionIndex, 1);
             this.mainService.actions.splice(0, 0, action);
+        }
+    }
+
+    public footerTouchStart(event): void {
+        if (event.target.localName !== "input" && event.target.localName !== "button") {
+            event.preventDefault();
         }
     }
 }

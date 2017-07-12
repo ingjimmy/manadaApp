@@ -9,11 +9,11 @@ export class Focuser {
         private elementRef: ElementRef) {
     }
     ngAfterViewInit() {
-        //const element = this.elementRef.nativeElement;
-        
         setTimeout(() => {
-            document.getElementsByTagName('input')[0].focus();
-            //this.renderer.invokeElementMethod(element, 'focus', []);
+            let foc = document.getElementsByTagName('input')[0];
+            if (foc != undefined) {
+                foc.focus();
+            }
         }, 500);
     }
 }

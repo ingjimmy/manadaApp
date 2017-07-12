@@ -5,6 +5,6 @@ export const Configuration = {
     Url: 'http://190.93.157.244:8081',
     OneSignalKey: '7e2933ab-c667-47b0-9ac9-cc66e3602946',
     GoogleID: '916395243494',
-    ErrorMessage: 'Network is not available',
+    ErrorMessage: 'Connect to the internet ;)',
     MinutesInMonth: 60 * 60 * 24 * 31
 }
