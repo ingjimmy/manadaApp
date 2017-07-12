@@ -2,8 +2,9 @@ import { Subscription } from 'rxjs/Subscription';
 import { Component } from '@angular/core';
 import { MenuController, ModalController, ItemSliding } from 'ionic-angular';
 import { Network } from '@ionic-native/network';
+import { ThreeDeeTouch, ThreeDeeTouchQuickAction, ThreeDeeTouchForceTouch } from '@ionic-native/three-dee-touch';
 
-import { AccountComponent, ActionListComponent, UserCrudComponent, ProjectCrudComponent } from '../../pages';
+import { AccountComponent, ActionListComponent, UserCrudComponent, ProjectCrudComponent, ActionCrudComponent } from '../../pages';
 import { MainService, UserService, ProjectService, HelperService, CacheService } from './../../services';
 import { AlertHelper } from "../../helpers/alert-helper";
 import { Configuration } from "../../configuration/configuration";
@@ -24,7 +25,8 @@ export class ActionsPage {
     private alertHelper: AlertHelper,
     private helperService: HelperService,
     private cacheService: CacheService,
-    private network: Network) {
+    private network: Network,
+    private threeDeeTouch: ThreeDeeTouch) {
     this.mainService.syncUp();
     this.mainService.bind();
   }
@@ -35,6 +37,30 @@ export class ActionsPage {
         //this.cacheService.setStatusNetwork(this.network.type != 'none');
       }, error => { console.log(error); })
     }
+
+    this.threeDeeTouch.isAvailable().then(isAvailable => {
+      let actions: Array<ThreeDeeTouchQuickAction> = [
+        {
+          type: 'checkin',
+          title: 'New Action',
+          subtitle: 'Quickly new action',
+          iconType: 'Compose'
+        }
+      ];
+
+      this.threeDeeTouch.configureQuickActions(actions);
+
+      this.threeDeeTouch.onHomeIconPressed().subscribe(
+        (payload) => {
+          if (payload.type == 'checkin') {
+            let modal = this.modalCtrl.create(ActionCrudComponent);
+            modal.present();
+          }
+        }
+      )
+    }).catch(error => {
+      console.log(error);
+    });
   }
   public ionViewWillLeave(): void {
     if (this.connectSubscription != undefined) {

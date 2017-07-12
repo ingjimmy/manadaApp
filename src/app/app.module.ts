@@ -1,3 +1,4 @@
+import { ThreeDeeTouch } from '@ionic-native/three-dee-touch';
 import { Network } from '@ionic-native/network';
 import { IonicStorageModule } from '@ionic/storage';
 import { Transfer } from '@ionic-native/transfer';
@@ -101,6 +102,7 @@ import { Focuser } from "../directives/aut-focus";
     OneSignal,
     CacheService,
     Network,
+    ThreeDeeTouch,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     { provide: RequestOptions, useClass: CustomRequestOptions },
   ]
