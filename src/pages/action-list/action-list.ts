@@ -44,7 +44,7 @@ export class ActionListComponent {
         this.content.ionScrollEnd.subscribe(data => {
             setTimeout(() => {
                 this.isEnableClick = true;
-            }, 500);
+            }, 800);
         })
     }
 
@@ -304,5 +304,15 @@ export class ActionListComponent {
 
     public toogleMenu(): void {
         this.mainService.isOpenMenu = !this.mainService.isOpenMenu;
+    }
+
+    public flag(action: any, slidingItem: ItemSliding) {
+        slidingItem.close();
+        if (action.flag == true) {
+            action.flag = false;
+        } else {
+            action.flag = true;
+        }    
+        this.actionService.updateLocalAction(action, false);   
     }
 }

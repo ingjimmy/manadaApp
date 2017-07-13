@@ -81,6 +81,10 @@
     top: 0; 
     left: 0;
     background-color: #F1F1F1;
+
+    &.active {
+        background-color: $color4 !important;
+    }   
 }
 .remove-item {
     opacity: 0;

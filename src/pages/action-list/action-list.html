@@ -61,7 +61,15 @@
       </div>
     </div>
     <ion-item-sliding #item *ngFor="let action of mainService.actions" [ngClass]="{'custom-list-h': true,  'remove-item': action.remove}">
+      <ion-item-options *ngIf="action.status == 0" side="left" (ionSwipe)="flag(action, item)">
+        <button class="button-swipe tagcolor4" ion-button expandable (click)="flag(action, item)">
+          <span>Flag</span>
+        </button>
+      </ion-item-options>
       <button type="button" class="primary-button" ion-item detail-none (tap)="detail(action)">
+        <div *ngIf="action.flag" class="color-bar active">
+        
+        </div>
         <div class="list-button">          
           <h2>
             <span class="custom-new-updates" *ngIf="action.countUpdates > 0"></span> {{action.shortSubject}}
