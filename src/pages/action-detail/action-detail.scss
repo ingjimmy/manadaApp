@@ -130,3 +130,8 @@
 .custom-card-subcomment:last-child {
     border: none !important;
 }
+.custom-swipe-action-detail {
+    .toolbar-background {
+        background-color: $color2 !important;
+    }
+}

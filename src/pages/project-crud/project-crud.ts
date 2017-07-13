@@ -80,6 +80,11 @@ export class ProjectCrudComponent {
                     this.updateProject.name = this.model.name;
                     this.isBusy = false;
                     this.dismiss();
+
+                    let project = this.mainService.projects.find(t => t.projectID == this.model.projectID);
+                    let index = this.mainService.projects.indexOf(project);
+                    this.mainService.projects.splice(index, 1);
+                    this.mainService.projects.splice(0, 0, project);
                 }, error => {
                     let message = error.json();
                     if (message.message != undefined) {

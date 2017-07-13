@@ -33,6 +33,7 @@ export class ActionDetailComponent {
     public keyboardShowSub: any;
     public showAnimate: boolean = false;
     public isBusy: boolean = false;
+    public opacityValue:number = 1;
     constructor(
         public platform: Platform,
         public params: NavParams,
@@ -52,6 +53,7 @@ export class ActionDetailComponent {
         private helperService: HelperService) {
         this.rootPath = Configuration.Url;
         this.model = params.get('action');
+        this.model.subject = this.model.shortSubject;
         this.model.files = [];
 
         if (this.model.actionID > 0) {
@@ -100,11 +102,21 @@ export class ActionDetailComponent {
                     this.content.scrollToBottom(0);
                 } catch (error) { }
             }, 200);
-        }
+        }        
     }
 
     public ionViewWillLeave(): void {
-        this.keyboard.close();
+        this.keyboard.close();        
+    }
+
+    public slideDrag(event): void {
+        if (event._touches.diff <= 0 && Math.abs(event._touches.diff) <= event._renderedSize) {
+            this.opacityValue = 1 + (event._touches.diff / event._renderedSize);        
+        }      
+    }
+
+    public slideUp(): void {
+        this.opacityValue = 1;
     }
 
     public ionViewDidLoad(): void {
@@ -268,6 +280,14 @@ export class ActionDetailComponent {
 
                         let dimension = this.content.getContentDimensions();
                         this.content.scrollTo(0, dimension.scrollHeight);
+                        
+                        let action = this.mainService.actions.find(t => t.actionID == this.model.actionID);
+                        if (action != undefined) {
+                            this.actionService.updateLocalAction(action, true);
+                            let actionIndex = this.mainService.actions.indexOf(action);
+                            this.mainService.actions.splice(actionIndex, 1);
+                            this.mainService.actions.splice(0, 0, action);
+                        }
 
                         let commentCache = new SyncModel();
                         commentCache.data = addComment;

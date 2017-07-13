@@ -257,7 +257,11 @@ export class MainService {
     if (action.assignedUsers.length > 0) {
       for (let index = 0; index < action.assignedUsers.length; index++) {
         let user = this.users.find(t => t.userID == action.assignedUsers[index].userID);
+        let indexUser = this.users.indexOf(user);
+        this.users.splice(indexUser, 1);
         user.countActiveActions++;
+
+        this.users.splice(0, 0, user);
 
         if (user.userID == this.actionFilter.userID) {
           push = true;
@@ -267,7 +271,11 @@ export class MainService {
 
     if (action.projects.length > 0) {
       let project = this.projects.find(t => t.projectID == action.projects[0].projectID);
+      let indexProject = this.projects.indexOf(project);
+      this.projects.splice(indexProject, 1);
+            
       project.countActions++;
+      this.projects.splice(0, 0, project);
 
       if (project.projectID == this.actionFilter.projectID) {
         push = true;

@@ -2,22 +2,31 @@
   <img src="assets/images/check-manada.gif?r={{model.actionID}}" />
 </div>
 <ion-header>
-  <ion-navbar>
-    <ion-buttons end>
-      <button class="fontcolor2" *ngIf="model.status == 0 && model.actionID > 0" (click)="changeStatus()" ion-button icon-right>
+  <ion-slides (touchend)="slideUp()" (ionSlideWillChange)="changeStatus()" (ionSlideDrag)="slideDrag($event)">
+    <ion-slide>
+      <ion-navbar>
+        <ion-buttons end>
+          <button class="fontcolor2" *ngIf="model.status == 0 && model.actionID > 0" ion-button icon-right>
           Done
       </button>
-      <button class="fontcolor2" *ngIf="model.status == 1" (click)="changeStatus()" ion-button icon-right>
+          <button class="fontcolor2" *ngIf="model.status == 1" ion-button icon-right>
           Make active
       </button>
-    </ion-buttons>
-  </ion-navbar>
+        </ion-buttons>
+      </ion-navbar>
+    </ion-slide>
+    <ion-slide>
+      <ion-navbar>
+        
+      </ion-navbar>
+    </ion-slide>
+  </ion-slides>
 </ion-header>
 <ion-content fixed scrollDownOnLoad="true" class="custom-content" (tap)="contentMouseDown($event)">
   <ion-infinite-scroll position="top" (ionInfinite)="doInfinite($event)">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
-  <ion-list>
+  <ion-list [ngStyle]="{'opacity': opacityValue}">
     <ion-card class="custom-card">
       <ion-card-header>
         1. {{model.creator.names}}
@@ -34,7 +43,7 @@
           <span class="users custom-white-space" *ngFor="let user of model.assignedUsers"><ion-icon name="icon-user"></ion-icon> {{ user.names }}</span>
           <span class="users custom-white-space" *ngFor="let project of model.projects">{{ project.name }}</span>
           <div class="custom-clear">
-            
+
           </div>
         </div>
       </ion-card-content>
@@ -52,10 +61,10 @@
     <ion-card [ngClass]="{'custom-card custom-comment-card': true, 'custom-trash-action': comment.commentID == null}" *ngFor="let comment of comments">
       <div class="color-bar tag{{comment.color}}"></div>
       <ion-card-header>
-        {{comment.index}}. {{comment.user.names}} 
+        {{comment.index}}. {{comment.user.names}}
         <ion-icon *ngIf="comment.commentID == null" name="refresh"></ion-icon>
-        <ion-icon *ngIf="model.status == 0 && comment.user.userID == mainService.currentUser.user_id && comment.commentID != null" (click)="displayMenuComment(comment)"
-          class="custom-icon-edit custom-icon-edit-comment" name="icon-edit"></ion-icon>
+        <ion-icon *ngIf="model.status == 0 && comment.user.userID == mainService.currentUser.user_id && comment.commentID != null"
+          (click)="displayMenuComment(comment)" class="custom-icon-edit custom-icon-edit-comment" name="icon-edit"></ion-icon>
       </ion-card-header>
       <ion-card-content>
         <span class="custom-comment-date" [innerHTML]="comment.modificationDate | tillDate"></span>
@@ -63,24 +72,24 @@
       </ion-card-content>
       <div *ngIf="comment.files.length > 0">
         <div *ngFor="let file of comment.files | commentType:0" class="custom-card-image">
-        <img (click)="openPicture(file)" [src]="rootPath + file.path" />
-      </div>
-      <button class="custom-button-file" *ngFor="let file of comment.files | commentType:1" ion-button clear block color="primary"
-        (click)="openFile(file)">
+          <img (click)="openPicture(file)" [src]="rootPath + file.path" />
+        </div>
+        <button class="custom-button-file" *ngFor="let file of comment.files | commentType:1" ion-button clear block color="primary"
+          (click)="openFile(file)">
         <ion-icon name="attach"></ion-icon>        
         {{file.name}}
       </button>
-      <div style="width: 100%;" *ngFor="let file of comment.files | commentType:2">
-        <audio style="width: calc(100% - 10px);margin: 5px;" controls [src]="rootPath + file.path">
-          no allow
-        </audio>
-      </div>      
-      </div>      
-      <button *ngIf="model.status == 0 && comment.commentID != null" class="custom-response-comment-button fontcolor2" type="button" ion-button clear left (click)="newSubcomment(comment)"
-        color="primary">Comment
+        <div style="width: 100%;" *ngFor="let file of comment.files | commentType:2">
+          <audio style="width: calc(100% - 10px);margin: 5px;" controls [src]="rootPath + file.path">
+            no allow
+          </audio>
+        </div>
+      </div>
+      <button *ngIf="model.status == 0 && comment.commentID != null" class="custom-response-comment-button fontcolor2" type="button"
+        ion-button clear left (click)="newSubcomment(comment)" color="primary">Comment
       </button>
       <div *ngIf="model.status == 1 || comment.commentID == null" class="custom-visibility-hidde">
-        
+
       </div>
       <ion-card class="custom-card custom-card-subcomment" *ngFor="let subcomment of comment.comments">
         <ion-card-header class="custom-card-padding">
@@ -93,12 +102,12 @@
         <ion-card-content>
           <span class="custom-comment-date" [innerHTML]="subcomment.modificationDate | tillDate"></span>
           <p [innerHTML]="subcomment.content"></p>
-        </ion-card-content>        
+        </ion-card-content>
       </ion-card>
     </ion-card>
   </ion-list>
 </ion-content>
-<ion-footer *ngIf="model.status == 0" (touchstart)="footerTouchStart($event)">
+<ion-footer *ngIf="model.status == 0" (touchstart)="footerTouchStart($event)" [ngStyle]="{'opacity': opacityValue}">
   <ion-list class="custom-list-files">
     <ion-item *ngFor="let file of comment.files">
       <ion-avatar item-start>

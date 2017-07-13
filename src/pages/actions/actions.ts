@@ -43,7 +43,7 @@ export class ActionsPage {
         {
           type: 'checkin',
           title: 'New Action',
-          subtitle: 'Quickly new action',
+          subtitle: 'New action',
           iconType: 'Compose'
         }
       ];
