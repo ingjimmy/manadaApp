@@ -60,7 +60,7 @@
         </p>
       </div>
     </div>
-    <ion-item-sliding #item *ngFor="let action of mainService.actions" [ngClass]="{'custom-list-h': true,  'remove-item': action.remove}">
+    <ion-item-sliding #item *ngFor="let action of mainService.actions; trackBy: trackByFn" [ngClass]="{'custom-list-h': true,  'remove-item': action.remove}">
       <ion-item-options *ngIf="action.status == 0" side="left" (ionSwipe)="flag(action, item)">
         <button class="button-swipe tagcolor4" ion-button expandable (click)="flag(action, item)">
           <span>Flag</span>

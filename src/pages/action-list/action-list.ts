@@ -298,8 +298,8 @@ export class ActionListComponent {
         this.browserTab.openUrl(this.rootPath + file.path);
     }
 
-    public trackByFn(index, item): void {
-        return item.actionID;
+    public trackByFn(index, action): void {
+        return action.actionID;
     }
 
     public toogleMenu(): void {
